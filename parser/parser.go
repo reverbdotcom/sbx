@@ -45,5 +45,5 @@ func cmdfn(command string) (*cli.CmdFn, error) {
 }
 
 func errr(message string) error {
-  return errors.New(fmt.Sprintf("❌ %s\n%s", message, help))
+  return errors.New(fmt.Sprintf("🚫 %s\n%s", message, help))
 }
