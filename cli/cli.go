@@ -6,6 +6,8 @@ import (
 	"os/exec"
 )
 
+type CmdFn = func() error
+
 func Cmd(name string, arg ...string) {
 	// Define the git command
 	cmd := exec.Command(name, arg...)

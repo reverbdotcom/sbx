@@ -4,21 +4,18 @@ import (
 	"fmt"
 	"os"
 
-
-  "github.com/reverbdotcom/sbx/up"
+	"github.com/reverbdotcom/sbx/parser"
 )
 
 func main() {
-	// os.Args[0] is the program name itself
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide at least one argument")
+	cmdfn, err := parser.Parse()
+
+	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	// Access the first positional argument
-	command := os.Args[1]
-	fmt.Println("cmd:", command)
+	fn := *cmdfn
 
-
-  up.Test()
+	fn()
 }

@@ -1,10 +1,10 @@
 package up
 
 import (
-  "github.com/reverbdotcom/sbx/cli"
+	"github.com/reverbdotcom/sbx/cli"
 )
 
-func Test() {
-  cli.Cmd("git", "status")
+func Run() error {
+	cli.Cmd("git", "status")
+	return nil
 }
-
