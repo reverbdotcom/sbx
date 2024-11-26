@@ -3,7 +3,6 @@ package parser
 import (
 	"fmt"
 	"errors"
-	"os"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/up"
@@ -13,8 +12,8 @@ const help = `
 Usage: sbx <up|down|name>
 `
 
-func Parse() (*cli.CmdFn, error) {
-	cmd, err := command()
+func Parse(args []string) (*cli.CmdFn, error) {
+	cmd, err := command(args)
 
 	if err != nil {
 		return nil, err
@@ -23,12 +22,12 @@ func Parse() (*cli.CmdFn, error) {
 	return cmdfn(*cmd)
 }
 
-func command() (command *string, err error) {
-	if len(os.Args) < 2 {
+func command(args []string) (command *string, err error) {
+	if len(args) < 2 {
 		return nil, errr("command required")
 	}
 
-	cmd := os.Args[1]
+	cmd := args[1]
 
 	return &cmd, nil
 }
@@ -46,5 +45,5 @@ func cmdfn(command string) (*cli.CmdFn, error) {
 }
 
 func errr(message string) error {
-  return errors.New(fmt.Sprintf("%s\n%s", message, help))
+  return errors.New(fmt.Sprintf("❌ %s\n%s", message, help))
 }

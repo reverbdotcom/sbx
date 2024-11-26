@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	cmdfn, err := parser.Parse()
+	cmdfn, err := parser.Parse(os.Args)
 
 	if err != nil {
 		fmt.Println(err)
