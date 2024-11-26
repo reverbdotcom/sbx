@@ -13,10 +13,6 @@ func main() {
 	}
 
 	// Access the first positional argument
-	firstArg := os.Args[1]
-	fmt.Println("First argument:", firstArg)
-
-	// Access all positional arguments (excluding the program name)
-	allArgs := os.Args[1:]
-	fmt.Println("All arguments:", allArgs)
+	command := os.Args[1]
+	fmt.Println("cmd:", command)
 }
