@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+
+
+  "github.com/reverbdotcom/sbx/up"
 )
 
 func main() {
@@ -15,4 +18,7 @@ func main() {
 	// Access the first positional argument
 	command := os.Args[1]
 	fmt.Println("cmd:", command)
+
+
+  up.Test()
 }
