@@ -16,6 +16,11 @@ func main() {
 	}
 
 	fn := *cmdfn
+	out, err := fn()
+	fmt.Println(out)
 
-	fn()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

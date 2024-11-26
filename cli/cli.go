@@ -1,24 +1,23 @@
 package cli
 
 import (
-	"fmt"
-	"os"
+	"bytes"
 	"os/exec"
 )
 
-type CmdFn = func() error
+type CmdFn = func() (string, error)
 
-func Cmd(name string, arg ...string) {
-	// Define the git command
+func Cmd(name string, arg ...string) (string, error) {
 	cmd := exec.Command(name, arg...)
 
-	// Set the command's standard input/output to the console
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	buffer := bytes.Buffer{}
+	cmd.Stdout = &buffer
+	cmd.Stderr = &buffer
 
-	// Run the command
 	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("error: %s\n", err)
+		return buffer.String(), err
 	}
+
+	return buffer.String(), nil
 }

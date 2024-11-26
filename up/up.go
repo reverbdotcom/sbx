@@ -4,7 +4,6 @@ import (
 	"github.com/reverbdotcom/sbx/cli"
 )
 
-func Run() error {
-	cli.Cmd("git", "statusdasd")
-	return nil
+func Run() (string, error) {
+	return cli.Cmd("git", "status")
 }
