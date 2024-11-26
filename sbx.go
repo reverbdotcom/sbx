@@ -1,25 +1,22 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"os"
 )
 
 func main() {
+	// os.Args[0] is the program name itself
+	if len(os.Args) < 2 {
+		fmt.Println("Please provide at least one argument")
+		os.Exit(1)
+	}
 
-	wordPtr := flag.String("word", "foo", "a string")
+	// Access the first positional argument
+	firstArg := os.Args[1]
+	fmt.Println("First argument:", firstArg)
 
-	numbPtr := flag.Int("numb", 42, "an int")
-	forkPtr := flag.Bool("fork", false, "a bool")
-
-	var svar string
-	flag.StringVar(&svar, "svar", "bar", "a string var")
-
-	flag.Parse()
-
-	fmt.Println("word:", *wordPtr)
-	fmt.Println("numb:", *numbPtr)
-	fmt.Println("fork:", *forkPtr)
-	fmt.Println("svar:", svar)
-	fmt.Println("tail:", flag.Args())
+	// Access all positional arguments (excluding the program name)
+	allArgs := os.Args[1:]
+	fmt.Println("All arguments:", allArgs)
 }
