@@ -5,6 +5,6 @@ import (
 )
 
 func Run() error {
-	cli.Cmd("git", "status")
+	cli.Cmd("git", "statusdasd")
 	return nil
 }
