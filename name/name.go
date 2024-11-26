@@ -4,13 +4,16 @@ import (
 	"github.com/reverbdotcom/sbx/cli"
 )
 
-func Name() (*string, error) {
-	return nil, nil
+func Run() (string, error) {
+  return currentBranch()
 }
 
-func branchName() (*string, error) {
+func currentBranch() (string, error) {
+  out, err := cli.Cmd("git", "branch", "--show-current")
 
-	cli.Cmd("git", "branch", "--show-current")
+  if err != nil {
+    return out, err
+  }
 
-	return nil, nil
+  return out, nil
 }
