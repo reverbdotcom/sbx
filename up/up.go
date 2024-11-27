@@ -3,6 +3,7 @@ package up
 import (
 	"fmt"
 	"strings"
+	"errors"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
@@ -22,6 +23,16 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 
 func Run() (string, error) {
+  yes, err := isMain()
+
+  if err != nil {
+    return "", err
+  }
+
+  if yes {
+    return "", errors.New("cannot deploy from main branch")
+  }
+
 	name, err := nameFn()
 
 	if err != nil {
@@ -90,3 +101,17 @@ func pushRemote(name string) (string, error) {
 
 	return out, nil
 }
+
+var isMain = _isMain
+func _isMain() (bool, error) {
+	out, err := cli.Cmd("git", "branch", "--show-current")
+
+	if err != nil {
+		return false, err
+	}
+
+  yes := strings.TrimSpace(out) == "main"
+
+	return yes, nil
+}
+
