@@ -38,5 +38,5 @@ func cmdfn(command string) (*commands.RunFn, error) {
 }
 
 func errr(message string) error {
-	return errors.New(fmt.Sprintf("🚫 %s\n%s", message, commands.Help))
+	return errors.New(fmt.Sprintf("🚫 %s\n\n\n%s", message, commands.Help))
 }
