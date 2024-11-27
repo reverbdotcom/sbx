@@ -37,7 +37,7 @@ func TestParse(t *testing.T) {
 	})
 
 	t.Run("it errs when command is not found", func(t *testing.T) {
-		args := []string{"sbx", "down"}
+		args := []string{"sbx", "does-not-exist"}
 		cmdfn, err := Parse(args)
 
 		if err == nil {
