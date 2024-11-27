@@ -1,9 +1,8 @@
 package parser
 
 import (
-	"errors"
-
 	"github.com/reverbdotcom/sbx/commands"
+	"github.com/reverbdotcom/sbx/errr"
 )
 
 func Parse(args []string) (*commands.RunFn, error) {
@@ -18,7 +17,7 @@ func Parse(args []string) (*commands.RunFn, error) {
 
 func command(args []string) (command *string, err error) {
 	if len(args) < 2 {
-		return nil, errors.New("command required")
+		return nil, errr.NewWithHelp("command required")
 	}
 
 	cmd := args[1]
@@ -30,7 +29,7 @@ func cmdfn(command string) (*commands.RunFn, error) {
 	cmd, ok := commands.Commands()[command]
 
 	if !ok {
-		return nil, errors.New("command not found")
+		return nil, errr.NewWithHelp("command not found")
 	}
 
 	return &cmd, nil

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/reverbdotcom/sbx/errr"
 	"github.com/reverbdotcom/sbx/parser"
+	"github.com/reverbdotcom/sbx/errr"
 )
 
 func main() {

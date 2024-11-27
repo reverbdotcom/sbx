@@ -8,5 +8,9 @@ import (
 )
 
 func New(message string) error {
+	return errors.New(fmt.Sprintf("🚫 %s", message))
+}
+
+func NewWithHelp(message string) error {
 	return errors.New(fmt.Sprintf("🚫 %s\n\n\n%s", message, commands.Help))
 }
