@@ -63,22 +63,21 @@ func pushRemote(name string, noop bool) (string, error) {
 		return out, err
 	}
 
-  if noop && strings.Contains(out, noChanges) {
-    out, err := noopCommit()
+	if noop && strings.Contains(out, noChanges) {
+		out, err := noopCommit()
 
-    if err != nil {
-      return out, err
-    }
+		if err != nil {
+			return out, err
+		}
 
-    out, err = pushRemote(name, false)
+		out, err = pushRemote(name, false)
 
-    if err != nil {
-      return out, err
-    }
-  } else if strings.Contains(out, noChanges) {
-    return out, errors.New(name + " is up to date, make a new commit")
-  }
-
+		if err != nil {
+			return out, err
+		}
+	} else if strings.Contains(out, noChanges) {
+		return out, errors.New(name + " is up to date, make a new commit")
+	}
 
 	return out, nil
 }

@@ -116,9 +116,9 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-    if err != nil {
-      t.Errorf("got %v, want nil", err)
-    }
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
 	})
 
 	t.Run("it errs if noop commit failed", func(t *testing.T) {
@@ -149,10 +149,10 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-    want := "sandbox-blake-julian-kevin is up to date, make a new commit"
-    if err.Error() != want {
-      t.Errorf("got %v, want %v", err, want)
-    }
+		want := "sandbox-blake-julian-kevin is up to date, make a new commit"
+		if err.Error() != want {
+			t.Errorf("got %v, want %v", err, want)
+		}
 	})
 
 	t.Run("it pushes to remote with new changes", func(t *testing.T) {
@@ -173,8 +173,8 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-    if err != nil {
-      t.Errorf("got %v, want nil", err)
-    }
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
 	})
 }
