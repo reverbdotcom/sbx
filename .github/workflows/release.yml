@@ -15,6 +15,7 @@ jobs:
         run: |
           mkdir -p dist
           GOOS=darwin GOARCH=amd64 go build -o dist/sbx-darwin-amd64 .
+          GOOS=darwin GOARCH=arm64 go build -o dist/sbx-darwin-arm64 .
 
       - name: Get release
         id: get_release
@@ -22,12 +23,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload macOS binary
+      - name: Upload macOS amd64 binary
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: dist/sbx-darwin-amd64
           asset_name: sbx-darwin-amd64
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS arm64 binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: dist/sbx-darwin-arm64
+          asset_name: sbx-darwin-arm64
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
