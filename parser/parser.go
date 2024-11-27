@@ -5,8 +5,7 @@ import (
 	"fmt"
 
 	"github.com/reverbdotcom/sbx/cli"
-	"github.com/reverbdotcom/sbx/up"
-	"github.com/reverbdotcom/sbx/name"
+	"github.com/reverbdotcom/sbx/commands"
 )
 
 const help = `
@@ -34,7 +33,7 @@ func command(args []string) (command *string, err error) {
 }
 
 func cmdfn(command string) (*cli.CmdFn, error) {
-	cmd, ok := commands()[command]
+	cmd, ok := commands.Commands()[command]
 
 	if !ok {
 		return nil, errr("command not found")
@@ -43,13 +42,6 @@ func cmdfn(command string) (*cli.CmdFn, error) {
 	return &cmd, nil
 }
 
-
-func commands() map[string]cli.CmdFn {
-	return map[string]cli.CmdFn{
-		"up": up.Run,
-		"name": name.Run,
-	}
-}
 
 func errr(message string) error {
 	return errors.New(fmt.Sprintf("🚫 %s\n%s", message, help))
