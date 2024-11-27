@@ -5,6 +5,10 @@ import (
 )
 
 func TestRun(t *testing.T) {
+  dictionary = func() ([]string, error) {
+    return []string{"blake", "julian", "kevin"}, nil
+  }
+
 	t.Run("it generates a sandbox name", func(t *testing.T) {
 		branch = func() (string, error) {
 			return "nn-sbx-1234", nil
@@ -24,6 +28,10 @@ func TestRun(t *testing.T) {
 }
 
 func TestProperNames(t *testing.T) {
+  dictionary = func() ([]string, error) {
+    return []string{"blake", "julian", "kevin", "a", "super-long-name-that-does-not-fit"}, nil
+  }
+
 	t.Run("it should be longer than 2 and less than 13", func(t *testing.T) {
 		words, err := properNames()
 
