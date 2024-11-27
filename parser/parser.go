@@ -6,11 +6,8 @@ import (
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/commands"
+	"github.com/reverbdotcom/sbx/help"
 )
-
-const help = `
-Usage: sbx <up|down|name>
-`
 
 func Parse(args []string) (*cli.CmdFn, error) {
 	cmd, err := command(args)
@@ -42,7 +39,6 @@ func cmdfn(command string) (*cli.CmdFn, error) {
 	return &cmd, nil
 }
 
-
 func errr(message string) error {
-	return errors.New(fmt.Sprintf("🚫 %s\n%s", message, help))
+	return errors.New(fmt.Sprintf("🚫 %s\n%s", message, help.Help))
 }
