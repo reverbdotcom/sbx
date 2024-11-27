@@ -101,7 +101,7 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop commit to trigger deploy'",
+				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop to trigger'",
 				Out:     "",
 				Err:     nil,
 			},

@@ -74,7 +74,7 @@ func pushRemote(name string) (string, error) {
 }
 
 func pushRemoteNoop(name string) (string, error) {
-	out, err := cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop commit to trigger deploy'")
+	out, err := cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop to trigger'")
 
   if err != nil {
     return out, err
