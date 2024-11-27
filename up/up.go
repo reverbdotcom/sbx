@@ -2,6 +2,7 @@ package up
 
 import (
 	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
@@ -99,6 +100,10 @@ func pushRemote(name string) (string, error) {
 	if err != nil {
 		return out, err
 	}
+
+  if strings.Contains(out, noChanges) {
+    return out, errors.New(name + " is up to date, make a new commit")
+  }
 
 	return out, nil
 }
