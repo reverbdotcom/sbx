@@ -7,10 +7,27 @@ import (
 
 type RunFn func() (string, error)
 
-const Help = `
-Usage: sbx <help|up|name>
+const Help = `NAME
+  sbx - orchestra cli
 
-Examples:
+COMMANDS
+
+  sbx up
+      help
+      name
+      web
+      dash
+      gateway
+
+DESCRIPTION
+
+  up      spin up an orchestra sandbox.
+  help    display this help message.
+  name    display the name of the current branch.
+  web     open the web interface.
+
+USAGE:
+
   sbx up
   sbx name
 `
