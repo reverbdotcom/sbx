@@ -11,7 +11,7 @@ Orchestra CLI tool: `sbx up`
 #### golang
 
 ```bash
-export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@latest
+export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@main
 ```
 
 
