@@ -1,9 +1,9 @@
 package up
 
 import (
+	"errors"
 	"fmt"
 	"strings"
-	"errors"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
@@ -23,15 +23,15 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 
 func Run() (string, error) {
-  yes, err := isMain()
+	yes, err := isMain()
 
-  if err != nil {
-    return "", err
-  }
+	if err != nil {
+		return "", err
+	}
 
-  if yes {
-    return "", errors.New("cannot deploy from main branch")
-  }
+	if yes {
+		return "", errors.New("cannot deploy from main branch")
+	}
 
 	name, err := nameFn()
 
@@ -73,13 +73,13 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 		return out, err
 	}
 
-  if noopCommit {
-    out, err = cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop to trigger'")
+	if noopCommit {
+		out, err = cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop to trigger'")
 
-    if err != nil {
-      return out, err
-    }
-  }
+		if err != nil {
+			return out, err
+		}
+	}
 
 	return out, nil
 }
@@ -109,8 +109,7 @@ func isMain() (bool, error) {
 		return false, err
 	}
 
-  yes := strings.TrimSpace(out) == "main"
+	yes := strings.TrimSpace(out) == "main"
 
 	return yes, nil
 }
-
