@@ -9,6 +9,15 @@ import (
 
 func TestRun(t *testing.T) {
 	t.Run("it errs on nameFn", func(t *testing.T) {
+		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
+		}
+
+		cmdFn = cli.MockCmd(t, wants)
 		nameFn = func() (string, error) {
 			return "sandbox-blake-julian-kevin", errors.New("name error")
 		}
@@ -26,6 +35,11 @@ func TestRun(t *testing.T) {
 
 	t.Run("it push a new remote", func(t *testing.T) {
 		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
 			{
 				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
 				Out:     "",
@@ -50,6 +64,11 @@ func TestRun(t *testing.T) {
 	t.Run("it errs on make local", func(t *testing.T) {
 		wants := []cli.MockCall{
 			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
+			{
 				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
 				Out:     "",
 				Err:     errors.New("make local error"),
@@ -60,13 +79,18 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-		if err.Error() != wants[0].Err.Error() {
+		if err.Error() != wants[1].Err.Error() {
 			t.Errorf("got %v, want %v", err, wants[0].Err)
 		}
 	})
 
 	t.Run("it errs on push remote", func(t *testing.T) {
 		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
 			{
 				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
 				Out:     "",
@@ -83,13 +107,18 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-		if err != wants[1].Err {
-			t.Errorf("got %v, want %v", err, wants[1].Err)
+		if err != wants[2].Err {
+			t.Errorf("got %v, want %v", err, wants[2].Err)
 		}
 	})
 
 	t.Run("it creates a noop commit on push remote when remote is up to date", func(t *testing.T) {
 		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
 			{
 				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
 				Out:     "",
@@ -101,12 +130,12 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop to trigger'",
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
 				Out:     "",
 				Err:     nil,
 			},
 			{
-				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop to trigger'",
 				Out:     "",
 				Err:     nil,
 			},
@@ -128,6 +157,11 @@ func TestRun(t *testing.T) {
 
 	t.Run("it pushes to remote with new changes", func(t *testing.T) {
 		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
 			{
 				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
 				Out:     "",

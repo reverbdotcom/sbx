@@ -102,9 +102,8 @@ func pushRemote(name string) (string, error) {
 	return out, nil
 }
 
-var isMain = _isMain
-func _isMain() (bool, error) {
-	out, err := cli.Cmd("git", "branch", "--show-current")
+func isMain() (bool, error) {
+	out, err := cmdFn("git", "branch", "--show-current")
 
 	if err != nil {
 		return false, err
