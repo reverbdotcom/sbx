@@ -3,10 +3,10 @@ package commands
 import (
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/down"
-	"github.com/reverbdotcom/sbx/web"
+	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/up"
-	"github.com/reverbdotcom/sbx/graphiql"
+	"github.com/reverbdotcom/sbx/web"
 )
 
 type RunFn func() (string, error)
@@ -48,13 +48,13 @@ func help() (string, error) {
 
 func Commands() map[string]RunFn {
 	return map[string]RunFn{
-		"up":   up.Run,
-		"help": help,
-		"name": name.Run,
-		"web": web.Run,
-		"dash": dash.Run,
+		"up":       up.Run,
+		"help":     help,
+		"name":     name.Run,
+		"web":      web.Run,
+		"dash":     dash.Run,
 		"graphiql": graphiql.Run,
-		"graphql": graphiql.Run,
-		"down": down.Run,
+		"graphql":  graphiql.Run,
+		"down":     down.Run,
 	}
 }

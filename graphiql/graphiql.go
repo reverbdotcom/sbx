@@ -7,7 +7,7 @@ import (
 
 func Run() (string, error) {
 	urlFn := func(name string) string {
-    return fmt.Sprintf("https://graphiql-%s.int.orchestra.rvb.ai/graphql", name)
+		return fmt.Sprintf("https://graphiql-%s.int.orchestra.rvb.ai/graphql", name)
 	}
 
 	err := open.Open(urlFn)
