@@ -8,6 +8,23 @@ import (
 )
 
 func TestRun(t *testing.T) {
+	t.Run("it errs on main", func(t *testing.T) {
+		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "main",
+				Err:     nil,
+			},
+		}
+
+		cmdFn = cli.MockCmd(t, wants)
+		_, err := Run()
+
+		if err.Error() != "cannot deploy from main branch" {
+			t.Errorf("got %v", err.Error())
+		}
+	})
+
 	t.Run("it errs on nameFn", func(t *testing.T) {
 		wants := []cli.MockCall{
 			{
