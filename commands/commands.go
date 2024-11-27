@@ -1,9 +1,9 @@
 package commands
 
 import (
+	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/up"
-	"github.com/reverbdotcom/sbx/dash"
 )
 
 type RunFn func() (string, error)

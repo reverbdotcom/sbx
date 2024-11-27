@@ -23,7 +23,6 @@ const noChanges = "up-to-date"
 var cmdFn = cli.Cmd
 var nameFn = name.Name
 
-
 func Run() (string, error) {
 	name, err := nameFn()
 
@@ -57,7 +56,7 @@ func Run() (string, error) {
 		return out, err
 	}
 
-  fmt.Printf(info, name)
+	fmt.Printf(info, name)
 
 	return "", nil
 }
