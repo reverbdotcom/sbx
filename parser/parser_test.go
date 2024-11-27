@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestParse(t *testing.T) {
