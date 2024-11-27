@@ -29,20 +29,6 @@ func Run() (string, error) {
 		return "", err
 	}
 
-	//_, err := remoteExists(name)
-
-	//if err != nil {
-	//	return "", err
-	//}
-
-	// if exists {
-	// 	out, err := resetRemote(name)
-
-	// 	if err != nil {
-	// 		return out, err
-	// 	}
-	// }
-
 	out, err := makeLocal(name)
 
 	if err != nil {
@@ -58,30 +44,6 @@ func Run() (string, error) {
 	fmt.Printf(info, name)
 
 	return "", nil
-}
-
-func remoteExists(name string) (bool, error) {
-	out, err := cmdFn("git", "ls-remote", "--heads", "origin", name)
-
-	if err != nil {
-		return false, err
-	}
-
-	if strings.Contains(out, name) {
-		return true, nil
-	}
-
-	return false, nil
-}
-
-func resetRemote(name string) (string, error) {
-	out, err := cmdFn("git", "push", "origin", "--delete", name)
-
-	if err != nil {
-		return out, err
-	}
-
-	return out, nil
 }
 
 func makeLocal(name string) (string, error) {
