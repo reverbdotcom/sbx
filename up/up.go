@@ -28,6 +28,18 @@ func Run() (string, error) {
 		return "", err
 	}
 
+  out, err := deploy(name)
+
+  if err != nil {
+    return out, err
+  }
+
+	fmt.Printf(info, name)
+
+  return out, nil
+}
+
+func deploy(name string) (string, error) {
 	out, err := makeLocal(name)
 
 	if err != nil {
@@ -39,8 +51,6 @@ func Run() (string, error) {
 	if err != nil {
 		return out, err
 	}
-
-	fmt.Printf(info, name)
 
 	return "", nil
 }
@@ -63,7 +73,7 @@ func pushRemote(name string) (string, error) {
 	}
 
 	if strings.Contains(out, noChanges) {
-    out, err := pushRemoteNoop(name)
+    out, err := deployNoop(name)
 
 		if err != nil {
 			return out, err
@@ -73,14 +83,14 @@ func pushRemote(name string) (string, error) {
 	return out, nil
 }
 
-func pushRemoteNoop(name string) (string, error) {
+func deployNoop(name string) (string, error) {
 	out, err := cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop to trigger'")
 
   if err != nil {
     return out, err
   }
 
-	out, err = cmdFn("git", "push", "origin", name)
+  out, err = deploy(name)
 
 	if err != nil {
 		return out, err
