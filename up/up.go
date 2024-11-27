@@ -1,16 +1,28 @@
 package up
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
 )
 
+const info = `🚀 deploying orchestra sandbox: [ %s ]
+
+»» commands:
+»» sbx help	: display this help message
+»» sbx down	: teardown the sandbox
+»» sbx dash	: for dasboard
+»» sbx web	: to open website in browser
+»» sbx name	: get sandbox name
+`
+
 const noChanges = "up-to-date"
 
 var cmdFn = cli.Cmd
 var nameFn = name.Name
+
 
 func Run() (string, error) {
 	name, err := nameFn()
@@ -45,7 +57,9 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	return out, nil
+  fmt.Printf(info, name)
+
+	return "", nil
 }
 
 func remoteExists(name string) (bool, error) {
