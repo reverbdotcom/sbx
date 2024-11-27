@@ -35,6 +35,10 @@ VERSION=v1.1.3 \
     && tar -xzf /tmp/sbx-darwin-arm64.tar.gz -C /tmp \
     && sudo mv /tmp/sbx /usr/local/bin/sbx
 ```
+## Release
+
+Release is done for `bash` and `brew` installations. We support only darwin-arm64 ( macos m1 ) for now.
+To cut a new release, [publish a new tag](https://github.com/reverbdotcom/sbx/releases) following semver.
 
 ## Development
 
@@ -48,3 +52,4 @@ This runs live.
 
 #### Test
 `make test`
+
