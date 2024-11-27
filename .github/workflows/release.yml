@@ -29,3 +29,5 @@ jobs:
           asset_path: dist/sbx-darwin-amd64
           asset_name: sbx-darwin-amd64
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
