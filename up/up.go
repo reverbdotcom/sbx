@@ -29,19 +29,19 @@ func Run() (string, error) {
 		return "", err
 	}
 
-	exists, err := remoteExists(name)
+	//_, err := remoteExists(name)
 
-	if err != nil {
-		return "", err
-	}
+	//if err != nil {
+	//	return "", err
+	//}
 
-	if exists {
-		out, err := resetRemote(name)
+	// if exists {
+	// 	out, err := resetRemote(name)
 
-		if err != nil {
-			return out, err
-		}
-	}
+	// 	if err != nil {
+	// 		return out, err
+	// 	}
+	// }
 
 	out, err := makeLocal(name)
 
