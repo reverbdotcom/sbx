@@ -1,7 +1,7 @@
 package parser
 
 import (
-  "errors"
+	"errors"
 
 	"github.com/reverbdotcom/sbx/commands"
 )

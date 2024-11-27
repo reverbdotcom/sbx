@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"strings"
 	"testing"
 )
 
@@ -27,8 +26,9 @@ func TestParse(t *testing.T) {
 			t.Errorf("got nil, want error")
 		}
 
-		if strings.Contains("command required", err.Error()) {
-			t.Errorf("got %v, want 'command required'", err)
+		want := "command required"
+		if err.Error() != want {
+			t.Errorf("got %v, want %v", err, want)
 		}
 
 		if cmdfn != nil {
@@ -44,8 +44,9 @@ func TestParse(t *testing.T) {
 			t.Errorf("got nil, want error")
 		}
 
-		if strings.Contains("command not found", err.Error()) {
-			t.Errorf("got %v, want 'command not found'", err)
+		want := "command not found"
+		if err.Error() != want {
+			t.Errorf("got %v, want %v", err, want)
 		}
 
 		if cmdfn != nil {

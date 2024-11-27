@@ -42,9 +42,9 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-    if err != nil {
-      t.Errorf("got %v, want nil", err)
-    }
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
 	})
 
 	t.Run("it errs on make local", func(t *testing.T) {
@@ -106,9 +106,9 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-    want := "sandbox-blake-julian-kevin is up to date, make a new commit"
-    if err.Error() != want {
-      t.Errorf("got %s, want %s", err, want)
-    }
+		want := "sandbox-blake-julian-kevin is up to date, make a new commit"
+		if err.Error() != want {
+			t.Errorf("got %s, want %s", err, want)
+		}
 	})
 }
