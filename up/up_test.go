@@ -106,6 +106,11 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Out:     "",
+				Err:     nil,
+			},
+			{
 				Command: "git push origin sandbox-blake-julian-kevin",
 				Out:     "",
 				Err:     nil,
