@@ -16,8 +16,8 @@ jobs:
           mkdir -p dist
           GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
           GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
-          tar -czvf sbx-darwin-amd64.tar.gz -C dist sbx
-          tar -czvf sbx-darwin-arm64.tar.gz -C dist sbx
+          tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx
+          tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx
 
       - name: Get release
         id: get_release
