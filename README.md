@@ -7,7 +7,7 @@ Orchestra CLI tool
 ## Installation
 
 ```bash
-go install github.com/reverbdotcom/sbx
+go install github.com/reverbdotcom/sbx@latest
 ```
 
 ## Development
