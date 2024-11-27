@@ -2,6 +2,7 @@ package commands
 
 import (
 	"github.com/reverbdotcom/sbx/dash"
+	"github.com/reverbdotcom/sbx/down"
 	"github.com/reverbdotcom/sbx/web"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/up"
@@ -22,6 +23,7 @@ COMMANDS
       dash
       graphiql
       graphql
+      down ( not yet supported )
 
 DESCRIPTION
 
@@ -32,6 +34,7 @@ DESCRIPTION
   dash        open the dashboard in a browser.
   graphiql    open graphql user interface in a browser.
   graphql     alias for 'graphiql'.
+  down        tear down the sandbox.
 
 USAGE:
 
@@ -52,5 +55,6 @@ func Commands() map[string]RunFn {
 		"dash": dash.Run,
 		"graphiql": graphiql.Run,
 		"graphql": graphiql.Run,
+		"down": down.Run,
 	}
 }
