@@ -26,7 +26,7 @@ brew install sbx
 #### bash
 
 ```bash
-VERSION=v1.1.3 \
+VERSION=v1.2.0 \
     curl \
         -s\
         -L \
