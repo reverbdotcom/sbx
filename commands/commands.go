@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/up"
+	"github.com/reverbdotcom/sbx/dash"
 )
 
 type RunFn func() (string, error)
@@ -40,6 +41,7 @@ func Commands() map[string]RunFn {
 	return map[string]RunFn{
 		"up":   up.Run,
 		"name": name.Run,
+		"dash": dash.Run,
 		"help": help,
 	}
 }
