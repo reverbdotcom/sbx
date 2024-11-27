@@ -88,10 +88,53 @@ func TestRun(t *testing.T) {
 		}
 	})
 
-	t.Run("it noops on push remote when there are no changes", func(t *testing.T) {
+	t.Run("it creates a noop commit on push remote when remote is up to date", func(t *testing.T) {
 		wants := []cli.MockCall{
 			{
 				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Out:     "",
+				Err:     nil,
+			},
+			{
+				Command: "git push origin sandbox-blake-julian-kevin",
+				Out:     "Everything up-to-date",
+				Err:     nil,
+			},
+			{
+				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop commit to trigger deploy'",
+				Out:     "",
+				Err:     nil,
+			},
+			{
+				Command: "git push origin sandbox-blake-julian-kevin",
+				Out:     "",
+				Err:     nil,
+			},
+		}
+
+		cmdFn = cli.MockCmd(t, wants)
+
+		_, err := Run()
+
+    if err != nil {
+      t.Errorf("got %v, want nil", err)
+    }
+	})
+
+	t.Run("it errs if noop commit failed", func(t *testing.T) {
+		wants := []cli.MockCall{
+			{
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Out:     "",
+				Err:     nil,
+			},
+			{
+				Command: "git push origin sandbox-blake-julian-kevin",
+				Out:     "Everything up-to-date",
+				Err:     nil,
+			},
+			{
+				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop commit to trigger deploy'",
 				Out:     "",
 				Err:     nil,
 			},
@@ -106,9 +149,32 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-		want := "sandbox-blake-julian-kevin is up to date, make a new commit"
-		if err.Error() != want {
-			t.Errorf("got %s, want %s", err, want)
+    want := "sandbox-blake-julian-kevin is up to date, make a new commit"
+    if err.Error() != want {
+      t.Errorf("got %v, want %v", err, want)
+    }
+	})
+
+	t.Run("it pushes to remote with new changes", func(t *testing.T) {
+		wants := []cli.MockCall{
+			{
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Out:     "",
+				Err:     nil,
+			},
+			{
+				Command: "git push origin sandbox-blake-julian-kevin",
+				Out:     "",
+				Err:     nil,
+			},
 		}
+
+		cmdFn = cli.MockCmd(t, wants)
+
+		_, err := Run()
+
+    if err != nil {
+      t.Errorf("got %v, want nil", err)
+    }
 	})
 }

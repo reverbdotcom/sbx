@@ -35,7 +35,7 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	out, err = pushRemote(name)
+	out, err = pushRemote(name, true)
 
 	if err != nil {
 		return out, err
@@ -56,15 +56,38 @@ func makeLocal(name string) (string, error) {
 	return out, nil
 }
 
-func pushRemote(name string) (string, error) {
+func pushRemote(name string, noop bool) (string, error) {
 	out, err := cmdFn("git", "push", "origin", name)
 
 	if err != nil {
 		return out, err
 	}
 
-	if strings.Contains(out, noChanges) {
-		return out, errors.New(name + " is up to date, make a new commit")
+  if noop && strings.Contains(out, noChanges) {
+    out, err := noopCommit()
+
+    if err != nil {
+      return out, err
+    }
+
+    out, err = pushRemote(name, false)
+
+    if err != nil {
+      return out, err
+    }
+  } else if strings.Contains(out, noChanges) {
+    return out, errors.New(name + " is up to date, make a new commit")
+  }
+
+
+	return out, nil
+}
+
+func noopCommit() (string, error) {
+	out, err := cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop commit to trigger deploy'")
+
+	if err != nil {
+		return out, err
 	}
 
 	return out, nil
