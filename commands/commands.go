@@ -2,8 +2,10 @@ package commands
 
 import (
 	"github.com/reverbdotcom/sbx/dash"
+	"github.com/reverbdotcom/sbx/web"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/up"
+	"github.com/reverbdotcom/sbx/graphiql"
 )
 
 type RunFn func() (string, error)
@@ -18,14 +20,18 @@ COMMANDS
       name
       web
       dash
-      gateway
+      graphiql
+      graphql
 
 DESCRIPTION
 
-  up      spin up an orchestra sandbox.
-  help    display this help message.
-  name    display the name of the current branch.
-  web     open the web interface.
+  up          spin up an orchestra sandbox.
+  help        display this help message.
+  name        display the name of the current branch.
+  web         open the site in a browser.
+  dash        open the dashboard in a browser.
+  graphiql    open graphql user interface in a browser.
+  graphql     alias for 'graphiql'.
 
 USAGE:
 
@@ -40,8 +46,11 @@ func help() (string, error) {
 func Commands() map[string]RunFn {
 	return map[string]RunFn{
 		"up":   up.Run,
-		"name": name.Run,
-		"dash": dash.Run,
 		"help": help,
+		"name": name.Run,
+		"web": web.Run,
+		"dash": dash.Run,
+		"graphiql": graphiql.Run,
+		"graphql": graphiql.Run,
 	}
 }
