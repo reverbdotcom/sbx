@@ -1,0 +1,13 @@
+name: Vet
+
+on:
+  push:
+
+jobs:
+  vet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+      - run: make vet
+      - run: make test
