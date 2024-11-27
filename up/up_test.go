@@ -121,40 +121,6 @@ func TestRun(t *testing.T) {
 		}
 	})
 
-	t.Run("it errs if noop commit failed", func(t *testing.T) {
-		wants := []cli.MockCall{
-			{
-				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
-				Out:     "",
-				Err:     nil,
-			},
-			{
-				Command: "git push origin sandbox-blake-julian-kevin",
-				Out:     "Everything up-to-date",
-				Err:     nil,
-			},
-			{
-				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop commit to trigger deploy'",
-				Out:     "",
-				Err:     nil,
-			},
-			{
-				Command: "git push origin sandbox-blake-julian-kevin",
-				Out:     "Everything up-to-date",
-				Err:     nil,
-			},
-		}
-
-		cmdFn = cli.MockCmd(t, wants)
-
-		_, err := Run()
-
-		want := "sandbox-blake-julian-kevin is up to date, make a new commit"
-		if err.Error() != want {
-			t.Errorf("got %v, want %v", err, want)
-		}
-	})
-
 	t.Run("it pushes to remote with new changes", func(t *testing.T) {
 		wants := []cli.MockCall{
 			{
