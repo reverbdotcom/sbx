@@ -4,11 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/commands"
 )
 
-func Parse(args []string) (*cli.CmdFn, error) {
+func Parse(args []string) (*commands.RunFn, error) {
 	cmd, err := command(args)
 
 	if err != nil {
@@ -28,7 +27,7 @@ func command(args []string) (command *string, err error) {
 	return &cmd, nil
 }
 
-func cmdfn(command string) (*cli.CmdFn, error) {
+func cmdfn(command string) (*commands.RunFn, error) {
 	cmd, ok := commands.Commands()[command]
 
 	if !ok {
