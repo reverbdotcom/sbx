@@ -14,10 +14,10 @@ import (
 const maxStep = 2
 
 func Run() (string, error) {
-	return name()
+	return Name()
 }
 
-func name() (string, error) {
+func Name() (string, error) {
 	branch, err := branch()
 
 	if err != nil {
