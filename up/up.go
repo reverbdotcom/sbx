@@ -12,10 +12,8 @@ const info = `🚀 deploying orchestra sandbox: [ %s ]
 
 »» commands:
 »» sbx help	: display this help message
-»» sbx down	: teardown the sandbox
-»» sbx dash	: for dasboard
-»» sbx web	: to open website in browser
-»» sbx name	: get sandbox name
+»» sbx dash	: open the dashboard in a browser
+»» sbx name	: display the sandbox name
 `
 
 const noChanges = "up-to-date"
