@@ -7,9 +7,12 @@ import (
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
+	"github.com/reverbdotcom/sbx/run"
 )
 
 const info = `🚀 deploying orchestra sandbox: [ %s ]
+
+Run: %s
 
 »» commands:
 »» sbx help	: display this help message
@@ -45,7 +48,13 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	fmt.Printf(info, name)
+  url, err := run.HtmlUrl()
+
+  if err != nil {
+    return "", err
+  }
+
+	fmt.Printf(info, name, url)
 
 	return out, nil
 }

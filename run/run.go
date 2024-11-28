@@ -1,6 +1,8 @@
 package run
 
 import (
+	"fmt"
+	"time"
 	"context"
 	"errors"
 	"github.com/google/go-github/v67/github"
@@ -13,6 +15,7 @@ import (
 
 const owner = "reverbdotcom"
 const workflow = "conductor-on-orchestra.yml"
+const notFound = "no workflow runs found"
 
 func HtmlUrl() (string, error) {
 	sha, err := headSHA()
@@ -21,11 +24,30 @@ func HtmlUrl() (string, error) {
 		return "", err
 	}
 
-	run, err := currentRun(sha)
+  run := &github.WorkflowRun{}
+  maxRetries := 3
 
-	if err != nil {
-		return "", err
+  for i := 0; i <= maxRetries; i++ {
+    backoff := time.Duration(i * 2) * time.Second
+    run, err = currentRun(sha)
+
+    if err != nil && err.Error() != notFound {
+      return "", err
+    }
+
+    if run != nil {
+      break
+    }
+
+		if i < maxRetries {
+      fmt.Printf("\nWaiting for run... sha: %v, attempt: %v, backoff: %v", i + 1, backoff, sha)
+			time.Sleep(backoff)
+		}
 	}
+
+  if run == nil {
+    return "", errors.New(notFound)
+  }
 
 	return *run.HTMLURL, nil
 }
@@ -48,7 +70,7 @@ func currentRun(commitSHA string) (*github.WorkflowRun, error) {
 	}
 
 	if *runs.TotalCount == 0 {
-		return nil, errors.New("no workflow runs found")
+		return nil, errors.New(notFound)
 	}
 
 	return nil, nil
