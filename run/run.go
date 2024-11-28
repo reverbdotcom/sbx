@@ -1,16 +1,17 @@
 package run
 
 import (
-	"fmt"
-	"time"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/google/go-github/v67/github"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/reverbdotcom/sbx/cli"
+	"github.com/reverbdotcom/sbx/debug"
 )
 
 const owner = "reverbdotcom"
@@ -24,30 +25,32 @@ func HtmlUrl() (string, error) {
 		return "", err
 	}
 
-  run := &github.WorkflowRun{}
-  maxRetries := 3
+	run := &github.WorkflowRun{}
+	maxRetries := 5
 
-  for i := 0; i <= maxRetries; i++ {
-    backoff := time.Duration(i * 2) * time.Second
-    run, err = currentRun(sha)
+	for i := 0; i <= maxRetries; i++ {
+		backoff := time.Duration(i*2) * time.Second
+		run, err = currentRun(sha)
 
-    if err != nil && err.Error() != notFound {
-      return "", err
-    }
+		if err != nil && err.Error() != notFound {
+			return "", err
+		}
 
-    if run != nil {
-      break
-    }
+		if run != nil {
+			break
+		}
 
 		if i < maxRetries {
-      fmt.Printf("\nWaiting for run... sha: %v, attempt: %v, backoff: %v", i + 1, backoff, sha)
+			if debug.On() {
+				fmt.Printf("Waiting for run... sha: %v, attempt: %v, backoff: %v\n", sha, i+1, backoff)
+			}
 			time.Sleep(backoff)
 		}
 	}
 
-  if run == nil {
-    return "", errors.New(notFound)
-  }
+	if run == nil {
+		return "", errors.New(notFound)
+	}
 
 	return *run.HTMLURL, nil
 }
@@ -73,7 +76,7 @@ func currentRun(commitSHA string) (*github.WorkflowRun, error) {
 		return nil, errors.New(notFound)
 	}
 
-	return nil, nil
+	return runs.WorkflowRuns[0], nil
 }
 
 func client() *github.Client {

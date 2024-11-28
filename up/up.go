@@ -4,26 +4,23 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 )
 
-const info = `🚀 deploying orchestra sandbox: [ %s ]
-
-Run: %s
-
-»» commands:
-»» sbx help	: display this help message
-»» sbx dash	: open the dashboard in a browser
-»» sbx name	: display the sandbox name
+const info = `
+%s
+%s
 `
 
 const noChanges = "up-to-date"
 
 var cmdFn = cli.Cmd
 var nameFn = name.Name
+var htmlUrlFn = run.HtmlUrl
 
 func Run() (string, error) {
 	yes, err := isMain()
@@ -44,15 +41,20 @@ func Run() (string, error) {
 
 	out, err := deploy(name, false)
 
+	if err != nil && strings.Contains(err.Error(), noChanges) {
+		out, err = deploy(name, true)
+	}
+
 	if err != nil {
 		return out, err
 	}
 
-  url, err := run.HtmlUrl()
+	time.Sleep(2 * time.Second) // wait for noop commit to resolve in cli
+	url, err := htmlUrlFn()
 
-  if err != nil {
-    return "", err
-  }
+	if err != nil {
+		return "", err
+	}
 
 	fmt.Printf(info, name, url)
 
@@ -76,18 +78,18 @@ func deploy(name string, noopCommit bool) (string, error) {
 }
 
 func makeLocal(name string, noopCommit bool) (string, error) {
-	out, err := cmdFn("git", "branch", "-f", name, "HEAD")
-
-	if err != nil {
-		return out, err
-	}
-
 	if noopCommit {
-		out, err = cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop to trigger'")
+		out, err := cmdFn("git", "commit", "--allow-empty", "-m", "'sandbox is up-to-date, noop to trigger'")
 
 		if err != nil {
 			return out, err
 		}
+	}
+
+	out, err := cmdFn("git", "branch", "-f", name, "HEAD")
+
+	if err != nil {
+		return out, err
 	}
 
 	return out, nil
@@ -101,11 +103,7 @@ func pushRemote(name string) (string, error) {
 	}
 
 	if strings.Contains(out, noChanges) {
-		out, err := deploy(name, true)
-
-		if err != nil {
-			return out, err
-		}
+		return "", errors.New(noChanges)
 	}
 
 	return out, nil

@@ -8,6 +8,10 @@ import (
 )
 
 func TestRun(t *testing.T) {
+	htmlUrlFn = func() (string, error) {
+		return "some.url", nil
+	}
+
 	t.Run("it errs on main", func(t *testing.T) {
 		wants := []cli.MockCall{
 			{
@@ -147,12 +151,12 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop to trigger'",
 				Out:     "",
 				Err:     nil,
 			},
 			{
-				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop to trigger'",
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
 				Out:     "",
 				Err:     nil,
 			},
