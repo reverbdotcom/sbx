@@ -6,6 +6,7 @@ import (
 	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
+	"github.com/reverbdotcom/sbx/summary"
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
 	"github.com/reverbdotcom/sbx/web"
@@ -25,22 +26,22 @@ COMMANDS
       logs
       web
       graphiql
-      graphql
       version
+      info
 
 DESCRIPTION
 
   command     shorthand     description
 
-  help        h             display this help message.
+  help        h             show the help message.
   up          u             spin up an orchestra sandbox.
   name        n             display the name of the current branch.
   dash        d             open the dashboard in a browser.
   logs        l             open the logs in a browser.
   web         w             open the site in a browser.
   graphiql    g             open graphql user interface in a browser.
-  graphql                   alias for 'graphiql'.
   version     v             show the version of the sbx cli.
+  info        i             show the summary of the sandbox.
 
 USAGE:
 
@@ -65,12 +66,13 @@ func Commands() map[string]RunFn {
 		"dash":     dash.Run,
 		"d":        dash.Run,
 		"graphiql": graphiql.Run,
-		"graphql":  graphiql.Run,
 		"g":        graphiql.Run,
 		"down":     down.Run,
 		"version":  version.Run,
 		"v":        version.Run,
 		"logs":     logs.Run,
 		"l":        logs.Run,
+		"info":     summary.Run,
+		"i":        summary.Run,
 	}
 }
