@@ -14,5 +14,8 @@ fmt:
 test:
 	@go test -v -count=1 ./...
 
+%.test:
+	@go test -v -count=1 ./$*/...
+
 %.run:
 	@go run sbx.go $*

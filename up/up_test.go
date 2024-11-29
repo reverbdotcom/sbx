@@ -8,6 +8,7 @@ import (
 )
 
 func TestRun(t *testing.T) {
+	summaryFn = func(name string) error { return nil }
 	htmlUrlFn = func() (string, error) {
 		return "some.url", nil
 	}

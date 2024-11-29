@@ -7,12 +7,12 @@ import (
 	"github.com/reverbdotcom/sbx/open"
 )
 
-func Run() (string, error) {
-	urlFn := func(name string) string {
-		return fmt.Sprintf("https://%s.int.orchestra.rvb.ai/", name)
-	}
+const template = "https://%s.int.orchestra.rvb.ai/"
 
-	err := open.Open(urlFn)
+var openURL = open.Open
+
+func Run() (string, error) {
+	err := openURL(Url())
 
 	if err != nil {
 		return "", err
@@ -21,7 +21,9 @@ func Run() (string, error) {
 	return "", nil
 }
 
+var nameFn = name.Name
+
 func Url() string {
-	name, _ := name.Name()
-	return fmt.Sprintf("https://%s.int.orchestra.rvb.ai/", name)
+	name, _ := nameFn()
+	return fmt.Sprintf(template, name)
 }

@@ -1,25 +1,24 @@
 package up
 
 import (
-	"errors"
 	"fmt"
-	"path/filepath"
+	"errors"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
-	"github.com/reverbdotcom/sbx/dash"
-	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
-	"github.com/reverbdotcom/sbx/web"
+	"github.com/reverbdotcom/sbx/summary"
 )
 
-const info = `
+const info = `»»»
 Name:       %s
 SHA:        %s
 
 Deploy:     %s
 Dash:       %s
+Logs:       %s
+
 Host:       %s
 Graphiql:   %s
 `
@@ -29,8 +28,12 @@ const noChanges = "up-to-date"
 var cmdFn = cli.Cmd
 var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
+var summaryFn = summary.Print
 
 func Run() (string, error) {
+  fmt.Println("deploying...")
+  fmt.Println()
+
 	yes, err := isMain()
 
 	if err != nil {
@@ -57,19 +60,11 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	url, err := htmlUrlFn()
+	err = summaryFn(name)
 
 	if err != nil {
 		return "", err
 	}
-
-	sha, err := headSHA()
-
-	if err != nil {
-		return "", err
-	}
-
-	fmt.Printf(info, name, sha, url, dash.Url(), web.Url(), graphiql.Url())
 
 	return out, nil
 }
@@ -132,17 +127,4 @@ func isMain() (bool, error) {
 	yes := strings.TrimSpace(out) == "main"
 
 	return yes, nil
-}
-
-func headSHA() (string, error) {
-	out, err := cli.Cmd("git", "rev-parse", "HEAD")
-
-	if err != nil {
-		return out, err
-	}
-
-	path := strings.TrimSpace(out)
-	sha := filepath.Base(path)
-
-	return sha, nil
 }
