@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/reverbdotcom/sbx/cli"
+	"github.com/reverbdotcom/sbx/commit"
 	"github.com/reverbdotcom/sbx/debug"
 )
 
@@ -19,7 +20,7 @@ const workflow = "conductor-on-orchestra.yml"
 const notFound = "no workflow runs found"
 
 func HtmlUrl() (string, error) {
-	sha, err := headSHA()
+	sha, err := commit.HeadSHA()
 
 	if err != nil {
 		return "", err
@@ -94,17 +95,4 @@ func currentRepo() (string, error) {
 	repo := filepath.Base(path)
 
 	return repo, nil
-}
-
-func headSHA() (string, error) {
-	out, err := cli.Cmd("git", "rev-parse", "HEAD")
-
-	if err != nil {
-		return out, err
-	}
-
-	path := strings.TrimSpace(out)
-	sha := filepath.Base(path)
-
-	return sha, nil
 }
