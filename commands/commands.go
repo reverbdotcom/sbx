@@ -4,7 +4,7 @@ import (
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/down"
 	"github.com/reverbdotcom/sbx/graphiql"
-	"github.com/reverbdotcom/sbx/log"
+	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
@@ -70,7 +70,7 @@ func Commands() map[string]RunFn {
 		"down":     down.Run,
 		"version":  version.Run,
 		"v":        version.Run,
-		"logs":     log.Run,
-		"l":        log.Run,
+		"logs":     logs.Run,
+		"l":        logs.Run,
 	}
 }

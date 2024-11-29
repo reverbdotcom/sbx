@@ -9,7 +9,7 @@ import (
 	"github.com/reverbdotcom/sbx/commit"
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/graphiql"
-	"github.com/reverbdotcom/sbx/log"
+	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 	"github.com/reverbdotcom/sbx/web"
@@ -60,21 +60,40 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	deployUrl, err := htmlUrlFn()
+	err = summary(name)
 
 	if err != nil {
 		return "", err
+	}
+
+	return out, nil
+}
+
+func summary(name string) error {
+	deployUrl, err := htmlUrlFn()
+
+	if err != nil {
+		return err
 	}
 
 	sha, err := commit.HeadSHA()
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	fmt.Printf(info, name, sha, deployUrl, dash.Url(), log.Url(), web.Url(), graphiql.Url())
+	fmt.Printf(
+		info,
+		name,
+		sha,
+		deployUrl,
+		dash.Url(),
+		logs.Url(),
+		web.Url(),
+		graphiql.Url(),
+	)
 
-	return out, nil
+	return nil
 }
 
 func deploy(name string, noopCommit bool) (string, error) {
