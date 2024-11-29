@@ -2,6 +2,8 @@ package graphiql
 
 import (
 	"fmt"
+
+	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/open"
 )
 
@@ -17,4 +19,9 @@ func Run() (string, error) {
 	}
 
 	return "", nil
+}
+
+func Url() string {
+	name, _ := name.Name()
+	return fmt.Sprintf("https://graphiql-%s.int.orchestra.rvb.ai/graphql", name)
 }

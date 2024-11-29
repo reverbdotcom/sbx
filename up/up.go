@@ -8,17 +8,20 @@ import (
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/dash"
+	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 	"github.com/reverbdotcom/sbx/web"
 )
 
 const info = `
-Name:   %s
-SHA:    %s
-Run:    %s
-Dash:   %s
-Host:   %s
+Name:       %s
+SHA:        %s
+
+Run:        %s
+Dash:       %s
+Host:       %s
+Graphiql:   %s
 `
 
 const noChanges = "up-to-date"
@@ -66,7 +69,7 @@ func Run() (string, error) {
 		return "", err
 	}
 
-	fmt.Printf(info, name, sha, url, dash.Url(), web.Url())
+	fmt.Printf(info, name, sha, url, dash.Url(), web.Url(), graphiql.Url())
 
 	return out, nil
 }
