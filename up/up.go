@@ -14,7 +14,7 @@ import (
 	"github.com/reverbdotcom/sbx/web"
 )
 
-const info = `
+const info = `»»»
 Name:       %s
 SHA:        %s
 
