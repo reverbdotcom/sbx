@@ -35,7 +35,7 @@ DESCRIPTION
 
   help        h             show the help message.
   up          u             spin up an orchestra sandbox.
-  name        n             display the name of the current branch.
+  name        n             show the sandbox name.
   dash        d             open the dashboard in a browser.
   logs        l             open the logs in a browser.
   web         w             open the site in a browser.
