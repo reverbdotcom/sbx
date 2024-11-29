@@ -3,6 +3,7 @@ package up
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
@@ -11,8 +12,9 @@ import (
 )
 
 const info = `
-%s
-%s
+Name:   %s
+SHA:    %s
+Run:    %s
 `
 
 const noChanges = "up-to-date"
@@ -54,7 +56,13 @@ func Run() (string, error) {
 		return "", err
 	}
 
-	fmt.Printf(info, name, url)
+	sha, err := headSHA()
+
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Printf(info, name, sha, url)
 
 	return out, nil
 }
@@ -117,4 +125,17 @@ func isMain() (bool, error) {
 	yes := strings.TrimSpace(out) == "main"
 
 	return yes, nil
+}
+
+func headSHA() (string, error) {
+	out, err := cli.Cmd("git", "rev-parse", "HEAD")
+
+	if err != nil {
+		return out, err
+	}
+
+	path := strings.TrimSpace(out)
+	sha := filepath.Base(path)
+
+	return sha, nil
 }
