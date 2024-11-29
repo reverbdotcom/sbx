@@ -2,6 +2,8 @@ package dash
 
 import (
 	"fmt"
+
+	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/open"
 )
 
@@ -17,4 +19,9 @@ func Run() (string, error) {
 	}
 
 	return "", nil
+}
+
+func Url() string {
+	name, _ := name.Name()
+	return fmt.Sprintf("https://app.datadoghq.com/dashboard/9rm-fjs-8tx/orchestra?tpl_var_sandbox[]=%s", name)
 }
