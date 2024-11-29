@@ -1,20 +1,18 @@
-package logs
+package dash
 
 import (
 	"errors"
 	"fmt"
 	"testing"
-	"time"
 )
 
 func TestUrl(t *testing.T) {
-	now = func() time.Time { return time.UnixMilli(1732737340502) }
-	sha := "b3a1410a1be2e3d4c4ea9983ef4fa660327683a6"
-	headSHA = func() (string, error) { return sha, nil }
+	name := "sandbox-foo-bar-baz"
+	nameFn = func() (string, error) { return name, nil }
 
 	t.Run("it returns url", func(t *testing.T) {
 		got := Url()
-		want := fmt.Sprintf(template, sha, "1732733740502")
+		want := fmt.Sprintf(template, name)
 
 		if got != want {
 			t.Errorf("got %v, want %v", got, want)
@@ -23,12 +21,11 @@ func TestUrl(t *testing.T) {
 }
 
 func TestRun(t *testing.T) {
-	now = func() time.Time { return time.UnixMilli(1732737340502) }
-	sha := "b3a1410a1be2e3d4c4ea9983ef4fa660327683a6"
-	headSHA = func() (string, error) { return sha, nil }
+	name := "sandbox-foo-bar-baz"
+	nameFn = func() (string, error) { return name, nil }
 
 	t.Run("it opens url", func(t *testing.T) {
-		want := fmt.Sprintf(template, sha, "1732733740502")
+		want := fmt.Sprintf(template, name)
 
 		openURL = func(got string) error {
 			if got != want {

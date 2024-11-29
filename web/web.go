@@ -9,8 +9,10 @@ import (
 
 const template = "https://%s.int.orchestra.rvb.ai/"
 
+var openURL = open.Open
+
 func Run() (string, error) {
-	err := open.Open(Url())
+	err := openURL(Url())
 
 	if err != nil {
 		return "", err
@@ -19,7 +21,9 @@ func Run() (string, error) {
 	return "", nil
 }
 
+var nameFn = name.Name
+
 func Url() string {
-	name, _ := name.Name()
+	name, _ := nameFn()
 	return fmt.Sprintf(template, name)
 }

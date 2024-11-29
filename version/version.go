@@ -7,8 +7,10 @@ import (
 	"runtime/debug"
 )
 
+var buildInfoFn = debug.ReadBuildInfo
+
 func Run() (string, error) {
-	info, ok := debug.ReadBuildInfo()
+	info, ok := buildInfoFn()
 	if !ok {
 		return "", errors.New("failed to retrieve build info")
 	}

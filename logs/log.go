@@ -10,8 +10,10 @@ import (
 
 const template = "https://app.datadoghq.com/logs?query=version:1.0.0-sha-%v&from_ts=%v&live=true"
 
+var openURL = open.Open
+
 func Run() (string, error) {
-	err := open.Open(Url())
+	err := openURL(Url())
 
 	if err != nil {
 		return "", err
@@ -20,8 +22,10 @@ func Run() (string, error) {
 	return "", nil
 }
 
+var headSHA = commit.HeadSHA
+
 func Url() string {
-	sha, _ := commit.HeadSHA()
+	sha, _ := headSHA()
 	return fmt.Sprintf(template, sha, unixOneHourAgo())
 }
 
