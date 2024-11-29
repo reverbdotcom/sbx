@@ -18,7 +18,7 @@ const info = `
 Name:       %s
 SHA:        %s
 
-Run:        %s
+Deploy:     %s
 Dash:       %s
 Host:       %s
 Graphiql:   %s
