@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
@@ -49,7 +48,6 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	time.Sleep(2 * time.Second) // wait for noop commit to resolve in cli
 	url, err := htmlUrlFn()
 
 	if err != nil {

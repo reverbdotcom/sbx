@@ -7,6 +7,8 @@ Orchestra CLI tool: `sbx up`
 
 ## Install / Upgrade
 
+Requires `GITHUB_TOKEN` to be set in the environment.
+
 
 #### golang
 
@@ -54,4 +56,7 @@ This runs live.
 `make test`
 
 #### Test with another repo
-TODO
+
+```bash
+export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@your-test-branch
+```
