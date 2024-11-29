@@ -11,6 +11,19 @@ import (
 )
 
 func main() {
+	validate()
+
+	cmdfn, err := parser.Parse(os.Args)
+	onError(err)
+
+	fn := *cmdfn
+	out, err := fn()
+	onError(err)
+
+	fmt.Println(out)
+}
+
+func validate() {
 	has, err := check.OnOrchestra()
 
 	onError(err)
@@ -19,15 +32,9 @@ func main() {
 		onError(errors.New("This project is not on Orchestra."))
 	}
 
-	cmdfn, err := parser.Parse(os.Args)
-
-	onError(err)
-
-	fn := *cmdfn
-	out, err := fn()
-	fmt.Println(out)
-
-	onError(err)
+	if !check.HasGithubToken() {
+		onError(errors.New("Please set the GITHUB_TOKEN environment variable."))
+	}
 }
 
 func onError(err error) {

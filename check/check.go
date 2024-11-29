@@ -8,6 +8,16 @@ import (
 
 const yml = "/.github/workflows/conductor-on-orchestra.yml"
 
+func HasGithubToken() bool {
+	token := os.Getenv("GITHUB_TOKEN")
+
+	if token != "" {
+		return true
+	}
+
+	return false
+}
+
 func OnOrchestra() (bool, error) {
 	dir, err := gitDir()
 
