@@ -1,8 +1,8 @@
 package up
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
@@ -31,8 +31,8 @@ var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
 
 func Run() (string, error) {
-  fmt.Println("deploying...")
-  fmt.Println()
+	fmt.Println("deploying...")
+	fmt.Println()
 
 	yes, err := isMain()
 

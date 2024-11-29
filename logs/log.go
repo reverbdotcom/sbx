@@ -5,10 +5,11 @@ import (
 	"time"
 
 	"github.com/reverbdotcom/sbx/commit"
+	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/open"
 )
 
-const template = "https://app.datadoghq.com/logs?query=version:1.0.0-sha-%v&from_ts=%v&live=true"
+const template = "https://app.datadoghq.com/logs?query=version:1.0.0-sha-%v%%20kube_namespace:%v&from_ts=%v&live=true"
 
 var openURL = open.Open
 
@@ -23,10 +24,13 @@ func Run() (string, error) {
 }
 
 var headSHA = commit.HeadSHA
+var nameFn = name.Name
 
 func Url() string {
 	sha, _ := headSHA()
-	return fmt.Sprintf(template, sha, unixOneHourAgo())
+	name, _ := nameFn()
+
+	return fmt.Sprintf(template, sha, name, unixOneHourAgo())
 }
 
 var now = time.Now
