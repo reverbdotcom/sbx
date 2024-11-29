@@ -7,6 +7,7 @@ import (
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/logs"
+	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 	"github.com/reverbdotcom/sbx/web"
 )
@@ -22,6 +23,16 @@ Logs:       %s
 Host:       %s
 Graphiql:   %s
 `
+
+func Run() (string, error) {
+	name, err := name.Name()
+
+	if err != nil {
+		return "", err
+	}
+
+	return printSummary(name)
+}
 
 func Print(name string) error {
 	summary, err := printSummary(name)

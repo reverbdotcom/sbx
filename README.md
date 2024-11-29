@@ -57,6 +57,10 @@ This runs live.
 
 #### Test with another repo
 
+Run, in any orchestra enabled repo.
+
 ```bash
 export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@your-test-branch
 ```
+
+`sbx` now points to your branch version.
