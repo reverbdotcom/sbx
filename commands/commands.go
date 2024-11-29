@@ -25,20 +25,18 @@ COMMANDS
       graphiql
       graphql
       version
-      down ( not yet supported )
 
 DESCRIPTION
 
   command     shorthand     description
 
   up          u             spin up an orchestra sandbox.
-  help                      display this help message.
+  help        h             display this help message.
   name        n             display the name of the current branch.
-  web                       open the site in a browser.
-  dash                      open the dashboard in a browser.
-  graphiql                  open graphql user interface in a browser.
+  web         w             open the site in a browser.
+  dash        d             open the dashboard in a browser.
+  graphiql    g             open graphql user interface in a browser.
   graphql                   alias for 'graphiql'.
-  down                      tear down the sandbox.
   version     v             show the version of the sbx cli.
 
 USAGE:
@@ -56,12 +54,16 @@ func Commands() map[string]RunFn {
 		"up":       up.Run,
 		"u":        up.Run,
 		"help":     help,
+		"h":        help,
 		"name":     name.Run,
 		"n":        name.Run,
 		"web":      web.Run,
+		"w":        web.Run,
 		"dash":     dash.Run,
+		"d":        dash.Run,
 		"graphiql": graphiql.Run,
 		"graphql":  graphiql.Run,
+		"g":        graphiql.Run,
 		"down":     down.Run,
 		"version":  version.Run,
 		"v":        version.Run,
