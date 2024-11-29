@@ -7,8 +7,10 @@ import (
 	"github.com/reverbdotcom/sbx/cli"
 )
 
+var cmdFn = cli.Cmd
+
 func HeadSHA() (string, error) {
-	out, err := cli.Cmd("git", "rev-parse", "HEAD")
+	out, err := cmdFn("git", "rev-parse", "HEAD")
 
 	if err != nil {
 		return out, err

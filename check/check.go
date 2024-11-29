@@ -46,7 +46,9 @@ func gitDir() (string, error) {
 	return dir, nil
 }
 
-func fileExists(path string) bool {
+var fileExists = _fileExists
+
+func _fileExists(path string) bool {
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		return true
 	}

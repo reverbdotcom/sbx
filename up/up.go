@@ -1,18 +1,14 @@
 package up
 
 import (
-	"errors"
 	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
-	"github.com/reverbdotcom/sbx/commit"
-	"github.com/reverbdotcom/sbx/dash"
-	"github.com/reverbdotcom/sbx/graphiql"
-	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
-	"github.com/reverbdotcom/sbx/web"
+	"github.com/reverbdotcom/sbx/summary"
 )
 
 const info = `»»»
@@ -32,8 +28,12 @@ const noChanges = "up-to-date"
 var cmdFn = cli.Cmd
 var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
+var summaryFn = summary.Print
 
 func Run() (string, error) {
+  fmt.Println("deploying...")
+  fmt.Println()
+
 	yes, err := isMain()
 
 	if err != nil {
@@ -60,40 +60,13 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	err = summary(name)
+	err = summaryFn(name)
 
 	if err != nil {
 		return "", err
 	}
 
 	return out, nil
-}
-
-func summary(name string) error {
-	deployUrl, err := htmlUrlFn()
-
-	if err != nil {
-		return err
-	}
-
-	sha, err := commit.HeadSHA()
-
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf(
-		info,
-		name,
-		sha,
-		deployUrl,
-		dash.Url(),
-		logs.Url(),
-		web.Url(),
-		graphiql.Url(),
-	)
-
-	return nil
 }
 
 func deploy(name string, noopCommit bool) (string, error) {

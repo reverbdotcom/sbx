@@ -3,50 +3,51 @@ package run
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/google/go-github/v67/github"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/commit"
-	"github.com/reverbdotcom/sbx/debug"
+	"github.com/reverbdotcom/sbx/retries"
 )
 
 const owner = "reverbdotcom"
 const workflow = "conductor-on-orchestra.yml"
 const notFound = "no workflow runs found"
 
+var headSHA = commit.HeadSHA
+var maxRetries = 5
+
 func HtmlUrl() (string, error) {
-	sha, err := commit.HeadSHA()
+	sha, err := headSHA()
 
 	if err != nil {
 		return "", err
 	}
 
 	run := &github.WorkflowRun{}
-	maxRetries := 5
-
-	for i := 0; i <= maxRetries; i++ {
-		backoff := time.Duration(i*2) * time.Second
+	err = retries.Backoff(maxRetries, 2, func() (bool, error) {
 		run, err = currentRun(sha)
 
 		if err != nil && err.Error() != notFound {
-			return "", err
+			return false, err
 		}
 
 		if run != nil {
-			break
+			return true, nil
 		}
 
-		if i < maxRetries {
-			if debug.On() {
-				fmt.Printf("Waiting for run... sha: %v, attempt: %v, backoff: %v\n", sha, i+1, backoff)
-			}
-			time.Sleep(backoff)
-		}
+		return false, nil
+	})
+
+	if err != nil && err.Error() == retries.ErrBackoffExhausted {
+		return "", errors.New(notFound)
+	}
+
+	if err != nil {
+		return "", err
 	}
 
 	if run == nil {
@@ -57,17 +58,13 @@ func HtmlUrl() (string, error) {
 }
 
 func currentRun(commitSHA string) (*github.WorkflowRun, error) {
-	ctx := context.Background()
-	client := client()
-
 	repo, err := currentRepo()
 
 	if err != nil {
 		return nil, err
 	}
 
-	opts := &github.ListWorkflowRunsOptions{HeadSHA: commitSHA}
-	runs, _, err := client.Actions.ListWorkflowRunsByFileName(ctx, owner, repo, workflow, opts)
+	runs, err := findRun(repo, commitSHA)
 
 	if err != nil {
 		return nil, err
@@ -80,12 +77,25 @@ func currentRun(commitSHA string) (*github.WorkflowRun, error) {
 	return runs.WorkflowRuns[0], nil
 }
 
+var findRun = _findRun
+
+func _findRun(repo, sha string) (*github.WorkflowRuns, error) {
+	ctx := context.Background()
+	client := client()
+	opts := &github.ListWorkflowRunsOptions{HeadSHA: sha}
+	runs, _, err := client.Actions.ListWorkflowRunsByFileName(ctx, owner, repo, workflow, opts)
+
+	return runs, err
+}
+
 func client() *github.Client {
 	return github.NewClient(nil).WithAuthToken(os.Getenv("GITHUB_TOKEN"))
 }
 
+var cmdFn = cli.Cmd
+
 func currentRepo() (string, error) {
-	out, err := cli.Cmd("git", "rev-parse", "--show-toplevel")
+	out, err := cmdFn("git", "rev-parse", "--show-toplevel")
 
 	if err != nil {
 		return out, err
