@@ -113,6 +113,7 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 
 func pushRemote(name string) (string, error) {
   fmt.Println("step 3")
+  fmt.Println(name)
 	out, err := cmdFn("git", "push", "origin", name)
 
 	if err != nil {
