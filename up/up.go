@@ -77,10 +77,13 @@ func Run() (string, error) {
 func deploy(name string, noopCommit bool) (string, error) {
 	out, err := makeLocal(name, noopCommit)
 
+  fmt.Println("step 1")
 	if err != nil {
 		return out, err
 	}
 
+
+  fmt.Println("step 2")
 	out, err = pushRemote(name)
 
 	if err != nil {
