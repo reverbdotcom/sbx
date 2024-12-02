@@ -68,7 +68,7 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git push origin sandbox-blake-julian-kevin",
+				Command: "git push -f origin sandbox-blake-julian-kevin",
 				Out:     "",
 				Err:     nil,
 			},
@@ -119,7 +119,7 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git push origin sandbox-blake-julian-kevin",
+				Command: "git push -f origin sandbox-blake-julian-kevin",
 				Out:     "",
 				Err:     errors.New("push remote error"),
 			},
@@ -147,7 +147,7 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git push origin sandbox-blake-julian-kevin",
+				Command: "git push -f origin sandbox-blake-julian-kevin",
 				Out:     "Everything up-to-date",
 				Err:     nil,
 			},
@@ -162,7 +162,7 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git push origin sandbox-blake-julian-kevin",
+				Command: "git push -f origin sandbox-blake-julian-kevin",
 				Out:     "",
 				Err:     nil,
 			},
@@ -190,7 +190,7 @@ func TestRun(t *testing.T) {
 				Err:     nil,
 			},
 			{
-				Command: "git push origin sandbox-blake-julian-kevin",
+				Command: "git push -f origin sandbox-blake-julian-kevin",
 				Out:     "",
 				Err:     nil,
 			},

@@ -104,7 +104,7 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 }
 
 func pushRemote(name string) (string, error) {
-	out, err := cmdFn("git", "push", "origin", name)
+	out, err := cmdFn("git", "push", "-f", "origin", name)
 
 	if err != nil {
 		return out, err
