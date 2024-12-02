@@ -47,20 +47,26 @@ USAGE:
 
 Requires `GITHUB_TOKEN` to be set in the environment.
 
-
-#### golang
-
-```bash
-export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@main
-```
-
-
 #### brew
 
 ```bash
 brew tap reverbdotcom/homebrew-reverb
 brew update
 brew install sbx
+```
+
+Having trouble?
+
+```bash
+brew untap --force reverbdotcom/homebrew-reverb
+brew tap reverbdotcom/homebrew-reverb
+brew install sbx
+```
+
+#### golang
+
+```bash
+export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@main
 ```
 
 #### bash
