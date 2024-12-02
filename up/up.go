@@ -90,6 +90,8 @@ func deploy(name string, noopCommit bool) (string, error) {
 		return out, err
 	}
 
+
+  fmt.Println("step 3")
 	return "", nil
 }
 
