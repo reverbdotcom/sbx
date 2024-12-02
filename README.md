@@ -4,6 +4,44 @@
 # sbx
 Orchestra CLI tool: `sbx up`
 
+```bash
+➜  sbx help
+
+NAME
+  sbx - orchestra cli
+
+COMMANDS
+
+  sbx help
+      up
+      name
+      dash
+      logs
+      web
+      graphiql
+      version
+      info
+
+DESCRIPTION
+
+  command     shorthand     description
+
+  help        h             show the help message.
+  up          u             spin up an orchestra sandbox.
+  name        n             show the sandbox name.
+  dash        d             open the dashboard in a browser.
+  logs        l             open the logs in a browser.
+  web         w             open the site in a browser.
+  graphiql    g             open graphql user interface in a browser.
+  version     v             show the version of the sbx cli.
+  info        i             show the summary of the sandbox.
+
+USAGE:
+
+  sbx up
+  sbx name
+```
+
 
 ## Install / Upgrade
 
