@@ -1,7 +1,7 @@
 [![Vet](https://github.com/reverbdotcom/sbx/actions/workflows/vet.yaml/badge.svg)](https://github.com/reverbdotcom/sbx/actions/workflows/vet.yaml)
 [![Release](https://github.com/reverbdotcom/sbx/actions/workflows/release.yml/badge.svg)](https://github.com/reverbdotcom/sbx/actions/workflows/release.yml)
 
-# sbx 
+# sbx
 Short for _sandbox_, Orchestra CLI tool: `sbx up`
 
 ```bash
@@ -49,11 +49,20 @@ Requires `GITHUB_TOKEN` to be set in the environment.
 
 #### brew
 
+To install
+
 ```bash
 brew untap --force reverbdotcom/homebrew-reverb
 brew tap reverbdotcom/homebrew-reverb
 brew install sbx
 ```
+
+To update
+
+```bash
+brew update
+brew install sbx
+````
 
 #### golang
 
