@@ -50,14 +50,6 @@ Requires `GITHUB_TOKEN` to be set in the environment.
 #### brew
 
 ```bash
-brew tap reverbdotcom/homebrew-reverb
-brew update
-brew install sbx
-```
-
-Having trouble?
-
-```bash
 brew untap --force reverbdotcom/homebrew-reverb
 brew tap reverbdotcom/homebrew-reverb
 brew install sbx
