@@ -53,8 +53,11 @@ func Run() (string, error) {
   fmt.Println("step 1")
 	out, err := deploy(name, false)
 
+	if err != nil {
+		return out, err
+	}
+
 	if err != nil && strings.Contains(err.Error(), noChanges) {
-  fmt.Println("step 2")
 		out, err = deploy(name, true)
 	}
 
