@@ -90,8 +90,6 @@ func deploy(name string, noopCommit bool) (string, error) {
 		return out, err
 	}
 
-
-  fmt.Println("step 3")
 	return "", nil
 }
 
@@ -114,12 +112,14 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 }
 
 func pushRemote(name string) (string, error) {
+  fmt.Println("step 3")
 	out, err := cmdFn("git", "push", "origin", name)
 
 	if err != nil {
 		return out, err
 	}
 
+  fmt.Println("step 4")
 	if strings.Contains(out, noChanges) {
 		return "", errors.New(noChanges)
 	}
