@@ -9,7 +9,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
       - name: Build binaries
         run: |
@@ -44,3 +44,16 @@ jobs:
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      tag: ${{ steps.get_release.outputs.tag }}
+
+  bump-brew:
+    uses: reverbdotcom/homebrew-tap/.github/workflows/release-me.yml@main
+    needs: [ release ]
+    secrets: inherit
+    with:
+      formula: sbx
+      version: ${{ needs.release.outputs.tag }}
+
+
+
