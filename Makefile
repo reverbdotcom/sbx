@@ -20,14 +20,6 @@ test:
 %.run:
 	@go run sbx.go $*
 
-version/SBX_CHECKSUM: version/SBX_VERSION
-	@export VERSION=`cat $<` && \
-		curl -sL \
-			https://github.com/reverbdotcom/sbx/releases/download/$${VERSION}/sbx-darwin-arm64.tar.gz \
-			| shasum -a 256 \
-			| awk '{ print $$1 }' \
-			> $@
-
 .PHONY: version/SBX_VERSION
 version/SBX_VERSION:
 	@test -n "$(VERSION)" || (echo "VERSION is not set" && exit 1)

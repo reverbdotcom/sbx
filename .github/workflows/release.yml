@@ -17,11 +17,24 @@ jobs:
         uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Make artifacts
+      - name: Brew
         env:
+          ACTOR: "${{ github.actor }}"
+          EMAIL: "${{ github.actor }}@users.noreply.github.com"
+          AUTHOR: "${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
           VERSION: "${{ steps.get_release.outputs.tag_name }}"
         run: |
-          VERSION=$VERSION make version/SBX_VERSION version/SBX_CHECKSUM
+          git config --global user.name "$ACTOR"
+          git config --global user.email "$EMAIL"
+          VERSION=$VERSION make version/SBX_VERSION
+
+          git add version/SBX_VERSION
+          git add version/SBX_CHECKSUM
+          git commit -m "Bump version to $VERSION" --author="$AUTHOR"
+
+          git fetch origin main
+          git merge FETCH_HEAD --no-edit
+          git push origin main
       - uses: actions/setup-go@v5
       - name: Build binaries
         run: |
@@ -49,21 +62,3 @@ jobs:
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Brew
-        env:
-          ACTOR: "${{ github.actor }}"
-          EMAIL: "${{ github.actor }}@users.noreply.github.com"
-          AUTHOR: "${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
-          VERSION: "${{ steps.get_release.outputs.tag_name }}"
-        run: |
-          git config --global user.name "$ACTOR"
-          git config --global user.email "$EMAIL"
-          VERSION=$VERSION make version/SBX_VERSION version/SBX_CHECKSUM
-
-          git add version/SBX_VERSION
-          git add version/SBX_CHECKSUM
-          git commit -m "Bump version to $VERSION" --author="$AUTHOR"
-
-          git fetch origin main
-          git merge FETCH_HEAD --no-edit
-          git push origin main
