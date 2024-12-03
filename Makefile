@@ -23,7 +23,7 @@ test:
 version/SBX_CHECKSUM: version/SBX_VERSION
 	@export VERSION=`cat $<` && \
 		curl -sL \
-			"https://github.com/reverbdotcom/sbx/releases/download/$${VERSION}/Source code.tar.gz" \
+			https://github.com/reverbdotcom/sbx/releases/download/$${VERSION}/sbx-darwin-arm64.tar.gz \
 			| shasum -a 256 \
 			| awk '{ print $$1 }' \
 			> $@
