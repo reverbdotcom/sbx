@@ -48,12 +48,17 @@ jobs:
       tag_name: ${{ steps.get_release.outputs.tag_name }}
 
   bump-brew:
-    uses: reverbdotcom/homebrew-reverb/.github/workflows/release-me.yml@main
+    runs-on: ubuntu-latest
     needs: [ release ]
-    secrets: inherit
-    with:
-      formula: sbx
-      version: ${{ needs.release.outputs.tag_name }}
-
-
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - run: |
+          gh workflow run \
+            -R reverbdotcom/graphql-gateway \
+            -r main \
+            -f branch=${{ github.ref_name }} \
+            -f repo=${{ github.event.repository.name }} \
+            -f schema_path=${{ inputs.schema_path }} \
+            deploy-schema.yml
 
