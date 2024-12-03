@@ -1,63 +1,63 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
+
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      #- uses: actions/setup-go@v4
-      #- name: Build binaries
-      #  run: |
-      #    mkdir -p dist
-      #    GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
-      #    GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
-      #    tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx
-      #    tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx
-
+        ref: main
+      - uses: actions/setup-go@v4
+      - name: Build binaries
+        run: |
+          mkdir -p dist
+          GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
+          GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
+          tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx
+          tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload macOS amd64 binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: dist/sbx-darwin-amd64.tar.gz
+          asset_name: sbx-darwin-amd64.tar.gz
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload macOS arm64 binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: dist/sbx-darwin-arm64.tar.gz
+          asset_name: sbx-darwin-arm64.tar.gz
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Brew
+        env:
+          ACTOR: "${{ github.actor }}"
+          EMAIL: "${{ github.actor }}@users.noreply.github.com"
+          AUTHOR: "${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
+          VERSION: "${{ steps.get_release.outputs.tag_name }}"
+        run: |
+          git config --global user.name "$ACTOR"
+          git config --global user.email "$EMAIL"
+          VERSION=$VERSION make SBX_VERSION SBX_CHECKSUM
 
-          #- name: Upload macOS amd64 binary
-          #  uses: actions/upload-release-asset@v1
-          #  with:
-          #    upload_url: ${{ steps.get_release.outputs.upload_url }}
-          #    asset_path: dist/sbx-darwin-amd64.tar.gz
-          #    asset_name: sbx-darwin-amd64.tar.gz
-          #    asset_content_type: application/octet-stream
-          #  env:
-          #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git add SBX_VERSION
+          git add SBX_CHECKSUM
+          git commit -m "Bump version to $VERSION" --author="$AUTHOR"
 
-          #- name: Upload macOS arm64 binary
-          #  uses: actions/upload-release-asset@v1
-          #  with:
-          #    upload_url: ${{ steps.get_release.outputs.upload_url }}
-          #    asset_path: dist/sbx-darwin-arm64.tar.gz
-          #    asset_name: sbx-darwin-arm64.tar.gz
-          #    asset_content_type: application/octet-stream
-          #  env:
-          #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    outputs:
-      tag_name: ${{ steps.get_release.outputs.tag_name }}
-
-  bump-brew:
-    runs-on: ubuntu-latest
-    needs: [ release ]
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - run: |
-          gh workflow run \
-            -R reverbdotcom/homebrew-reverb \
-            -f version=${{ needs.release.outputs.tag_name }} \
-            -f formula=sbx \
-            release-me.yml
-
+          git fetch origin main
+          git merge FETCH_HEAD --no-edit
+          git push origin head
