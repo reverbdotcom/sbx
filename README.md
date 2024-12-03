@@ -52,7 +52,7 @@ Requires `GITHUB_TOKEN` to be set in the environment.
 ```bash
 brew tap reverbdotcom/sbx git@github.com:reverbdotcom/sbx.git
 brew update
-brew install reverbdotcom/sbx/sbx
+brew install sbx
 sbx version
 ```
 
