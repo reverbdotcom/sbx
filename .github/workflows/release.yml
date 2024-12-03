@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
-      tag: ${{ steps.get_release.outputs.tag }}
+      tag_name: ${{ steps.get_release.outputs.tag_name }}
 
   bump-brew:
     uses: reverbdotcom/homebrew-reverb/.github/workflows/release-me.yml@main
@@ -53,7 +53,7 @@ jobs:
     secrets: inherit
     with:
       formula: sbx
-      version: ${{ needs.release.outputs.tag }}
+      version: ${{ needs.release.outputs.tag_name }}
 
 
 
