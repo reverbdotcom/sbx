@@ -1,9 +1,11 @@
 package check
 
 import (
-	"github.com/reverbdotcom/sbx/cli"
+	"errors"
 	"os"
 	"strings"
+
+	"github.com/reverbdotcom/sbx/cli"
 )
 
 const yml = "/.github/workflows/conductor-on-orchestra.yml"
@@ -16,6 +18,20 @@ func HasGithubToken() bool {
 	}
 
 	return false
+}
+
+func EnsureOrchestra() error {
+	has, err := OnOrchestra()
+
+	if err != nil {
+		return err
+	}
+
+	if !has {
+		return errors.New("This project is not on Orchestra.")
+	}
+
+	return nil
 }
 
 func OnOrchestra() (bool, error) {

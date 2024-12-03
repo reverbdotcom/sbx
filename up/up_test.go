@@ -8,7 +8,6 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	checkGithubToken = func() bool { return true }
 	checkOrchestra = func() (bool, error) { return true, nil }
 
 	summaryFn = func(_ string) error { return nil }
