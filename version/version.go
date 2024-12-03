@@ -1,19 +1,19 @@
 package version
 
 import (
-	"errors"
+  _ "embed"
 	"fmt"
-
-	"runtime/debug"
+	"strings"
 )
 
-var buildInfoFn = debug.ReadBuildInfo
+
+//go:embed SBX_CHECKSUM
+var checksum string
+
+//go:embed SBX_VERSION
+var version string
+
 
 func Run() (string, error) {
-	info, ok := buildInfoFn()
-	if !ok {
-		return "", errors.New("failed to retrieve build info")
-	}
-
-	return fmt.Sprintf("Module: %s, Version: %s\n", info.Main.Path, info.Main.Version), nil
+	return fmt.Sprintf("Version: %s, Checksum: %s", strings.TrimSpace(version), checksum), nil
 }
