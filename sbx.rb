@@ -1,5 +1,5 @@
 class Sbx < Formula
-  @version = File.read(File.expand_path("../SBX_VERSION", __FILE__)).chomp
+  @version = File.read(File.expand_path("../version/SBX_VERSION", __FILE__)).chomp
 
   desc "sbx: orchestra cli"
   homepage "https://github.com/reverbdotcom/sbx"
@@ -7,7 +7,7 @@ class Sbx < Formula
 
   on_macos do
     url "https://github.com/reverbdotcom/sbx/releases/download/#{@version}/sbx-darwin-arm64.tar.gz"
-    sha256 File.read(File.expand_path("../SBX_CHECKSUM", __FILE__)).chomp
+    sha256 File.read(File.expand_path("../version/SBX_CHECKSUM", __FILE__)).chomp
   end
 
   def install

@@ -53,10 +53,10 @@ jobs:
         run: |
           git config --global user.name "$ACTOR"
           git config --global user.email "$EMAIL"
-          VERSION=$VERSION make SBX_VERSION SBX_CHECKSUM
+          VERSION=$VERSION make version/SBX_VERSION version/SBX_CHECKSUM
 
-          git add SBX_VERSION
-          git add SBX_CHECKSUM
+          git add version/SBX_VERSION
+          git add version/SBX_CHECKSUM
           git commit -m "Bump version to $VERSION" --author="$AUTHOR"
 
           git fetch origin main
