@@ -6,10 +6,10 @@ import (
 
 func TestRun(t *testing.T) {
 	t.Run("it returns version", func(t *testing.T) {
-    version = "v1.0.0"
+		version = "v1.0.0"
 
 		got, err := Run()
-    want := "Version: v1.0.0\n"
+		want := "Version: v1.0.0\n"
 
 		if got != want {
 			t.Errorf("got %v, want %v", got, want)
