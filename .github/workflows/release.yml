@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
-      - name: Build binaries
-        run: |
-          mkdir -p dist
-          GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
-          GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
-          tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx
-          tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx
+      #- uses: actions/setup-go@v4
+      #- name: Build binaries
+      #  run: |
+      #    mkdir -p dist
+      #    GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
+      #    GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
+      #    tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx
+      #    tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx
 
       - name: Get release
         id: get_release
@@ -25,25 +25,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload macOS amd64 binary
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: dist/sbx-darwin-amd64.tar.gz
-          asset_name: sbx-darwin-amd64.tar.gz
-          asset_content_type: application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #- name: Upload macOS amd64 binary
+          #  uses: actions/upload-release-asset@v1
+          #  with:
+          #    upload_url: ${{ steps.get_release.outputs.upload_url }}
+          #    asset_path: dist/sbx-darwin-amd64.tar.gz
+          #    asset_name: sbx-darwin-amd64.tar.gz
+          #    asset_content_type: application/octet-stream
+          #  env:
+          #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload macOS arm64 binary
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: dist/sbx-darwin-arm64.tar.gz
-          asset_name: sbx-darwin-arm64.tar.gz
-          asset_content_type: application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #- name: Upload macOS arm64 binary
+          #  uses: actions/upload-release-asset@v1
+          #  with:
+          #    upload_url: ${{ steps.get_release.outputs.upload_url }}
+          #    asset_path: dist/sbx-darwin-arm64.tar.gz
+          #    asset_name: sbx-darwin-arm64.tar.gz
+          #    asset_content_type: application/octet-stream
+          #  env:
+          #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       tag_name: ${{ steps.get_release.outputs.tag_name }}
 
