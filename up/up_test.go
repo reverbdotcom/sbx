@@ -8,7 +8,10 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	summaryFn = func(name string) error { return nil }
+	checkGithubToken = func() bool { return true }
+	checkOrchestra = func() (bool, error) { return true, nil }
+
+	summaryFn = func(_ string) error { return nil }
 	htmlUrlFn = func() (string, error) {
 		return "some.url", nil
 	}

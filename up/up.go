@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/reverbdotcom/sbx/check"
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
@@ -31,6 +32,12 @@ var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
 
 func Run() (string, error) {
+	err := validate()
+
+	if err != nil {
+		return "", err
+	}
+
 	fmt.Println("deploying...")
 	fmt.Println()
 
@@ -67,6 +74,27 @@ func Run() (string, error) {
 	}
 
 	return out, nil
+}
+
+var checkOrchestra = check.OnOrchestra
+var checkGithubToken = check.HasGithubToken
+
+func validate() error {
+	has, err := checkOrchestra()
+
+	if err != nil {
+		return err
+	}
+
+	if !has {
+		return errors.New("This project is not on Orchestra.")
+	}
+
+	if !checkGithubToken() {
+		return errors.New("Please set the GITHUB_TOKEN environment variable.")
+	}
+
+	return nil
 }
 
 func deploy(name string, noopCommit bool) (string, error) {
