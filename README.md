@@ -66,7 +66,7 @@ sbx version
 #### bash
 
 ```bash
-VERSION=v1.4.7 \
+VERSION=<grab the latest tag> \
     curl \
         -s\
         -L \
