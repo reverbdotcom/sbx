@@ -49,20 +49,11 @@ Requires `GITHUB_TOKEN` to be set in the environment.
 
 #### brew
 
-To install
-
 ```bash
-brew untap --force reverbdotcom/homebrew-reverb
-brew tap reverbdotcom/homebrew-reverb
-brew install sbx
-```
-
-To update
-
-```bash
+brew tap reverbdotcom/sbx git@github.com:reverbdotcom/sbx.git
 brew update
-brew install sbx
-````
+brew install reverbdotcom/sbx/sbx
+```
 
 #### golang
 
