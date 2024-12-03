@@ -32,3 +32,8 @@ SBX_CHECKSUM: SBX_VERSION
 SBX_VERSION:
 	@test -n "$(VERSION)" || (echo "VERSION is not set" && exit 1)
 	@echo $(VERSION) > $@
+
+.PHONY: bump
+bump:
+	@cat SBX_VERSION | awk -F. '{print $$1 "." $$2 "." $$3 + 1}' > SBX_VERSION_NEW
+	@mv SBX_VERSION_NEW SBX_VERSION
