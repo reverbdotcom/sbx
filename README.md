@@ -82,10 +82,6 @@ To cut a new release, [publish a new tag](https://github.com/reverbdotcom/sbx/re
 
 ## Development
 
-> [!IMPORTANT]
-> This is a public repo.
-
-
 `sbx.go` is the main entry point for the CLI tool.
 Every command should be a go package. Commands are
 configured in `commands/commands.go`.
