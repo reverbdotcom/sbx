@@ -21,6 +21,7 @@ COMMANDS
 
   sbx help
       up
+      down
       name
       dash
       logs
@@ -35,6 +36,7 @@ DESCRIPTION
 
   help        h             show the help message.
   up          u             spin up an orchestra sandbox.
+  down                      tear down an orchestra sandbox.
   name        n             show the sandbox name.
   dash        d             open the dashboard in a browser.
   logs        l             open the logs in a browser.

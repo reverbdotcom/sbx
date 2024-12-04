@@ -30,9 +30,10 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
+var ensureOrchestraFn = check.EnsureOrchestra
 
 func Run() (string, error) {
-	err := validate()
+	err := ensureOrchestraFn()
 
 	if err != nil {
 		return "", err
@@ -74,27 +75,6 @@ func Run() (string, error) {
 	}
 
 	return out, nil
-}
-
-var checkOrchestra = check.OnOrchestra
-var checkGithubToken = check.HasGithubToken
-
-func validate() error {
-	has, err := checkOrchestra()
-
-	if err != nil {
-		return err
-	}
-
-	if !has {
-		return errors.New("This project is not on Orchestra.")
-	}
-
-	if !checkGithubToken() {
-		return errors.New("Please set the GITHUB_TOKEN environment variable.")
-	}
-
-	return nil
 }
 
 func deploy(name string, noopCommit bool) (string, error) {

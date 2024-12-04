@@ -1,22 +1,21 @@
 package run
 
 import (
-	"context"
 	"errors"
 	"github.com/google/go-github/v67/github"
-	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/commit"
+	gh "github.com/reverbdotcom/sbx/github"
 	"github.com/reverbdotcom/sbx/retries"
 )
 
-const owner = "reverbdotcom"
-const workflow = "conductor-on-orchestra.yml"
 const notFound = "no workflow runs found"
 
+var findRun = gh.FindSandboxRun
+var cmdFn = cli.Cmd
 var headSHA = commit.HeadSHA
 var maxRetries = 5
 
@@ -76,23 +75,6 @@ func currentRun(commitSHA string) (*github.WorkflowRun, error) {
 
 	return runs.WorkflowRuns[0], nil
 }
-
-var findRun = _findRun
-
-func _findRun(repo, sha string) (*github.WorkflowRuns, error) {
-	ctx := context.Background()
-	client := client()
-	opts := &github.ListWorkflowRunsOptions{HeadSHA: sha}
-	runs, _, err := client.Actions.ListWorkflowRunsByFileName(ctx, owner, repo, workflow, opts)
-
-	return runs, err
-}
-
-func client() *github.Client {
-	return github.NewClient(nil).WithAuthToken(os.Getenv("GITHUB_TOKEN"))
-}
-
-var cmdFn = cli.Cmd
 
 func currentRepo() (string, error) {
 	out, err := cmdFn("git", "rev-parse", "--show-toplevel")

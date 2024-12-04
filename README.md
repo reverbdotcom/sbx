@@ -14,6 +14,7 @@ COMMANDS
 
   sbx help
       up
+      down
       name
       dash
       logs
@@ -28,6 +29,7 @@ DESCRIPTION
 
   help        h             show the help message.
   up          u             spin up an orchestra sandbox.
+  down                      tear down an orchestra sandbox.
   name        n             show the sandbox name.
   dash        d             open the dashboard in a browser.
   logs        l             open the logs in a browser.
@@ -53,14 +55,12 @@ Requires `GITHUB_TOKEN` to be set in the environment.
 brew tap reverbdotcom/sbx git@github.com:reverbdotcom/sbx.git
 brew update
 brew install sbx
-sbx version
 ```
 
 #### golang
 
 ```bash
 export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@main
-sbx version
 ```
 
 #### bash
@@ -74,7 +74,6 @@ VERSION=<grab the latest tag> \
         "https://github.com/reverbdotcom/sbx/releases/download/${VERSION}/sbx-darwin-arm64.tar.gz" \
     && tar -xzf /tmp/sbx-darwin-arm64.tar.gz -C /tmp \
     && sudo mv /tmp/sbx /usr/local/bin/sbx
-sbx version
 ```
 ## Release
 
