@@ -21,7 +21,7 @@ test:
 	@go run sbx.go $*
 
 %_test.go: always
-	@go test -v -count=1 $$(dirname $*_test.go)
+	@go test -v -count=1 $*.go $*_test.go
 
 .PHONY: version/SBX_VERSION
 version/SBX_VERSION:
