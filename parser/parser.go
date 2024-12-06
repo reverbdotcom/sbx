@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/reverbdotcom/sbx/check"
 	"github.com/reverbdotcom/sbx/commands"
+	"golang.org/x/exp/slices"
 )
 
 func Parse(args []string) (*commands.RunFn, error) {
@@ -27,7 +29,17 @@ func command(args []string) (command *string, err error) {
 	return &cmd, nil
 }
 
+var ensureOrchestra = check.EnsureOrchestra
+
 func cmdfn(command string) (*commands.RunFn, error) {
+	general := []string{"help", "version"}
+
+	if !slices.Contains(general, command) {
+		if err := ensureOrchestra(); err != nil {
+			return nil, err
+		}
+	}
+
 	cmd, ok := commands.Commands()[command]
 
 	if !ok {
