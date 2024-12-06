@@ -82,6 +82,10 @@ To cut a new release, [publish a new tag](https://github.com/reverbdotcom/sbx/re
 
 ## Development
 
+> [!IMPORTANT]
+> This is public repo. Do not commit any secrets or sensitive information.
+> Simpler for brew install. Though we can work with an internal repo with `HOMEBREW_GITHUB_API_TOKEN` set.
+
 `sbx.go` is the main entry point for the CLI tool.
 Every command should be a go package. Commands are
 configured in `commands/commands.go`.
