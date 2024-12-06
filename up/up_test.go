@@ -8,7 +8,6 @@ import (
 )
 
 func TestRun(t *testing.T) {
-  ensureOrchestraFn = func() error { return nil }
 	summaryFn = func(_ string) error { return nil }
 	htmlUrlFn = func() (string, error) {
 		return "some.url", nil

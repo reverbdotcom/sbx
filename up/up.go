@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/reverbdotcom/sbx/check"
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
@@ -30,15 +29,8 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
-var ensureOrchestraFn = check.EnsureOrchestra
 
 func Run() (string, error) {
-	err := ensureOrchestraFn()
-
-	if err != nil {
-		return "", err
-	}
-
 	fmt.Println("deploying...")
 	fmt.Println()
 

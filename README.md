@@ -92,6 +92,7 @@ This runs live.
 
 #### Test
 `make test`
+`make <package>.test`
 
 #### Test with another repo
 
