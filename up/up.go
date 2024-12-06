@@ -12,7 +12,8 @@ import (
 )
 
 const info = `»»»
-Name:       %s SHA:        %s
+Name:       %s
+SHA:        %s
 
 Deploy:     %s
 Dash:       %s
@@ -93,15 +94,15 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 		}
 	}
 
-  yes, err := onSandbox(name)
+	yes, err := onSandbox(name)
 
-  if err != nil {
-    return "", err
-  }
+	if err != nil {
+		return "", err
+	}
 
-  if yes { // noop
-    return "", nil
-  }
+	if yes { // noop
+		return "", nil
+	}
 
 	out, err := cmdFn("git", "branch", "-f", name, "HEAD")
 
@@ -113,7 +114,7 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 }
 
 func pushRemote(name string) (string, error) {
-  out, err := cmdFn("git", "push", "-f", "origin", name)
+	out, err := cmdFn("git", "push", "-f", "origin", name)
 
 	if err != nil {
 		return out, err

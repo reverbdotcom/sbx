@@ -72,22 +72,22 @@ func TestParse(t *testing.T) {
 	})
 
 	t.Run("it does not err on non orchestra for genereal command", func(t *testing.T) {
-    general := []string{
-      "help",
-      "h",
-      "version",
-      "v",
-    }
+		general := []string{
+			"help",
+			"h",
+			"version",
+			"v",
+		}
 
-    for _, cmd := range general {
-      ensureOrchestra = func() error { return errors.New("This project is not on Orchestra.") }
+		for _, cmd := range general {
+			ensureOrchestra = func() error { return errors.New("This project is not on Orchestra.") }
 
-      args := []string{"sbx", cmd}
-      _, err := Parse(args)
+			args := []string{"sbx", cmd}
+			_, err := Parse(args)
 
-      if err != nil {
-        t.Errorf("got %v, want nil, for cmd %s", err, cmd)
-      }
-    }
+			if err != nil {
+				t.Errorf("got %v, want nil, for cmd %s", err, cmd)
+			}
+		}
 	})
 }

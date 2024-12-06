@@ -33,11 +33,11 @@ var ensureOrchestra = check.EnsureOrchestra
 
 func cmdfn(command string) (*commands.RunFn, error) {
 	general := []string{
-    "help",
-    "h",
-    "version",
-    "v",
-  }
+		"help",
+		"h",
+		"version",
+		"v",
+	}
 
 	if !slices.Contains(general, command) {
 		if err := ensureOrchestra(); err != nil {
