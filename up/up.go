@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/reverbdotcom/sbx/check"
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
@@ -30,15 +29,8 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
-var ensureOrchestraFn = check.EnsureOrchestra
 
 func Run() (string, error) {
-	err := ensureOrchestraFn()
-
-	if err != nil {
-		return "", err
-	}
-
 	fmt.Println("deploying...")
 	fmt.Println()
 
@@ -102,6 +94,16 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 		}
 	}
 
+	yes, err := onSandbox(name)
+
+	if err != nil {
+		return "", err
+	}
+
+	if yes { // noop
+		return "", nil
+	}
+
 	out, err := cmdFn("git", "branch", "-f", name, "HEAD")
 
 	if err != nil {
@@ -133,6 +135,18 @@ func isMain() (bool, error) {
 	}
 
 	yes := strings.TrimSpace(out) == "main"
+
+	return yes, nil
+}
+
+func onSandbox(name string) (bool, error) {
+	out, err := cmdFn("git", "branch", "--show-current")
+
+	if err != nil {
+		return false, err
+	}
+
+	yes := strings.TrimSpace(out) == name
 
 	return yes, nil
 }

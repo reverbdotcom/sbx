@@ -10,7 +10,7 @@ func TestRun(t *testing.T) {
 	}
 
 	t.Run("it generates a sandbox name", func(t *testing.T) {
-		branch = func() (string, error) {
+		Branch = func() (string, error) {
 			return "nn-sbx-1234", nil
 		}
 
@@ -47,6 +47,63 @@ func TestProperNames(t *testing.T) {
 			if len(word) > 12 {
 				t.Errorf("got %v, want less than 13", word)
 			}
+		}
+	})
+}
+
+func TestName(t *testing.T) {
+	dictionary = func() ([]string, error) {
+		return []string{"blake", "julian", "kevin"}, nil
+	}
+
+	t.Run("it generates a sandbox name", func(t *testing.T) {
+		Branch = func() (string, error) {
+			return "nn-sbx-1234", nil
+		}
+
+		got, err := Name()
+		want := "sandbox-blake-julian-kevin"
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+
+		if got != want {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("skips name hash if branch starts with sandbox", func(t *testing.T) {
+		Branch = func() (string, error) {
+			return "sandbox-already-named", nil
+		}
+
+		got, err := Name()
+		want := "sandbox-already-named"
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+
+		if got != want {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("it errs if name does not start with sandbox", func(t *testing.T) {
+		name = func() (string, error) {
+			return "not-sandbox\n", nil
+		}
+
+		_, err := Name()
+
+		if err == nil {
+			t.Errorf("got nil, want error")
+		}
+
+		want := "name does not start with sandbox-"
+		if want != err.Error() {
+			t.Errorf("got %v, want %v", err, want)
 		}
 	})
 }

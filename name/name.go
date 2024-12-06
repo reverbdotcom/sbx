@@ -12,16 +12,38 @@ import (
 )
 
 const maxStep = 2
+const sandbox = "sandbox-"
 
 func Run() (string, error) {
 	return Name()
 }
 
 func Name() (string, error) {
-	branch, err := branch()
+	nam, err := name()
 
 	if err != nil {
 		return "", err
+	}
+
+	if !strings.HasPrefix(nam, sandbox) {
+		return "", fmt.Errorf("name does not start with %s", sandbox)
+	}
+
+	return nam, nil
+}
+
+var name = _name
+
+func _name() (string, error) {
+	branch, err := Branch()
+
+	if err != nil {
+		return "", err
+	}
+
+	if strings.HasPrefix(branch, sandbox) {
+		fmt.Println("»» skipping name generation, already on sandbox branch.")
+		return strings.TrimSpace(branch), nil
 	}
 
 	name, err := names(branch)
@@ -33,7 +55,7 @@ func Name() (string, error) {
 	return prefix(name), nil
 }
 
-var branch = _branch
+var Branch = _branch
 
 func _branch() (string, error) {
 	out, err := cli.Cmd("git", "branch", "--show-current")
@@ -90,7 +112,7 @@ func hash(name string, step int) (string, error) {
 }
 
 func prefix(name string) string {
-	return "sandbox-" + name
+	return sandbox + name
 }
 
 func properNames() ([]string, error) {

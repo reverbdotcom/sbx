@@ -8,7 +8,6 @@ import (
 )
 
 func TestRun(t *testing.T) {
-  ensureOrchestraFn = func() error { return nil }
 	summaryFn = func(_ string) error { return nil }
 	htmlUrlFn = func() (string, error) {
 		return "some.url", nil
@@ -60,7 +59,12 @@ func TestRun(t *testing.T) {
 		wants := []cli.MockCall{
 			{
 				Command: "git branch --show-current",
-				Out:     "sandbox-blake-julian-kevin",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
 				Err:     nil,
 			},
 			{
@@ -88,7 +92,12 @@ func TestRun(t *testing.T) {
 		wants := []cli.MockCall{
 			{
 				Command: "git branch --show-current",
-				Out:     "sandbox-blake-julian-kevin",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
 				Err:     nil,
 			},
 			{
@@ -102,8 +111,8 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-		if err.Error() != wants[1].Err.Error() {
-			t.Errorf("got %v, want %v", err, wants[0].Err)
+		if err.Error() != wants[2].Err.Error() {
+			t.Errorf("got %v, want %v", err, wants[2].Err)
 		}
 	})
 
@@ -111,7 +120,12 @@ func TestRun(t *testing.T) {
 		wants := []cli.MockCall{
 			{
 				Command: "git branch --show-current",
-				Out:     "sandbox-blake-julian-kevin",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
 				Err:     nil,
 			},
 			{
@@ -130,8 +144,8 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-		if err != wants[2].Err {
-			t.Errorf("got %v, want %v", err, wants[2].Err)
+		if err != wants[3].Err {
+			t.Errorf("got %v, want %v", err, wants[3].Err)
 		}
 	})
 
@@ -139,7 +153,12 @@ func TestRun(t *testing.T) {
 		wants := []cli.MockCall{
 			{
 				Command: "git branch --show-current",
-				Out:     "sandbox-blake-julian-kevin",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
 				Err:     nil,
 			},
 			{
@@ -155,6 +174,11 @@ func TestRun(t *testing.T) {
 			{
 				Command: "git commit --allow-empty -m 'sandbox is up-to-date, noop to trigger'",
 				Out:     "",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
 				Err:     nil,
 			},
 			{
@@ -182,7 +206,12 @@ func TestRun(t *testing.T) {
 		wants := []cli.MockCall{
 			{
 				Command: "git branch --show-current",
-				Out:     "sandbox-blake-julian-kevin",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
 				Err:     nil,
 			},
 			{
@@ -195,6 +224,38 @@ func TestRun(t *testing.T) {
 				Out:     "",
 				Err:     nil,
 			},
+		}
+
+		cmdFn = cli.MockCmd(t, wants)
+
+		_, err := Run()
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+	})
+
+	t.Run("does not create a local branch is already on the sandbox branch", func(t *testing.T) {
+		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
+			{
+				Command: "git push -f origin sandbox-blake-julian-kevin",
+				Out:     "",
+				Err:     nil,
+			},
+		}
+
+		nameFn = func() (string, error) {
+			return "sandbox-blake-julian-kevin", nil
 		}
 
 		cmdFn = cli.MockCmd(t, wants)
