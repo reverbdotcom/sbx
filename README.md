@@ -93,6 +93,7 @@ This runs live.
 #### Test
 `make test`
 `make <package>.test`
+`make <file>_test.go`
 
 #### Test with another repo
 
