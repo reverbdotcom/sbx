@@ -43,7 +43,7 @@ func _name() (string, error) {
 
 	if strings.HasPrefix(branch, sandbox) {
 		fmt.Println("»» skipping name generation, already 'sandbox' prefixed...")
-		return branch, nil
+		return strings.TrimSpace(branch), nil
 	}
 
 	name, err := names(branch)

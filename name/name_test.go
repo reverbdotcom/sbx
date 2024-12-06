@@ -92,7 +92,7 @@ func TestName(t *testing.T) {
 
 	t.Run("it errs if name does not start with sandbox", func(t *testing.T) {
 		name = func() (string, error) {
-			return "not-sandbox", nil
+			return "not-sandbox\n", nil
 		}
 
 		_, err := Name()

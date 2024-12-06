@@ -14,9 +14,8 @@ func main() {
 
 	fn := *cmdfn
 	out, err := fn()
-	onError(err)
-
 	fmt.Println(out)
+	onError(err)
 }
 
 func onError(err error) {
