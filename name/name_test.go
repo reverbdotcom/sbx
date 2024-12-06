@@ -10,7 +10,7 @@ func TestRun(t *testing.T) {
 	}
 
 	t.Run("it generates a sandbox name", func(t *testing.T) {
-		branch = func() (string, error) {
+		Branch = func() (string, error) {
 			return "nn-sbx-1234", nil
 		}
 
@@ -57,7 +57,7 @@ func TestName(t *testing.T) {
 	}
 
 	t.Run("it generates a sandbox name", func(t *testing.T) {
-		branch = func() (string, error) {
+		Branch = func() (string, error) {
 			return "nn-sbx-1234", nil
 		}
 
@@ -74,7 +74,7 @@ func TestName(t *testing.T) {
 	})
 
 	t.Run("skips name hash if branch starts with sandbox", func(t *testing.T) {
-		branch = func() (string, error) {
+		Branch = func() (string, error) {
 			return "sandbox-already-named", nil
 		}
 

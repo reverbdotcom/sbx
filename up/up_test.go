@@ -59,7 +59,12 @@ func TestRun(t *testing.T) {
 		wants := []cli.MockCall{
 			{
 				Command: "git branch --show-current",
-				Out:     "sandbox-blake-julian-kevin",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
 				Err:     nil,
 			},
 			{
@@ -204,4 +209,36 @@ func TestRun(t *testing.T) {
 			t.Errorf("got %v, want nil", err)
 		}
 	})
+
+  t.Run("does not create a local branch is alread on the sandbox branch", func(t *testing.T) {
+    wants := []cli.MockCall{
+      {
+        Command: "git branch --show-current",
+        Out:     "sandbox-blake-julian-kevin",
+        Err:     nil,
+      },
+      {
+        Command: "git branch --show-current",
+        Out:     "sandbox-blake-julian-kevin",
+        Err:     nil,
+      },
+			{
+				Command: "git push -f origin sandbox-blake-julian-kevin",
+				Out:     "",
+				Err:     nil,
+			},
+    }
+
+		nameFn = func() (string, error) {
+			return "sandbox-blake-julian-kevin", nil
+		}
+
+    cmdFn = cli.MockCmd(t, wants)
+
+    _, err := Run()
+
+    if err != nil {
+      t.Errorf("got %v, want nil", err)
+    }
+  })
 }

@@ -35,14 +35,14 @@ func Name() (string, error) {
 var name = _name
 
 func _name() (string, error) {
-	branch, err := branch()
+	branch, err := Branch()
 
 	if err != nil {
 		return "", err
 	}
 
 	if strings.HasPrefix(branch, sandbox) {
-		fmt.Println("»» skipping name generation, already 'sandbox' prefixed...")
+		fmt.Println("»» skipping name generation, already on sandbox branch.")
 		return strings.TrimSpace(branch), nil
 	}
 
@@ -55,7 +55,7 @@ func _name() (string, error) {
 	return prefix(name), nil
 }
 
-var branch = _branch
+var Branch = _branch
 
 func _branch() (string, error) {
 	out, err := cli.Cmd("git", "branch", "--show-current")
