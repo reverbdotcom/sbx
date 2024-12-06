@@ -42,7 +42,6 @@ func _name() (string, error) {
 	}
 
 	if strings.HasPrefix(branch, sandbox) {
-		fmt.Println("»» skipping name generation, already on sandbox branch.")
 		return strings.TrimSpace(branch), nil
 	}
 
