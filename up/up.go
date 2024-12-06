@@ -94,6 +94,7 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 		}
 	}
 
+  fmt.Println("updating local branch...")
 	out, err := cmdFn("git", "branch", "-f", name, "HEAD")
 
 	if err != nil {
@@ -104,7 +105,8 @@ func makeLocal(name string, noopCommit bool) (string, error) {
 }
 
 func pushRemote(name string) (string, error) {
-	out, err := cmdFn("git", "push", "--force-with-lease", "origin", name)
+  fmt.Println("pushing to remote...")
+  out, err := cmdFn("git", "push", "-f", "origin", name)
 
 	if err != nil {
 		return out, err
