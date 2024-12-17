@@ -32,6 +32,9 @@ Logs:       logs.url
 
 Host:       web.url
 Graphiql:   graphiql.url
+
+»»»
+View deployment, run: 'sbx p'
 `
 
 		if got != want {
