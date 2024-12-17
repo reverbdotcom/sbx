@@ -29,6 +29,7 @@ COMMANDS
       graphiql
       version
       info
+      progress
 
 DESCRIPTION
 
@@ -44,6 +45,7 @@ DESCRIPTION
   graphiql    g             open graphql user interface in a browser.
   version     v             show the version of the sbx cli.
   info        i             show the summary of the sandbox.
+  progress    p             open deployment progress in a browser.
 
 USAGE:
 
@@ -63,8 +65,10 @@ func Commands() map[string]RunFn {
 		"h":        help,
 		"name":     name.Run,
 		"n":        name.Run,
-		"web":      web.Run,
-		"w":        web.Run,
+		"web":      web.Open,
+		"progress": web.OpenProgress,
+		"p":        web.OpenProgress,
+		"w":        web.Open,
 		"dash":     dash.Run,
 		"d":        dash.Run,
 		"graphiql": graphiql.Run,
