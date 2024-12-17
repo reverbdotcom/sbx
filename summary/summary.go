@@ -2,8 +2,8 @@ package summary
 
 import (
 	"fmt"
-  "github.com/reverbdotcom/sbx/commit"
-  "github.com/reverbdotcom/sbx/dash"
+	"github.com/reverbdotcom/sbx/commit"
+	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
