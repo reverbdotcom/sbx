@@ -2,7 +2,6 @@ package summary
 
 import (
 	"fmt"
-
 	"github.com/reverbdotcom/sbx/commit"
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/graphiql"
@@ -22,6 +21,9 @@ Logs:       %s
 
 Host:       %s
 Graphiql:   %s
+
+»»»
+View deployment, run: 'sbx p'
 `
 
 func Run() (string, error) {
