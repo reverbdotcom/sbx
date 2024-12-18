@@ -10,7 +10,7 @@ import (
 var nameFn = name.Name
 var teardownSandboxFn = github.TeardownSandbox
 
-func Run() (string, error) {
+func Run(_ []string) (string, error) {
 	name, err := nameFn()
 
 	if err != nil {

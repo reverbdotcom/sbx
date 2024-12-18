@@ -9,11 +9,11 @@ import (
 )
 
 func main() {
-	cmdfn, err := parser.Parse(os.Args)
+	cmdfn, cmdArgs, err := parser.Parse(os.Args)
 	onError(err)
 
 	fn := *cmdfn
-	out, err := fn()
+	out, err := fn(cmdArgs)
 	fmt.Println(out)
 	onError(err)
 }

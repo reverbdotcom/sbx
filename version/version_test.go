@@ -8,7 +8,7 @@ func TestRun(t *testing.T) {
 	t.Run("it returns version", func(t *testing.T) {
 		version = "v1.0.0"
 
-		got, err := Run()
+		got, err := Run([]string{})
 		want := "Version: v1.0.0\n"
 
 		if got != want {

@@ -6,27 +6,38 @@ import (
 
 	"github.com/reverbdotcom/sbx/check"
 	"github.com/reverbdotcom/sbx/commands"
+	"github.com/reverbdotcom/sbx/help"
 	"golang.org/x/exp/slices"
 )
 
-func Parse(args []string) (*commands.RunFn, error) {
-	cmd, err := command(args)
+func Parse(args []string) (*commands.RunFn, []string, error) {
+	cmd, cmdArgs, err := command(args)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return cmdfn(*cmd)
+	cmdFn, err := cmdfn(*cmd)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return cmdFn, cmdArgs, nil
 }
 
-func command(args []string) (command *string, err error) {
+func command(args []string) (command *string, commandArgs []string, err error) {
 	if len(args) < 2 {
-		return nil, errr("command required")
+		return nil, nil, errr("command required")
 	}
 
 	cmd := args[1]
 
-	return &cmd, nil
+	cmdArgs := []string{}
+	if len(args) > 2 {
+		cmdArgs = args[2:]
+	}
+
+	return &cmd, cmdArgs, nil
 }
 
 var ensureOrchestra = check.EnsureOrchestra
@@ -55,5 +66,5 @@ func cmdfn(command string) (*commands.RunFn, error) {
 }
 
 func errr(message string) error {
-	return errors.New(fmt.Sprintf("%s\n\n\n%s", message, commands.Help))
+	return errors.New(fmt.Sprintf("%s\n\n\n%s", message, help.Help))
 }

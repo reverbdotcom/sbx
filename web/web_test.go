@@ -35,7 +35,7 @@ func TestOpen(t *testing.T) {
 			return nil
 		}
 
-		_, err := Open()
+		_, err := Open([]string{})
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
@@ -47,7 +47,7 @@ func TestOpen(t *testing.T) {
 			return errors.New("open error")
 		}
 
-		_, err := Open()
+		_, err := Open([]string{})
 
 		want := "open error"
 		if err.Error() != want {
@@ -75,12 +75,11 @@ func TestOpenProgress(t *testing.T) {
 			return "progress.html", nil
 		}
 
-		_, err := OpenProgress()
+		_, err := OpenProgress([]string{})
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
 		}
-
 	})
 
 	t.Run("errs on htmlUrlFn", func(t *testing.T) {
@@ -88,7 +87,7 @@ func TestOpenProgress(t *testing.T) {
 			return "", errors.New("htmlUrlFn error")
 		}
 
-		_, err := OpenProgress()
+		_, err := OpenProgress([]string{})
 
 		want := "htmlUrlFn error"
 		if err.Error() != want {
@@ -105,7 +104,7 @@ func TestOpenProgress(t *testing.T) {
 			return "progress.html", nil
 		}
 
-		_, err := OpenProgress()
+		_, err := OpenProgress([]string{})
 
 		want := "openURL error"
 		if err.Error() != want {

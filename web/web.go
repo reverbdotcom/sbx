@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/open"
 	"github.com/reverbdotcom/sbx/run"
@@ -11,7 +12,7 @@ const template = "https://%s.int.orchestra.rvb.ai/"
 
 var openURL = open.Open
 
-func Open() (string, error) {
+func Open(_ []string) (string, error) {
 	err := openURL(Url())
 
 	if err != nil {
@@ -23,7 +24,7 @@ func Open() (string, error) {
 
 var htmlUrlFn = run.HtmlUrl
 
-func OpenProgress() (string, error) {
+func OpenProgress(_ []string) (string, error) {
 	htmlUrl, err := htmlUrlFn()
 
 	if err != nil {

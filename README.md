@@ -90,7 +90,6 @@ To cut a new release, [publish a new tag](https://github.com/reverbdotcom/sbx/re
 Every command should be a go package. Commands are
 configured in `commands/commands.go`.
 
-
 `make <command>.run` will build and run the command.
 This runs live.
 

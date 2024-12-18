@@ -10,7 +10,7 @@ func TestRun(t *testing.T) {
 		nameFn = func() (string, error) { return "sandbox-blake-julian-kevin", nil }
 		teardownSandboxFn = func(_ string) error { return nil }
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err != nil {
 			t.Errorf("got %v", err)
@@ -23,7 +23,7 @@ func TestRun(t *testing.T) {
 		want := errors.New("name error")
 		nameFn = func() (string, error) { return "", want }
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err.Error() != want.Error() {
 			t.Errorf("got %v", err)
@@ -36,7 +36,7 @@ func TestRun(t *testing.T) {
 		want := errors.New("teardown error")
 		teardownSandboxFn = func(_ string) error { return want }
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err.Error() != want.Error() {
 			t.Errorf("got %v", err)

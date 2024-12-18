@@ -11,7 +11,7 @@ const template = "https://app.datadoghq.com/dashboard/9rm-fjs-8tx/orchestra?tpl_
 
 var openURL = open.Open
 
-func Run() (string, error) {
+func Run(_ []string) (string, error) {
 	err := openURL(Url())
 
 	if err != nil {

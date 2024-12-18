@@ -35,7 +35,7 @@ func TestRun(t *testing.T) {
 			return nil
 		}
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
@@ -47,7 +47,7 @@ func TestRun(t *testing.T) {
 			return errors.New("open error")
 		}
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		want := "open error"
 		if err.Error() != want {

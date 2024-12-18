@@ -26,7 +26,7 @@ Graphiql:   %s
 View deployment, run: 'sbx p'
 `
 
-func Run() (string, error) {
+func Run(_ []string) (string, error) {
 	name, err := name.Name()
 
 	if err != nil {

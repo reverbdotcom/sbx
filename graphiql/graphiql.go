@@ -11,7 +11,7 @@ const template = "https://graphiql-%s.int.orchestra.rvb.ai/graphql"
 
 var openURL = open.Open
 
-func Run() (string, error) {
+func Run(_ []string) (string, error) {
 	err := openURL(Url())
 
 	if err != nil {

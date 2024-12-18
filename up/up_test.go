@@ -23,7 +23,7 @@ func TestRun(t *testing.T) {
 		}
 
 		cmdFn = cli.MockCmd(t, wants)
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err.Error() != "cannot deploy from main branch" {
 			t.Errorf("got %v", err.Error())
@@ -44,7 +44,7 @@ func TestRun(t *testing.T) {
 			return "sandbox-blake-julian-kevin", errors.New("name error")
 		}
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err.Error() != "name error" {
 			t.Errorf("got %v", err.Error())
@@ -81,7 +81,7 @@ func TestRun(t *testing.T) {
 
 		cmdFn = cli.MockCmd(t, wants)
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
@@ -109,7 +109,7 @@ func TestRun(t *testing.T) {
 
 		cmdFn = cli.MockCmd(t, wants)
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err.Error() != wants[2].Err.Error() {
 			t.Errorf("got %v, want %v", err, wants[2].Err)
@@ -142,7 +142,7 @@ func TestRun(t *testing.T) {
 
 		cmdFn = cli.MockCmd(t, wants)
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err != wants[3].Err {
 			t.Errorf("got %v, want %v", err, wants[3].Err)
@@ -195,7 +195,7 @@ func TestRun(t *testing.T) {
 
 		cmdFn = cli.MockCmd(t, wants)
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
@@ -228,7 +228,7 @@ func TestRun(t *testing.T) {
 
 		cmdFn = cli.MockCmd(t, wants)
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
@@ -260,7 +260,7 @@ func TestRun(t *testing.T) {
 
 		cmdFn = cli.MockCmd(t, wants)
 
-		_, err := Run()
+		_, err := Run([]string{})
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)

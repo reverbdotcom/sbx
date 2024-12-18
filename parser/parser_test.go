@@ -10,7 +10,7 @@ func TestParse(t *testing.T) {
 	t.Run("it returns up command", func(t *testing.T) {
 		ensureOrchestra = func() error { return nil }
 		args := []string{"sbx", "up"}
-		cmdfn, err := Parse(args)
+		cmdfn, _, err := Parse(args)
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
@@ -21,10 +21,24 @@ func TestParse(t *testing.T) {
 		}
 	})
 
+	t.Run("it returns command args", func(t *testing.T) {
+		ensureOrchestra = func() error { return nil }
+		args := []string{"sbx", "help", "up"}
+		_, cmdArgs, err := Parse(args)
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+
+		if cmdArgs == nil || len(cmdArgs) != 1 || cmdArgs[0] != "up" {
+			t.Errorf("got %v, want %v", cmdArgs, []string{"up"})
+		}
+	})
+
 	t.Run("it errs when no command is provided", func(t *testing.T) {
 		ensureOrchestra = func() error { return nil }
 		args := []string{"sbx"}
-		cmdfn, err := Parse(args)
+		cmdfn, _, err := Parse(args)
 
 		if err == nil {
 			t.Errorf("got nil, want error")
@@ -43,7 +57,7 @@ func TestParse(t *testing.T) {
 	t.Run("it errs when command is not found", func(t *testing.T) {
 		ensureOrchestra = func() error { return nil }
 		args := []string{"sbx", "does-not-exist"}
-		cmdfn, err := Parse(args)
+		cmdfn, _, err := Parse(args)
 
 		if err == nil {
 			t.Errorf("got nil, want error")
@@ -63,7 +77,7 @@ func TestParse(t *testing.T) {
 		ensureOrchestra = func() error { return errors.New("This project is not on Orchestra.") }
 
 		args := []string{"sbx", "up"}
-		_, err := Parse(args)
+		_, _, err := Parse(args)
 
 		want := "This project is not on Orchestra."
 		if err.Error() != want {
@@ -83,7 +97,7 @@ func TestParse(t *testing.T) {
 			ensureOrchestra = func() error { return errors.New("This project is not on Orchestra.") }
 
 			args := []string{"sbx", cmd}
-			_, err := Parse(args)
+			_, _, err := Parse(args)
 
 			if err != nil {
 				t.Errorf("got %v, want nil, for cmd %s", err, cmd)

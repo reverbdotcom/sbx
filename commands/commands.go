@@ -4,6 +4,7 @@ import (
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/down"
 	"github.com/reverbdotcom/sbx/graphiql"
+	"github.com/reverbdotcom/sbx/help"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/summary"
@@ -12,57 +13,14 @@ import (
 	"github.com/reverbdotcom/sbx/web"
 )
 
-type RunFn func() (string, error)
-
-const Help = `NAME
-  sbx - orchestra cli
-
-COMMANDS
-
-  sbx help
-      up
-      down
-      name
-      dash
-      logs
-      web
-      graphiql
-      version
-      info
-      progress
-
-DESCRIPTION
-
-  command     shorthand     description
-
-  help        h             show the help message.
-  up          u             spin up an orchestra sandbox.
-  down                      tear down an orchestra sandbox.
-  name        n             show the sandbox name.
-  dash        d             open the dashboard in a browser.
-  logs        l             open the logs in a browser.
-  web         w             open the site in a browser.
-  graphiql    g             open graphql user interface in a browser.
-  version     v             show the version of the sbx cli.
-  info        i             show the summary of the sandbox.
-  progress    p             open deployment progress in a browser.
-
-USAGE:
-
-  sbx up
-  sbx name
-`
-
-func help() (string, error) {
-	return Help, nil
-}
+type RunFn func(cmdArgs []string) (string, error)
 
 func Commands() map[string]RunFn {
 	return map[string]RunFn{
 		"up":       up.Run,
 		"u":        up.Run,
-		"help":     help,
-		"h":        help,
+		"help":     help.Run,
+		"h":        help.Run,
 		"name":     name.Run,
 		"n":        name.Run,
 		"web":      web.Open,

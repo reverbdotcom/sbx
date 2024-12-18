@@ -30,7 +30,7 @@ var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
 
-func Run() (string, error) {
+func Run(_ []string) (string, error) {
 	fmt.Println("deploying...")
 	fmt.Println()
 
@@ -149,4 +149,13 @@ func onSandbox(name string) (bool, error) {
 	yes := strings.TrimSpace(out) == name
 
 	return yes, nil
+}
+
+func Help() (string, error) {
+	return `USAGE:
+sbx up
+
+DESCRIPTION:
+spin up an orchestra sandbox.`,
+		nil
 }

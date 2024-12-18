@@ -14,7 +14,7 @@ import (
 const maxStep = 2
 const sandbox = "sandbox-"
 
-func Run() (string, error) {
+func Run(_ []string) (string, error) {
 	return Name()
 }
 

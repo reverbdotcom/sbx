@@ -14,7 +14,7 @@ func TestRun(t *testing.T) {
 			return "nn-sbx-1234", nil
 		}
 
-		got, err := Run()
+		got, err := Run([]string{})
 		want := "sandbox-blake-julian-kevin"
 
 		if err != nil {
