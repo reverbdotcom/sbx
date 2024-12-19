@@ -3,27 +3,23 @@ package summary
 import (
 	"fmt"
 	"github.com/reverbdotcom/sbx/commit"
-	"github.com/reverbdotcom/sbx/dash"
-	"github.com/reverbdotcom/sbx/graphiql"
-	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 	"github.com/reverbdotcom/sbx/web"
 )
 
 const summary = `»»»
-Name:       %s
-SHA:        %s
-
-Deploy:     %s
-Dash:       %s
-Logs:       %s
-
-Host:       %s
-Graphiql:   %s
+Name:           %s
+SHA:            %s
+Host:           %s
 
 »»»
-View deployment, run: 'sbx p'
+Site:           sbx w | sbx web
+Graphiql:       sbx g | sbx graphiql
+
+Dash:           sbx d | sbx dash
+Logs:           sbx l | sbx logs
+Deployment:     sbx p | sbx progress
 `
 
 func Run() (string, error) {
@@ -50,18 +46,9 @@ func Print(name string) error {
 
 var htmlUrl = run.HtmlUrl
 var headSHA = commit.HeadSHA
-var dashUrl = dash.Url
-var logsUrl = logs.Url
 var webUrl = web.Url
-var graphiqlUrl = graphiql.Url
 
 func printSummary(name string) (string, error) {
-	deployUrl, err := htmlUrl()
-
-	if err != nil {
-		return "", err
-	}
-
 	sha, err := headSHA()
 
 	if err != nil {
@@ -72,10 +59,6 @@ func printSummary(name string) (string, error) {
 		summary,
 		name,
 		sha,
-		deployUrl,
-		dashUrl(),
-		logsUrl(),
 		webUrl(),
-		graphiqlUrl(),
 	), nil
 }
