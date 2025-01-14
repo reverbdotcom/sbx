@@ -22,26 +22,29 @@ COMMANDS
       graphiql
       version
       info
+      progress
+      headlamp
 
 DESCRIPTION
 
   command     shorthand     description
 
-  help        h             show the help message.
-  up          u             spin up an orchestra sandbox.
-  down                      tear down an orchestra sandbox.
-  name        n             show the sandbox name.
-  dash        d             open the dashboard in a browser.
-  logs        l             open the logs in a browser.
-  web         w             open the site in a browser.
-  graphiql    g             open graphql user interface in a browser.
-  version     v             show the version of the sbx cli.
-  info        i             show the summary of the sandbox.
+  help                      shows the help message.
+  up          u             spins up an orchestra sandbox.
+  down                      tears down an orchestra sandbox.
+  name        n             shows the sandbox name.
+  dash        d             opens the dashboard in a browser.
+  logs        l             opens the logs in a browser.
+  web         w             opens the site in a browser.
+  graphiql    g             opens graphql user interface in a browser.
+  version     v             shows the version of the sbx cli.
+  info        i             shows the summary of the sandbox.
+  progress    p             opens deployment progress in a browser.
+  headlamp    h             opens headlamp ( kubernetes dashboard ) in a browser.
 
 USAGE:
-
+  sbx <command> [flags]
   sbx up
-  sbx name
 ```
 
 

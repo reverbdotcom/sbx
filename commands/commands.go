@@ -30,6 +30,7 @@ COMMANDS
       version
       info
       progress
+      headlamp
 
 DESCRIPTION
 
@@ -49,9 +50,8 @@ DESCRIPTION
   headlamp    h             opens headlamp ( kubernetes dashboard ) in a browser.
 
 USAGE:
-
+  sbx <command> [flags]
   sbx up
-  sbx name
 `
 
 func help() (string, error) {
