@@ -5,9 +5,9 @@ import (
 	"github.com/reverbdotcom/sbx/commit"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
-	"github.com/reverbdotcom/sbx/web"
 )
 
+const template = "https://%s.int.orchestra.rvb.ai/"
 const summary = `»»»
 Name:           %s
 SHA:            %s
@@ -17,13 +17,16 @@ Host:           %s
 Site:           sbx w | sbx web
 Graphiql:       sbx g | sbx graphiql
 
+Headlamp:       sbx h | sbx headlamp
 Dash:           sbx d | sbx dash
 Logs:           sbx l | sbx logs
 Deployment:     sbx p | sbx progress
 `
 
+var nameFn = name.Name
+
 func Run() (string, error) {
-	name, err := name.Name()
+	name, err := nameFn()
 
 	if err != nil {
 		return "", err
@@ -46,7 +49,6 @@ func Print(name string) error {
 
 var htmlUrl = run.HtmlUrl
 var headSHA = commit.HeadSHA
-var webUrl = web.Url
 
 func printSummary(name string) (string, error) {
 	sha, err := headSHA()
@@ -59,6 +61,11 @@ func printSummary(name string) (string, error) {
 		summary,
 		name,
 		sha,
-		webUrl(),
+		url(),
 	), nil
+}
+
+func url() string {
+	name, _ := nameFn()
+	return fmt.Sprintf(template, name)
 }

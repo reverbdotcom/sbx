@@ -6,20 +6,6 @@ import (
 	"testing"
 )
 
-func TestUrl(t *testing.T) {
-	name := "sandbox-foo-bar-baz"
-	nameFn = func() (string, error) { return name, nil }
-
-	t.Run("it returns url", func(t *testing.T) {
-		got := Url()
-		want := fmt.Sprintf(template, name)
-
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
-	})
-}
-
 func TestOpen(t *testing.T) {
 	name := "sandbox-foo-bar-baz"
 	nameFn = func() (string, error) { return name, nil }
@@ -108,6 +94,42 @@ func TestOpenProgress(t *testing.T) {
 		_, err := OpenProgress()
 
 		want := "openURL error"
+		if err.Error() != want {
+			t.Errorf("got %v, want %v", err, want)
+		}
+	})
+}
+
+func TestOpenHeadlamp(t *testing.T) {
+	name := "sandbox-foo-bar-baz"
+	nameFn = func() (string, error) { return name, nil }
+
+	t.Run("it opens url", func(t *testing.T) {
+		want := fmt.Sprintf(headlampTemplate, name)
+
+		openURL = func(got string) error {
+			if got != want {
+				t.Errorf("got %v, want %v", got, want)
+			}
+
+			return nil
+		}
+
+		_, err := OpenHeadlamp()
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+	})
+
+	t.Run("it returns err", func(t *testing.T) {
+		openURL = func(_ string) error {
+			return errors.New("open error")
+		}
+
+		_, err := OpenHeadlamp()
+
+		want := "open error"
 		if err.Error() != want {
 			t.Errorf("got %v, want %v", err, want)
 		}
