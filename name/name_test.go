@@ -9,8 +9,8 @@ func TestRun(t *testing.T) {
 		return []string{"blake", "julian", "kevin"}, nil
 	}
 
-	duration = func() (string, error) {
-		return "", nil
+	getenv = func(key string) (string) {
+		return ""
 	}
 
 	Branch = func() (string, error) {
@@ -31,8 +31,8 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it includes duration when set", func(t *testing.T) {
-		duration = func() (string, error) {
-			return "5h", nil
+		getenv = func(key string) (string) {
+			return "5h"
 		}
 
 		got, err := Run()
@@ -53,8 +53,8 @@ func TestProperNames(t *testing.T) {
 		return []string{"blake", "julian", "kevin", "a", "super-long-name-that-does-not-fit"}, nil
 	}
 
-	duration = func() (string, error) {
-		return "", nil
+	getenv = func(key string) (string) {
+		return ""
 	}
 
 	t.Run("it should be longer than 2 and less than 13", func(t *testing.T) {
@@ -81,8 +81,8 @@ func TestName(t *testing.T) {
 		return []string{"blake", "julian", "kevin"}, nil
 	}
 
-	duration = func() (string, error) {
-		return "", nil
+	getenv = func(key string) (string) {
+		return ""
 	}
 
 	t.Run("it generates a sandbox name", func(t *testing.T) {

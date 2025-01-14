@@ -11,8 +11,9 @@ import (
 const format = "%-20s%-20s%-120s\n"
 const durationTooLong = 8 * time.Hour
 
+const DURATION = "DURATION"
 var allowlist = map[string]string{
-	"DURATION": "how long sandboxes live for",
+	DURATION: "how long sandboxes live for",
 }
 
 var warning = errr.Warning
@@ -33,27 +34,29 @@ func Run() (string, error) {
 	return output, nil
 }
 
+func Verify() (error) {
+	fmtErr := func(msg string) error {
+		return fmt.Errorf("invalid env, please fix the following issue: %s", msg)
+	}
+
+	dur := Getenv(DURATION)
+	if dur != "" {
+		parsed, err := time.ParseDuration(dur)
+		if err != nil {
+			return fmtErr(fmt.Sprintf("%s is an invalid duration", dur))
+		}
+
+		if parsed > durationTooLong {
+			warning(fmt.Sprintf("%s is a long duration! this is okay on occassion, but consider lowering it", dur))
+		}
+	}
+
+	return nil
+}
+
 var Getenv = _getenv
 func _getenv(key string) string {
 	return readenv()[key]
-}
-
-func Duration() (string, error) {
-	dur := Getenv("DURATION")
-	if dur == "" {
-		return dur, nil
-	}
-
-	parsed, err := time.ParseDuration(dur)
-	if err != nil {
-		return "", fmt.Errorf("invalid duration: %s", dur)
-	}
-
-	if parsed > durationTooLong {
-		warning(fmt.Sprintf("%s is a long duration! this is okay on occassion, but consider lowering it", dur))
-	}
-
-	return dur, nil
 }
 
 func readenv() map[string]string {
@@ -62,7 +65,6 @@ func readenv() map[string]string {
 	var err error
 	env, err := godotenv.Read(filepath)
 	if err != nil {
-		errr.Warning(fmt.Sprintf("could not open %s, defaulting to blank env", filepath))
 		env = make(map[string]string)
 	}
 

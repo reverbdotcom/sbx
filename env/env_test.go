@@ -4,38 +4,29 @@ import (
 	"testing"
 )
 
-func TestDuration(t *testing.T) {
-	t.Run("it returns duration if set", func(t *testing.T) {
-		Getenv = func(key string) string {
-			return "5h"
-		}
-
-		got, err := Duration()
-		want := "5h"
-
-		if err != nil {
-			t.Errorf("got %v, want nil", err)
-		}
-
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
-	})
-
+func TestVerify(t *testing.T) {
 	t.Run("it errs if duration is invalid", func(t *testing.T) {
 		Getenv = func(key string) string {
-			return "invalid"
+			if (key == DURATION) {
+				return "invalid"
+			}
+
+			return ""
 		}
 
-		_, err := Duration()
+		err := Verify()
 		if err == nil {
 			t.Errorf("got nil, want error")
 		}
 	})
 
-	t.Run("warns when duration is too long", func(t *testing.T) {
+	t.Run("it warns when duration is too long", func(t *testing.T) {
 		Getenv = func(key string) string {
-			return "10h"
+			if (key == DURATION) {
+				return "10h"
+			}
+
+			return ""
 		}
 
 		warned := false
@@ -43,7 +34,7 @@ func TestDuration(t *testing.T) {
 			warned = true
 		}
 
-		_, _ = Duration()
+		_ = Verify()
 		if !warned {
 			t.Error("got no warning, want warning about duration being too long")
 		}
