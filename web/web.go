@@ -8,7 +8,7 @@ import (
 )
 
 const template = "https://%s.int.orchestra.rvb.ai/"
-const headlampTemplate = "https://headlamp.int.preprod.reverb.rvb.ai/c/main/deployments?namespace=%s"
+const headlampTemplate = "https://headlamp.preprod.reverb.tools/c/main/deployments?namespace=%s"
 
 var openURL = open.Open
 
