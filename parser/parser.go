@@ -37,6 +37,7 @@ func cmdfn(command string) (*commands.RunFn, error) {
 		"h",
 		"version",
 		"v",
+		"env",
 	}
 
 	if !slices.Contains(general, command) {

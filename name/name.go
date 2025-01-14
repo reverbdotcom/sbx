@@ -9,10 +9,13 @@ import (
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
+	"github.com/reverbdotcom/sbx/env"
 )
 
 const maxStep = 2
 const sandbox = "sandbox-"
+
+var getenv = env.Getenv
 
 func Run() (string, error) {
 	return Name()
@@ -110,8 +113,17 @@ func hash(name string, step int) (string, error) {
 	return strings.ToLower(words[index]), nil
 }
 
-func prefix(name string) string {
-	return sandbox + name
+func prefix(name string) (string) {
+	return sandbox + duration() + name
+}
+
+func duration() (string) {
+	dur := getenv(env.DURATION)
+	if dur == "" {
+		return dur
+	}
+
+	return fmt.Sprintf("%s-", dur)
 }
 
 func properNames() ([]string, error) {

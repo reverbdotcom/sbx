@@ -10,6 +10,7 @@ import (
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
 	"github.com/reverbdotcom/sbx/web"
+	"github.com/reverbdotcom/sbx/env"
 )
 
 type RunFn func() (string, error)
@@ -31,6 +32,7 @@ COMMANDS
       info
       progress
       headlamp
+      env
 
 DESCRIPTION
 
@@ -47,6 +49,7 @@ DESCRIPTION
   version     v             shows the version of the sbx cli.
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
+  env         e             shows the configured environment variables for sbx.
   headlamp    h             opens headlamp ( kubernetes dashboard ) in a browser.
 
 USAGE:
@@ -82,5 +85,7 @@ func Commands() map[string]RunFn {
 		"i":        summary.Run,
 		"headlamp": web.OpenHeadlamp,
 		"h":        web.OpenHeadlamp,
+		"env":      env.Run,
+		"e":        env.Run,
 	}
 }

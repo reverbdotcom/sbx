@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/reverbdotcom/sbx/env"
 	"github.com/reverbdotcom/sbx/errr"
 	"github.com/reverbdotcom/sbx/parser"
 )
 
 func main() {
+	err := env.Verify()
+	onError(err)
+
 	cmdfn, err := parser.Parse(os.Args)
 	onError(err)
 
