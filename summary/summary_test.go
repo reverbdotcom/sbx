@@ -6,6 +6,8 @@ import (
 )
 
 func TestPrint(t *testing.T) {
+	nameFn = func() (string, error) { return "sandbox-lorraine-francisco-jonathan", nil }
+
 	t.Run("it prints the summary", func(t *testing.T) {
 		name := "sandbox-blake-julian-kevin"
 

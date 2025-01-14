@@ -23,8 +23,10 @@ Logs:           sbx l | sbx logs
 Deployment:     sbx p | sbx progress
 `
 
+var nameFn = name.Name
+
 func Run() (string, error) {
-	name, err := name.Name()
+	name, err := nameFn()
 
 	if err != nil {
 		return "", err
@@ -64,6 +66,6 @@ func printSummary(name string) (string, error) {
 }
 
 func url() string {
-	name, _ := name.Name()
+	name, _ := nameFn()
 	return fmt.Sprintf(template, name)
 }
