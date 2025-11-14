@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/down"
+	"github.com/reverbdotcom/sbx/env"
 	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
@@ -10,7 +11,6 @@ import (
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
 	"github.com/reverbdotcom/sbx/web"
-	"github.com/reverbdotcom/sbx/env"
 )
 
 type RunFn func() (string, error)

@@ -1,17 +1,18 @@
 package env
 
 import (
-	"os"
 	"fmt"
-	"time"
 	"github.com/joho/godotenv"
 	"github.com/reverbdotcom/sbx/errr"
+	"os"
+	"time"
 )
 
 const format = "%-20s%-20s%-120s\n"
 const durationTooLong = 8 * time.Hour
 
 const DURATION = "DURATION"
+
 var allowlist = map[string]string{
 	DURATION: "how long sandboxes live for",
 }
@@ -34,7 +35,7 @@ func Run() (string, error) {
 	return output, nil
 }
 
-func Verify() (error) {
+func Verify() error {
 	fmtErr := func(msg string) error {
 		return fmt.Errorf("invalid env, please fix the following issue: %s", msg)
 	}
@@ -55,6 +56,7 @@ func Verify() (error) {
 }
 
 var Getenv = _getenv
+
 func _getenv(key string) string {
 	return readenv()[key]
 }
