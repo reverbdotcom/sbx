@@ -71,10 +71,9 @@ func TestParse(t *testing.T) {
 		}
 	})
 
-	t.Run("it does not err on non orchestra for genereal command", func(t *testing.T) {
+	t.Run("it does not err on non orchestra for general command", func(t *testing.T) {
 		general := []string{
 			"help",
-			"h",
 			"version",
 			"v",
 		}

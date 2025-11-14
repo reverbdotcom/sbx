@@ -23,7 +23,6 @@ COMMANDS
       version
       info
       progress
-      headlamp
 
 DESCRIPTION
 
@@ -40,7 +39,6 @@ DESCRIPTION
   version     v             shows the version of the sbx cli.
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
-  headlamp    h             opens headlamp ( kubernetes dashboard ) in a browser.
 
 USAGE:
   sbx <command> [flags]

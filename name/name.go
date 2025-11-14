@@ -113,11 +113,11 @@ func hash(name string, step int) (string, error) {
 	return strings.ToLower(words[index]), nil
 }
 
-func prefix(name string) (string) {
+func prefix(name string) string {
 	return sandbox + duration() + name
 }
 
-func duration() (string) {
+func duration() string {
 	dur := getenv(env.DURATION)
 	if dur == "" {
 		return dur

@@ -9,7 +9,7 @@ func TestRun(t *testing.T) {
 		return []string{"blake", "julian", "kevin"}, nil
 	}
 
-	getenv = func(key string) (string) {
+	getenv = func(key string) string {
 		return ""
 	}
 
@@ -31,7 +31,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it includes duration when set", func(t *testing.T) {
-		getenv = func(key string) (string) {
+		getenv = func(key string) string {
 			return "5h"
 		}
 
@@ -53,7 +53,7 @@ func TestProperNames(t *testing.T) {
 		return []string{"blake", "julian", "kevin", "a", "super-long-name-that-does-not-fit"}, nil
 	}
 
-	getenv = func(key string) (string) {
+	getenv = func(key string) string {
 		return ""
 	}
 
@@ -81,7 +81,7 @@ func TestName(t *testing.T) {
 		return []string{"blake", "julian", "kevin"}, nil
 	}
 
-	getenv = func(key string) (string) {
+	getenv = func(key string) string {
 		return ""
 	}
 

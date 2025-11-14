@@ -8,7 +8,6 @@ import (
 )
 
 const template = "https://%s.int.orchestra.rvb.ai/"
-const headlampTemplate = "https://headlamp.preprod.reverb.tools/c/main/deployments?namespace=%s"
 
 var openURL = open.Open
 
@@ -41,15 +40,3 @@ func OpenProgress() (string, error) {
 }
 
 var nameFn = name.Name
-
-func OpenHeadlamp() (string, error) {
-	name, _ := nameFn()
-	url := fmt.Sprintf(headlampTemplate, name)
-	err := openURL(url)
-
-	if err != nil {
-		return "", err
-	}
-
-	return "", nil
-}

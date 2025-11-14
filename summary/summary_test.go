@@ -27,7 +27,6 @@ Host:           https://sandbox-lorraine-francisco-jonathan.int.orchestra.rvb.ai
 Site:           sbx w | sbx web
 Graphiql:       sbx g | sbx graphiql
 
-Headlamp:       sbx h | sbx headlamp
 Dash:           sbx d | sbx dash
 Logs:           sbx l | sbx logs
 Deployment:     sbx p | sbx progress

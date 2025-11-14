@@ -7,7 +7,7 @@ import (
 func TestVerify(t *testing.T) {
 	t.Run("it errs if duration is invalid", func(t *testing.T) {
 		Getenv = func(key string) string {
-			if (key == DURATION) {
+			if key == DURATION {
 				return "invalid"
 			}
 
@@ -22,7 +22,7 @@ func TestVerify(t *testing.T) {
 
 	t.Run("it warns when duration is too long", func(t *testing.T) {
 		Getenv = func(key string) string {
-			if (key == DURATION) {
+			if key == DURATION {
 				return "10h"
 			}
 
