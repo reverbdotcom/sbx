@@ -31,7 +31,6 @@ COMMANDS
       version
       info
       progress
-      headlamp
       env
 
 DESCRIPTION
@@ -50,7 +49,6 @@ DESCRIPTION
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
   env         e             shows the configured environment variables for sbx.
-  headlamp    h             opens headlamp ( kubernetes dashboard ) in a browser.
 
 USAGE:
   sbx <command> [flags]
@@ -83,8 +81,6 @@ func Commands() map[string]RunFn {
 		"l":        logs.Run,
 		"info":     summary.Run,
 		"i":        summary.Run,
-		"headlamp": web.OpenHeadlamp,
-		"h":        web.OpenHeadlamp,
 		"env":      env.Run,
 		"e":        env.Run,
 	}
