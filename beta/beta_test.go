@@ -269,7 +269,7 @@ func TestRun(t *testing.T) {
 		return "", nil
 	}
 
-	sleep = func() {}
+	sleep = func(_ int) {}
 
 	t.Run("it successfully deploys four repos", func(t *testing.T) {
 		wants := []cli.MockCall{
@@ -337,8 +337,8 @@ func TestRun(t *testing.T) {
 			t.Errorf("got %v, want nil", err)
 		}
 
-		if out != "beta sandbox successfully deployed" {
-			t.Errorf("got %v, want beta sandbox successfully deployed", out)
+		if out != "beta sandbox deploy triggered; monitor each deploy for completion" {
+			t.Errorf("got %v, want beta sandbox deploy triggered; monitor each deploy for completion", out)
 		}
 	})
 
@@ -418,8 +418,8 @@ func TestRun(t *testing.T) {
 			t.Errorf("got %v, want nil", err)
 		}
 
-		if out != "beta sandbox successfully deployed" {
-			t.Errorf("got %v, want beta sandbox successfully deployed", out)
+		if out != "beta sandbox deploy triggered; monitor each deploy for completion" {
+			t.Errorf("got %v, want beta sandbox deploy triggered; monitor each deploy for completion", out)
 		}
 	})
 }

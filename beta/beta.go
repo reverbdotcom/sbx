@@ -107,7 +107,7 @@ func Run() (string, error) {
 		return "", fmt.Errorf("failed to change dir to %s: %w", home, err)
 	}
 
-	return "beta sandbox successfully deployed", nil
+	return "beta sandbox deploy triggered; monitor each deploy for completion", nil
 }
 
 func currentDir() (string, error) {
