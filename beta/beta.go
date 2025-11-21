@@ -90,6 +90,8 @@ func Run() (string, error) {
 		// 
 		// was getting multiple errors from flux patch step, three trying at once, so
 		// added in a shorter sleep for the other repos to try to avoid this
+		fmt.Println("waiting before continuing...")
+		fmt.Println()
 		if repo == "reverb" {
 			sleep(240)
 		} else {
