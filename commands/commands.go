@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/reverbdotcom/sbx/beta"
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/down"
 	"github.com/reverbdotcom/sbx/env"
@@ -32,6 +33,7 @@ COMMANDS
       info
       progress
       env
+      beta
 
 DESCRIPTION
 
@@ -49,6 +51,7 @@ DESCRIPTION
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
   env         e             shows the configured environment variables for sbx.
+  beta                      spins up an orchestra sandbox with an isolated data layer
 
 USAGE:
   sbx <command> [flags]
@@ -83,5 +86,6 @@ func Commands() map[string]RunFn {
 		"i":        summary.Run,
 		"env":      env.Run,
 		"e":        env.Run,
+		"beta":     beta.Run,
 	}
 }
