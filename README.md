@@ -40,7 +40,9 @@ DESCRIPTION
   version     v             shows the version of the sbx cli.
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
-  k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands.
+  k8s                       kubernetes resources explorer. Subcommands:
+                            login, ssh, pods, deployments, jobs, crons,
+                            services, ingresses, processes, containers
 
 USAGE:
   sbx <command> [flags]

@@ -54,7 +54,9 @@ DESCRIPTION
   progress    p             opens deployment progress in a browser.
   env         e             shows the configured environment variables for sbx.
   beta                      spins up an orchestra sandbox with an isolated data layer
-  k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands.
+  k8s                       kubernetes resources explorer. Subcommands:
+                            login, ssh, pods, deployments, jobs, crons,
+                            services, ingresses, processes, containers
 
 USAGE:
   sbx <command> [flags]
