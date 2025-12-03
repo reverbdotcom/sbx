@@ -14,6 +14,7 @@ import (
 	"github.com/reverbdotcom/sbx/pods"
 	"github.com/reverbdotcom/sbx/processes"
 	"github.com/reverbdotcom/sbx/services"
+	"github.com/reverbdotcom/sbx/ssh"
 )
 
 const template = "https://app.datadoghq.com/kubernetes?query=kube_namespace:%s%%20kube_cluster_name:preprod-v6"
@@ -24,6 +25,7 @@ const subcommandHelp = `USAGE:
   sbx k8s [subcommand]
 
 SUBCOMMANDS:
+  ssh           drops into a kubernetes pod container shell
   pods          opens the kubernetes pod view
   deployments   opens the kubernetes deployment view
   jobs          opens the kubernetes job view
@@ -39,6 +41,7 @@ If no subcommand is provided, opens the kubernetes cluster view.
 type SubcommandFn func() (string, error)
 
 var subcommands = map[string]SubcommandFn{
+	"ssh":         ssh.Run,
 	"pods":        pods.Run,
 	"deployments": deployments.Run,
 	"jobs":        jobs.Run,
