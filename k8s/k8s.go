@@ -1,7 +1,6 @@
 package k8s
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -69,7 +68,7 @@ func Run() (string, error) {
 			return fn()
 		}
 
-		return "", errors.New(fmt.Sprintf("unknown subcommand: %s\n\n%s", subcommand, subcommandHelp))
+		return "", fmt.Errorf("unknown subcommand: %s\n\n%s", subcommand, subcommandHelp)
 	}
 
 	// Default behavior: open cluster view
