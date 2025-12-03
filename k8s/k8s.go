@@ -9,6 +9,7 @@ import (
 	"github.com/reverbdotcom/sbx/deployments"
 	"github.com/reverbdotcom/sbx/ingresses"
 	"github.com/reverbdotcom/sbx/jobs"
+	"github.com/reverbdotcom/sbx/login"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/open"
 	"github.com/reverbdotcom/sbx/pods"
@@ -25,6 +26,7 @@ const subcommandHelp = `USAGE:
   sbx k8s [subcommand]
 
 SUBCOMMANDS:
+  login         authenticates with AWS and switches to preprod kubernetes context
   ssh           drops into a kubernetes pod container shell
   pods          opens the kubernetes pod view
   deployments   opens the kubernetes deployment view
@@ -41,6 +43,7 @@ If no subcommand is provided, opens the kubernetes cluster view.
 type SubcommandFn func() (string, error)
 
 var subcommands = map[string]SubcommandFn{
+	"login":       login.Run,
 	"ssh":         ssh.Run,
 	"pods":        pods.Run,
 	"deployments": deployments.Run,
