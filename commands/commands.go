@@ -6,9 +6,9 @@ import (
 	"github.com/reverbdotcom/sbx/down"
 	"github.com/reverbdotcom/sbx/env"
 	"github.com/reverbdotcom/sbx/graphiql"
+	"github.com/reverbdotcom/sbx/k8s"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
-	"github.com/reverbdotcom/sbx/pods"
 	"github.com/reverbdotcom/sbx/ssh"
 	"github.com/reverbdotcom/sbx/summary"
 	"github.com/reverbdotcom/sbx/up"
@@ -36,8 +36,8 @@ COMMANDS
       progress
       env
       beta
-      pods
       ssh
+      k8s
 
 DESCRIPTION
 
@@ -56,8 +56,8 @@ DESCRIPTION
   progress    p             opens deployment progress in a browser.
   env         e             shows the configured environment variables for sbx.
   beta                      spins up an orchestra sandbox with an isolated data layer
-  pods                      opens the kubernetes pod view in a browser.
   ssh                       drops into a kubernetes pod container shell.
+  k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands.
 
 USAGE:
   sbx <command> [flags]
@@ -93,7 +93,7 @@ func Commands() map[string]RunFn {
 		"env":      env.Run,
 		"e":        env.Run,
 		"beta":     beta.Run,
-		"pods":     pods.Run,
 		"ssh":      ssh.Run,
+		"k8s":      k8s.Run,
 	}
 }
