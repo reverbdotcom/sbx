@@ -3,6 +3,7 @@ package k8s
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -87,7 +88,7 @@ func TestRun(t *testing.T) {
 		}
 
 		expectedErr := "unknown subcommand: unknown"
-		if !contains(err.Error(), expectedErr) {
+		if !strings.Contains(err.Error(), expectedErr) {
 			t.Errorf("expected error to contain '%s', got %v", expectedErr, err.Error())
 		}
 	})
@@ -123,21 +124,4 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected 'login called', got %v", result)
 		}
 	})
-}
-
-// Helper function to check if a string contains a substring
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && containsHelper(s, substr)
-}
-
-func containsHelper(s, substr string) bool {
-	if len(substr) == 0 {
-		return true
-	}
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }

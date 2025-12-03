@@ -2,6 +2,7 @@ package login
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/reverbdotcom/sbx/cli"
@@ -109,7 +110,7 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected error, got nil")
 		}
 
-		if !containsString(err.Error(), "failed to get AWS account ID") {
+		if !strings.Contains(err.Error(), "failed to get AWS account ID") {
 			t.Errorf("expected error message to contain 'failed to get AWS account ID', got %v", err.Error())
 		}
 	})
@@ -132,7 +133,7 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected error, got nil")
 		}
 
-		if !containsString(err.Error(), "failed to switch to kubernetes context") {
+		if !strings.Contains(err.Error(), "failed to switch to kubernetes context") {
 			t.Errorf("expected error message to contain 'failed to switch to kubernetes context', got %v", err.Error())
 		}
 	})
@@ -181,7 +182,7 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected error, got nil")
 		}
 
-		if !containsString(err.Error(), "aws CLI is required") {
+		if !strings.Contains(err.Error(), "aws CLI is required") {
 			t.Errorf("expected error message to contain 'aws CLI is required', got %v", err.Error())
 		}
 	})
@@ -201,7 +202,7 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected error, got nil")
 		}
 
-		if !containsString(err.Error(), "kubectx is required") {
+		if !strings.Contains(err.Error(), "kubectx is required") {
 			t.Errorf("expected error message to contain 'kubectx is required', got %v", err.Error())
 		}
 	})
@@ -228,7 +229,7 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected error, got nil")
 		}
 
-		if !containsString(err.Error(), "aws sso login failed") {
+		if !strings.Contains(err.Error(), "aws sso login failed") {
 			t.Errorf("expected error message to contain 'aws sso login failed', got %v", err.Error())
 		}
 	})
@@ -251,18 +252,4 @@ func TestCheckCommand(t *testing.T) {
 			t.Errorf("expected error for non-existent command, got nil")
 		}
 	})
-}
-
-// Helper function to check if a string contains a substring
-func containsString(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(s) > len(substr) && containsSubstring(s, substr))
-}
-
-func containsSubstring(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }
