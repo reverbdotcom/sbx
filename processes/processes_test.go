@@ -1,4 +1,4 @@
-package k8s
+package processes
 
 import (
 	"errors"
@@ -25,9 +25,6 @@ func TestRun(t *testing.T) {
 	nameFn = func() (string, error) { return name, nil }
 
 	t.Run("it opens url", func(t *testing.T) {
-		// Mock getArgs to return no subcommand
-		getArgs = func() []string { return []string{"sbx", "k8s"} }
-
 		want := fmt.Sprintf(template, name)
 
 		openURL = func(got string) error {
@@ -46,9 +43,6 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it returns err", func(t *testing.T) {
-		// Mock getArgs to return no subcommand
-		getArgs = func() []string { return []string{"sbx", "k8s"} }
-
 		openURL = func(_ string) error {
 			return errors.New("open error")
 		}
