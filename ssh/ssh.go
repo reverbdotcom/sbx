@@ -92,7 +92,7 @@ func Run() (string, error) {
 func getDeployments(namespace string) ([]string, error) {
 	out, err := cmdFn("kubectl", "get", "deployments", "-n", namespace, "-o", "jsonpath={.items[*].metadata.name}")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("kubectl error: %s: %w", out, err)
 	}
 
 	deployments := strings.Fields(strings.TrimSpace(out))
@@ -103,7 +103,7 @@ func getPods(namespace, deployment string) ([]string, error) {
 	// First get the deployment's selector
 	selectorOut, err := cmdFn("kubectl", "get", "deployment", deployment, "-n", namespace, "-o", "jsonpath={.spec.selector.matchLabels}")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("kubectl error: %s: %w", selectorOut, err)
 	}
 
 	// If the selector is empty or we can't parse it, fallback to a simple label selector
@@ -111,7 +111,7 @@ func getPods(namespace, deployment string) ([]string, error) {
 		// Try with common label patterns
 		out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", fmt.Sprintf("app=%s", deployment), "-o", "jsonpath={.items[*].metadata.name}")
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("kubectl error: %s: %w", out, err)
 		}
 		pods := strings.Fields(strings.TrimSpace(out))
 		return pods, nil
@@ -124,7 +124,7 @@ func getPods(namespace, deployment string) ([]string, error) {
 
 	out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", selector, "-o", "jsonpath={.items[*].metadata.name}")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("kubectl error: %s: %w", out, err)
 	}
 
 	pods := strings.Fields(strings.TrimSpace(out))
@@ -153,7 +153,7 @@ func parseSelector(selectorJSON string) string {
 func getContainers(namespace, pod string) ([]string, error) {
 	out, err := cmdFn("kubectl", "get", "pod", pod, "-n", namespace, "-o", "jsonpath={.spec.containers[*].name}")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("kubectl error: %s: %w", out, err)
 	}
 
 	containers := strings.Fields(strings.TrimSpace(out))
@@ -164,6 +164,7 @@ func selectItem(label string, items []string) (string, error) {
 	prompt := promptui.Select{
 		Label: label,
 		Items: items,
+		Size:  50,
 	}
 
 	_, result, err := prompt.Run()
