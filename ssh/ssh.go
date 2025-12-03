@@ -225,8 +225,9 @@ func selectItem(label string, items []string) (string, error) {
 
 func _execIntoContainer(namespace, pod, container string) (string, error) {
 	// Command to check if /etc/secrets/env exists and source it, then start an interactive shell
+	// Using /bin/sh to run the conditional sourcing, then exec into the desired shell
 	shellCmd := "[ -f /etc/secrets/env ] && . /etc/secrets/env; exec " + defaultShell
-	cmd := exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", defaultShell, "-c", shellCmd)
+	cmd := exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", "/bin/sh", "-c", shellCmd)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -235,7 +236,7 @@ func _execIntoContainer(namespace, pod, container string) (string, error) {
 	if err != nil {
 		// Try fallback shell if default shell fails
 		shellCmd = "[ -f /etc/secrets/env ] && . /etc/secrets/env; exec " + fallbackShell
-		cmd = exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", fallbackShell, "-c", shellCmd)
+		cmd = exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", "/bin/sh", "-c", shellCmd)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
