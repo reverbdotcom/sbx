@@ -280,6 +280,21 @@ func TestParseSelector(t *testing.T) {
 			input:    "map[]",
 			expected: "",
 		},
+		{
+			name:     "label with dots",
+			input:    `map["reverb.com/deployment":"graphql-gateway"]`,
+			expected: "reverb.com/deployment=graphql-gateway",
+		},
+		{
+			name:     "multiple labels with special characters",
+			input:    `map["reverb.com/deployment":"graphql-gateway" "app":"web"]`,
+			expected: "reverb.com/deployment=graphql-gateway,app=web",
+		},
+		{
+			name:     "mixed labels with and without quotes",
+			input:    `map["reverb.com/deployment":"graphql-gateway" version:v1]`,
+			expected: "reverb.com/deployment=graphql-gateway,version=v1",
+		},
 	}
 
 	for _, tt := range tests {

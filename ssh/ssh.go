@@ -133,15 +133,33 @@ func getPods(namespace, deployment string) ([]string, error) {
 
 func parseSelector(selectorJSON string) string {
 	// Simple parsing of kubectl jsonpath output for matchLabels
-	// Input format: map[app:myapp version:v1]
-	// Output format: app=myapp,version=v1
+	// Input format can be:
+	//   map[app:myapp version:v1]
+	//   map["reverb.com/deployment":"graphql-gateway"]
+	// Output format: app=myapp,version=v1 or reverb.com/deployment=graphql-gateway
 
 	// Remove "map[" prefix and "]" suffix
 	selectorJSON = strings.TrimSpace(selectorJSON)
 	selectorJSON = strings.TrimPrefix(selectorJSON, "map[")
 	selectorJSON = strings.TrimSuffix(selectorJSON, "]")
 
-	// Split by space and convert key:value to key=value
+	// Handle labels with special characters (quoted format)
+	// Example: "reverb.com/deployment":"graphql-gateway" "app":"web"
+	if strings.Contains(selectorJSON, "\"") {
+		// Split by space to get individual key:value pairs
+		pairs := strings.Fields(selectorJSON)
+		result := []string{}
+		for _, pair := range pairs {
+			// Remove quotes and convert : to =
+			pair = strings.ReplaceAll(pair, "\"", "")
+			pair = strings.Replace(pair, ":", "=", 1)
+			result = append(result, pair)
+		}
+		return strings.Join(result, ",")
+	}
+
+	// Handle simple labels without special characters
+	// Example: app:myapp version:v1
 	pairs := strings.Fields(selectorJSON)
 	for i, pair := range pairs {
 		pairs[i] = strings.Replace(pair, ":", "=", 1)
