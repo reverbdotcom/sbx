@@ -8,6 +8,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/reverbdotcom/sbx/cli"
+	"github.com/reverbdotcom/sbx/login"
 	"github.com/reverbdotcom/sbx/name"
 )
 
@@ -15,6 +16,8 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 var execIntoContainer = _execIntoContainer
 var selectItemFn = selectItem
+var checkClusterAccessFn = checkClusterAccess
+var loginFn = login.Run
 
 const (
 	defaultShell  = "/bin/sh"
@@ -22,6 +25,11 @@ const (
 )
 
 func Run() (string, error) {
+	// Check if kubectl can connect to the cluster
+	if err := checkClusterAccessFn(); err != nil {
+		return "", err
+	}
+
 	namespace, err := nameFn()
 	if err != nil {
 		return "", fmt.Errorf("failed to get namespace: %w", err)
@@ -243,4 +251,45 @@ func _execIntoContainer(namespace, pod, container string) (string, error) {
 	}
 
 	return "", nil
+}
+
+// checkClusterAccess checks if kubectl can connect to the preprod cluster
+// If not authenticated, it automatically runs sbx k8s login
+func checkClusterAccess() error {
+	out, err := cmdFn("kubectl", "version")
+	if err != nil {
+		// Check if the error is due to SSO token or connection issues
+		if strings.Contains(out, "Error loading SSO Token") ||
+			strings.Contains(out, "Unable to connect to the server") ||
+			strings.Contains(out, "getting credentials") {
+			return attemptAutoLogin()
+		}
+		return fmt.Errorf("kubectl version check failed: %s: %w", out, err)
+	}
+
+	// Verify that Server Version is present in the output
+	if !strings.Contains(out, "Server Version") {
+		return attemptAutoLogin()
+	}
+
+	return nil
+}
+
+// attemptAutoLogin attempts to authenticate and verify connection
+func attemptAutoLogin() error {
+	fmt.Println("kubectl cannot connect to preprod cluster. Running 'sbx k8s login'...")
+
+	// Attempt to login
+	_, loginErr := loginFn()
+	if loginErr != nil {
+		return fmt.Errorf("failed to authenticate: %w", loginErr)
+	}
+
+	// Verify connection after login
+	out, err := cmdFn("kubectl", "version")
+	if err != nil || !strings.Contains(out, "Server Version") {
+		return fmt.Errorf("kubectl still cannot connect to preprod cluster after login")
+	}
+
+	return nil
 }
