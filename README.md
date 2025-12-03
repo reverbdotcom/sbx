@@ -23,6 +23,7 @@ COMMANDS
       version
       info
       progress
+      pods
 
 DESCRIPTION
 
@@ -39,6 +40,7 @@ DESCRIPTION
   version     v             shows the version of the sbx cli.
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
+  pods                      opens the kubernetes pod view in a browser.
 
 USAGE:
   sbx <command> [flags]
