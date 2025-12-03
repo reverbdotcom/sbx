@@ -60,4 +60,84 @@ func TestRun(t *testing.T) {
 			t.Errorf("got %v, want %v", err, want)
 		}
 	})
+
+	t.Run("it returns help text", func(t *testing.T) {
+		// Mock getArgs to return help subcommand
+		getArgs = func() []string { return []string{"sbx", "k8s", "help"} }
+
+		result, err := Run()
+
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		if result != subcommandHelp {
+			t.Errorf("expected help text, got %v", result)
+		}
+	})
+
+	t.Run("it returns error for unknown subcommand", func(t *testing.T) {
+		// Mock getArgs to return unknown subcommand
+		getArgs = func() []string { return []string{"sbx", "k8s", "unknown"} }
+
+		_, err := Run()
+
+		if err == nil {
+			t.Errorf("expected error for unknown subcommand")
+		}
+
+		expectedErr := "unknown subcommand: unknown"
+		if !contains(err.Error(), expectedErr) {
+			t.Errorf("expected error to contain '%s', got %v", expectedErr, err.Error())
+		}
+	})
+
+	t.Run("it calls login subcommand", func(t *testing.T) {
+		// Mock getArgs to return login subcommand
+		getArgs = func() []string { return []string{"sbx", "k8s", "login"} }
+
+		// We need to ensure this calls the login.Run function
+		// Since login.Run requires actual commands, this would fail in tests
+		// but we can at least verify the subcommand is registered
+		loginCalled := false
+		originalLogin := subcommands["login"]
+		subcommands["login"] = func() (string, error) {
+			loginCalled = true
+			return "login called", nil
+		}
+		defer func() {
+			subcommands["login"] = originalLogin
+		}()
+
+		result, err := Run()
+
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		if !loginCalled {
+			t.Errorf("expected login subcommand to be called")
+		}
+
+		if result != "login called" {
+			t.Errorf("expected 'login called', got %v", result)
+		}
+	})
+}
+
+// Helper function to check if a string contains a substring
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) && containsHelper(s, substr)
+}
+
+func containsHelper(s, substr string) bool {
+	if len(substr) == 0 {
+		return true
+	}
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
 }
