@@ -231,8 +231,20 @@ func selectItem(label string, items []string) (string, error) {
 	return result, nil
 }
 
+func buildShellCommand(shell string) string {
+	// Validate shell is one of the expected values to prevent command injection
+	if shell != defaultShell && shell != fallbackShell {
+		// This should never happen since we only pass constants, but being defensive
+		shell = defaultShell
+	}
+	// Command to check if /etc/secrets/env exists and source it, then start an interactive shell
+	return "[ -f /etc/secrets/env ] && . /etc/secrets/env; exec " + shell
+}
+
 func _execIntoContainer(namespace, pod, container string) (string, error) {
-	cmd := exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", defaultShell)
+	// Using /bin/sh to run the conditional sourcing, then exec into the desired shell
+	shellCmd := buildShellCommand(defaultShell)
+	cmd := exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", "/bin/sh", "-c", shellCmd)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -240,7 +252,8 @@ func _execIntoContainer(namespace, pod, container string) (string, error) {
 	err := cmd.Run()
 	if err != nil {
 		// Try fallback shell if default shell fails
-		cmd = exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", fallbackShell)
+		shellCmd = buildShellCommand(fallbackShell)
+		cmd = exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", "/bin/sh", "-c", shellCmd)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
