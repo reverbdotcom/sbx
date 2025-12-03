@@ -24,6 +24,7 @@ COMMANDS
       info
       progress
       pods
+      ssh
 
 DESCRIPTION
 
@@ -41,6 +42,7 @@ DESCRIPTION
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
   pods                      opens the kubernetes pod view in a browser.
+  ssh                       drops into a kubernetes pod container shell.
 
 USAGE:
   sbx <command> [flags]

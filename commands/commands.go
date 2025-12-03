@@ -9,6 +9,7 @@ import (
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/pods"
+	"github.com/reverbdotcom/sbx/ssh"
 	"github.com/reverbdotcom/sbx/summary"
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
@@ -36,6 +37,7 @@ COMMANDS
       env
       beta
       pods
+      ssh
 
 DESCRIPTION
 
@@ -55,6 +57,7 @@ DESCRIPTION
   env         e             shows the configured environment variables for sbx.
   beta                      spins up an orchestra sandbox with an isolated data layer
   pods                      opens the kubernetes pod view in a browser.
+  ssh                       drops into a kubernetes pod container shell.
 
 USAGE:
   sbx <command> [flags]
@@ -91,5 +94,6 @@ func Commands() map[string]RunFn {
 		"e":        env.Run,
 		"beta":     beta.Run,
 		"pods":     pods.Run,
+		"ssh":      ssh.Run,
 	}
 }
