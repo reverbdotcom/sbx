@@ -348,54 +348,113 @@ func TestCheckClusterAccess(t *testing.T) {
 		}
 	})
 
-	t.Run("it errors when kubectl version returns SSO token error", func(t *testing.T) {
+	t.Run("it automatically runs login when kubectl version returns SSO token error", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl version", Out: "Error loading SSO Token: Token for okta does not exist\nClient Version: v1.30.3\nKustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3\nUnable to connect to the server: getting credentials: exec: executable aws failed with exit code 255", Err: errors.New("exit status 1")},
+			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
 
+		loginCalled := false
+		loginFn = func() (string, error) {
+			loginCalled = true
+			return "login successful", nil
+		}
+
 		err := checkClusterAccess()
-		if err == nil {
-			t.Error("expected error, got nil")
+		if err != nil {
+			t.Errorf("expected no error after login, got %v", err)
 		}
-		if !contains(err.Error(), "kubectl cannot connect to preprod cluster") {
-			t.Errorf("expected error to contain 'kubectl cannot connect to preprod cluster', got %v", err.Error())
-		}
-		if !contains(err.Error(), "Please run 'sbx k8s login' to authenticate") {
-			t.Errorf("expected error to contain 'Please run 'sbx k8s login' to authenticate', got %v", err.Error())
+		if !loginCalled {
+			t.Error("expected login to be called")
 		}
 	})
 
-	t.Run("it errors when kubectl version returns unable to connect error", func(t *testing.T) {
+	t.Run("it automatically runs login when kubectl version returns unable to connect error", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl version", Out: "Client Version: v1.30.3\nKustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3\nUnable to connect to the server: getting credentials: exec: executable aws failed with exit code 255", Err: errors.New("exit status 1")},
+			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
 
-		err := checkClusterAccess()
-		if err == nil {
-			t.Error("expected error, got nil")
+		loginCalled := false
+		loginFn = func() (string, error) {
+			loginCalled = true
+			return "login successful", nil
 		}
-		if !contains(err.Error(), "kubectl cannot connect to preprod cluster") {
-			t.Errorf("expected error to contain 'kubectl cannot connect to preprod cluster', got %v", err.Error())
+
+		err := checkClusterAccess()
+		if err != nil {
+			t.Errorf("expected no error after login, got %v", err)
+		}
+		if !loginCalled {
+			t.Error("expected login to be called")
 		}
 	})
 
-	t.Run("it errors when Server Version is not in output", func(t *testing.T) {
+	t.Run("it automatically runs login when Server Version is not in output", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl version", Out: "Client Version: v1.30.3\nKustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3", Err: nil},
+			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
+
+		loginCalled := false
+		loginFn = func() (string, error) {
+			loginCalled = true
+			return "login successful", nil
+		}
+
+		err := checkClusterAccess()
+		if err != nil {
+			t.Errorf("expected no error after login, got %v", err)
+		}
+		if !loginCalled {
+			t.Error("expected login to be called")
+		}
+	})
+
+	t.Run("it errors when login fails", func(t *testing.T) {
+		mockCalls := []cli.MockCall{
+			{Command: "kubectl version", Out: "Error loading SSO Token: Token for okta does not exist\nUnable to connect to the server", Err: errors.New("exit status 1")},
+		}
+
+		cmdFn = cli.MockCmd(t, mockCalls)
+
+		loginFn = func() (string, error) {
+			return "", errors.New("login failed")
+		}
 
 		err := checkClusterAccess()
 		if err == nil {
 			t.Error("expected error, got nil")
 		}
-		if !contains(err.Error(), "kubectl cannot connect to preprod cluster") {
-			t.Errorf("expected error to contain 'kubectl cannot connect to preprod cluster', got %v", err.Error())
+		if !contains(err.Error(), "failed to authenticate") {
+			t.Errorf("expected error to contain 'failed to authenticate', got %v", err.Error())
+		}
+	})
+
+	t.Run("it errors when connection still fails after login", func(t *testing.T) {
+		mockCalls := []cli.MockCall{
+			{Command: "kubectl version", Out: "Error loading SSO Token: Token for okta does not exist\nUnable to connect to the server", Err: errors.New("exit status 1")},
+			{Command: "kubectl version", Out: "Unable to connect to the server", Err: errors.New("exit status 1")},
+		}
+
+		cmdFn = cli.MockCmd(t, mockCalls)
+
+		loginFn = func() (string, error) {
+			return "login successful", nil
+		}
+
+		err := checkClusterAccess()
+		if err == nil {
+			t.Error("expected error, got nil")
+		}
+		if !contains(err.Error(), "kubectl still cannot connect to preprod cluster after login") {
+			t.Errorf("expected error to contain 'kubectl still cannot connect to preprod cluster after login', got %v", err.Error())
 		}
 	})
 
@@ -451,7 +510,51 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 		}
 	})
 
-	t.Run("it errors when cluster access check fails", func(t *testing.T) {
+	t.Run("it automatically logs in when cluster access check fails", func(t *testing.T) {
+		mockCalls := []cli.MockCall{
+			{Command: "kubectl version", Out: "Error loading SSO Token: Token for okta does not exist\nUnable to connect to the server", Err: errors.New("exit status 1")},
+			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
+			{Command: "kubectl get deployments -n sandbox-test-namespace -o jsonpath={.items[*].metadata.name}", Out: "app-1", Err: nil},
+			{Command: "kubectl get deployment app-1 -n sandbox-test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "map[app:app-1]", Err: nil},
+			{Command: "kubectl get pods -n sandbox-test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1", Err: nil},
+			{Command: "kubectl get pod pod-1 -n sandbox-test-namespace -o jsonpath={.spec.containers[*].name}", Out: "container-1", Err: nil},
+		}
+
+		cmdFn = cli.MockCmd(t, mockCalls)
+		nameFn = func() (string, error) {
+			return "sandbox-test-namespace", nil
+		}
+
+		loginCalled := false
+		loginFn = func() (string, error) {
+			loginCalled = true
+			return "login successful", nil
+		}
+
+		selectItemFn = func(label string, items []string) (string, error) {
+			if len(items) > 0 {
+				return items[0], nil
+			}
+			return "", errors.New("no items to select")
+		}
+
+		originalExec := execIntoContainer
+		defer func() { execIntoContainer = originalExec }()
+
+		execIntoContainer = func(namespace, pod, container string) (string, error) {
+			return "", nil
+		}
+
+		_, err := Run()
+		if err != nil {
+			t.Errorf("expected no error after auto-login, got %v", err)
+		}
+		if !loginCalled {
+			t.Error("expected login to be called")
+		}
+	})
+
+	t.Run("it errors when login fails", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl version", Out: "Error loading SSO Token: Token for okta does not exist\nUnable to connect to the server", Err: errors.New("exit status 1")},
 		}
@@ -461,12 +564,16 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 			return "sandbox-test-namespace", nil
 		}
 
+		loginFn = func() (string, error) {
+			return "", errors.New("login failed")
+		}
+
 		_, err := Run()
 		if err == nil {
 			t.Error("expected error, got nil")
 		}
-		if !contains(err.Error(), "kubectl cannot connect to preprod cluster") {
-			t.Errorf("expected error to contain 'kubectl cannot connect to preprod cluster', got %v", err.Error())
+		if !contains(err.Error(), "failed to authenticate") {
+			t.Errorf("expected error to contain 'failed to authenticate', got %v", err.Error())
 		}
 	})
 }
