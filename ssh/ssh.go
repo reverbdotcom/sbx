@@ -15,6 +15,7 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 var execIntoContainer = _execIntoContainer
 var selectItemFn = selectItem
+var checkClusterAccessFn = checkClusterAccess
 
 const (
 	defaultShell  = "/bin/sh"
@@ -22,6 +23,11 @@ const (
 )
 
 func Run() (string, error) {
+	// Check if kubectl can connect to the cluster
+	if err := checkClusterAccessFn(); err != nil {
+		return "", err
+	}
+
 	namespace, err := nameFn()
 	if err != nil {
 		return "", fmt.Errorf("failed to get namespace: %w", err)
@@ -243,4 +249,25 @@ func _execIntoContainer(namespace, pod, container string) (string, error) {
 	}
 
 	return "", nil
+}
+
+// checkClusterAccess checks if kubectl can connect to the preprod cluster
+func checkClusterAccess() error {
+	out, err := cmdFn("kubectl", "version")
+	if err != nil {
+		// Check if the error is due to SSO token or connection issues
+		if strings.Contains(out, "Error loading SSO Token") ||
+			strings.Contains(out, "Unable to connect to the server") ||
+			strings.Contains(out, "getting credentials") {
+			return fmt.Errorf("kubectl cannot connect to preprod cluster. Please run 'sbx k8s login' to authenticate.\n%s", out)
+		}
+		return fmt.Errorf("kubectl version check failed: %s: %w", out, err)
+	}
+
+	// Verify that Server Version is present in the output
+	if !strings.Contains(out, "Server Version") {
+		return fmt.Errorf("kubectl cannot connect to preprod cluster. Please run 'sbx k8s login' to authenticate")
+	}
+
+	return nil
 }
