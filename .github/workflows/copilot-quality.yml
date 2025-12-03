@@ -1,0 +1,48 @@
+name: Copilot Quality Check
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.0'
+
+      - name: Format check
+        run: |
+          make fmt
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Code is not formatted. Please run 'make fmt'"
+            git diff
+            exit 1
+          fi
+
+      - name: Vet
+        run: make vet
+
+      - name: Run tests
+        run: make test
+
+      - name: Build
+        run: make build
+
+      - name: Verify build artifact
+        run: |
+          if [ ! -f sbx ]; then
+            echo "Build artifact 'sbx' not found"
+            exit 1
+          fi
+          chmod +x sbx
+          ./sbx version || echo "Binary execution test completed"

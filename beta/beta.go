@@ -77,7 +77,7 @@ func Run() (string, error) {
 		out, err := upFn()
 
 		if repo != home {
-			formattedNote :=fmt.Sprintf(note, repo)
+			formattedNote := fmt.Sprintf(note, repo)
 			fmt.Println(formattedNote)
 		}
 
@@ -87,7 +87,7 @@ func Run() (string, error) {
 
 		// for the beta, core migrations are needed to run the new search indexer predeploy task
 		// five minutes give core time to build and run its predeploy migrations and seeding
-		// 
+		//
 		// was getting multiple errors from flux patch step, three trying at once, so
 		// added in a shorter sleep for the other repos to try to avoid this
 		fmt.Println("waiting before continuing...")
