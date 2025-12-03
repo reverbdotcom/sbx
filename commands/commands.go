@@ -3,16 +3,13 @@ package commands
 import (
 	"github.com/reverbdotcom/sbx/beta"
 	"github.com/reverbdotcom/sbx/containers"
-	"github.com/reverbdotcom/sbx/crons"
 	"github.com/reverbdotcom/sbx/dash"
-	"github.com/reverbdotcom/sbx/deployments"
 	"github.com/reverbdotcom/sbx/down"
 	"github.com/reverbdotcom/sbx/env"
 	"github.com/reverbdotcom/sbx/graphiql"
-	"github.com/reverbdotcom/sbx/jobs"
+	"github.com/reverbdotcom/sbx/k8s"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
-	"github.com/reverbdotcom/sbx/pods"
 	"github.com/reverbdotcom/sbx/processes"
 	"github.com/reverbdotcom/sbx/summary"
 	"github.com/reverbdotcom/sbx/up"
@@ -40,10 +37,7 @@ COMMANDS
       progress
       env
       beta
-      pods
-      deployments
-      jobs
-      crons
+      k8s
       processes
       containers
 
@@ -64,10 +58,7 @@ DESCRIPTION
   progress    p             opens deployment progress in a browser.
   env         e             shows the configured environment variables for sbx.
   beta                      spins up an orchestra sandbox with an isolated data layer
-  pods                      opens the kubernetes pod view in a browser.
-  deployments               opens the kubernetes deployment view in a browser.
-  jobs                      opens the kubernetes job view in a browser.
-  crons                     opens the kubernetes cron job view in a browser.
+  k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands.
   processes                 opens the datadog process view in a browser.
   containers                opens the datadog containers view in a browser.
 
@@ -82,34 +73,31 @@ func help() (string, error) {
 
 func Commands() map[string]RunFn {
 	return map[string]RunFn{
-		"up":          up.Run,
-		"u":           up.Run,
-		"help":        help,
-		"name":        name.Run,
-		"n":           name.Run,
-		"web":         web.Open,
-		"progress":    web.OpenProgress,
-		"p":           web.OpenProgress,
-		"w":           web.Open,
-		"dash":        dash.Run,
-		"d":           dash.Run,
-		"graphiql":    graphiql.Run,
-		"g":           graphiql.Run,
-		"down":        down.Run,
-		"version":     version.Run,
-		"v":           version.Run,
-		"logs":        logs.Run,
-		"l":           logs.Run,
-		"info":        summary.Run,
-		"i":           summary.Run,
-		"env":         env.Run,
-		"e":           env.Run,
-		"beta":        beta.Run,
-		"pods":        pods.Run,
-		"deployments": deployments.Run,
-		"jobs":        jobs.Run,
-		"crons":       crons.Run,
-		"processes":   processes.Run,
-		"containers":  containers.Run,
+		"up":         up.Run,
+		"u":          up.Run,
+		"help":       help,
+		"name":       name.Run,
+		"n":          name.Run,
+		"web":        web.Open,
+		"progress":   web.OpenProgress,
+		"p":          web.OpenProgress,
+		"w":          web.Open,
+		"dash":       dash.Run,
+		"d":          dash.Run,
+		"graphiql":   graphiql.Run,
+		"g":          graphiql.Run,
+		"down":       down.Run,
+		"version":    version.Run,
+		"v":          version.Run,
+		"logs":       logs.Run,
+		"l":          logs.Run,
+		"info":       summary.Run,
+		"i":          summary.Run,
+		"env":        env.Run,
+		"e":          env.Run,
+		"beta":       beta.Run,
+		"k8s":        k8s.Run,
+		"processes":  processes.Run,
+		"containers": containers.Run,
 	}
 }
