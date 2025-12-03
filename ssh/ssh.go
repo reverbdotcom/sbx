@@ -16,6 +16,11 @@ var nameFn = name.Name
 var execIntoContainer = _execIntoContainer
 var selectItemFn = selectItem
 
+const (
+	defaultShell  = "/bin/sh"
+	fallbackShell = "/bin/bash"
+)
+
 func Run() (string, error) {
 	namespace, err := nameFn()
 	if err != nil {
@@ -170,15 +175,15 @@ func selectItem(label string, items []string) (string, error) {
 }
 
 func _execIntoContainer(namespace, pod, container string) (string, error) {
-	cmd := exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", "/bin/sh")
+	cmd := exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", defaultShell)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	err := cmd.Run()
 	if err != nil {
-		// Try /bin/bash if /bin/sh fails
-		cmd = exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", "/bin/bash")
+		// Try fallback shell if default shell fails
+		cmd = exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", fallbackShell)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
