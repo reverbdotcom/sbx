@@ -11,6 +11,7 @@ func TestRun(t *testing.T) {
 	t.Run("it successfully drops into a container", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl get deployments -n sandbox-test-namespace -o jsonpath={.items[*].metadata.name}", Out: "app-1", Err: nil},
+			{Command: "kubectl get deployment app-1 -n sandbox-test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "map[app:app-1]", Err: nil},
 			{Command: "kubectl get pods -n sandbox-test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1", Err: nil},
 			{Command: "kubectl get pod pod-1 -n sandbox-test-namespace -o jsonpath={.spec.containers[*].name}", Out: "container-1", Err: nil},
 		}
@@ -158,9 +159,10 @@ func TestGetDeployments(t *testing.T) {
 }
 
 func TestGetPods(t *testing.T) {
-	t.Run("it returns pods for deployment", func(t *testing.T) {
+	t.Run("it returns pods for deployment using selector", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
-			{Command: "kubectl get pods -n test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1 pod-2", Err: nil},
+			{Command: "kubectl get deployment app-1 -n test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "map[app:app-1 version:v1]", Err: nil},
+			{Command: "kubectl get pods -n test-namespace -l app=app-1,version=v1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1 pod-2", Err: nil},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
@@ -179,9 +181,31 @@ func TestGetPods(t *testing.T) {
 		}
 	})
 
+	t.Run("it falls back to app label when selector is empty", func(t *testing.T) {
+		mockCalls := []cli.MockCall{
+			{Command: "kubectl get deployment app-1 -n test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "", Err: nil},
+			{Command: "kubectl get pods -n test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1", Err: nil},
+		}
+
+		cmdFn = cli.MockCmd(t, mockCalls)
+
+		pods, err := getPods("test-namespace", "app-1")
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		if len(pods) != 1 {
+			t.Errorf("expected 1 pod, got %d", len(pods))
+		}
+
+		if pods[0] != "pod-1" {
+			t.Errorf("unexpected pod name: %v", pods)
+		}
+	})
+
 	t.Run("it returns error on kubectl failure", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
-			{Command: "kubectl get pods -n test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "", Err: errors.New("kubectl error")},
+			{Command: "kubectl get deployment app-1 -n test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "", Err: errors.New("kubectl error")},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
@@ -227,6 +251,44 @@ func TestGetContainers(t *testing.T) {
 			t.Error("expected error, got nil")
 		}
 	})
+}
+
+func TestParseSelector(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "single label",
+			input:    "map[app:myapp]",
+			expected: "app=myapp",
+		},
+		{
+			name:     "multiple labels",
+			input:    "map[app:myapp version:v1]",
+			expected: "app=myapp,version=v1",
+		},
+		{
+			name:     "multiple labels with different order",
+			input:    "map[version:v1 app:myapp tier:backend]",
+			expected: "version=v1,app=myapp,tier=backend",
+		},
+		{
+			name:     "empty map",
+			input:    "map[]",
+			expected: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := parseSelector(tt.input)
+			if result != tt.expected {
+				t.Errorf("parseSelector(%q) = %q, want %q", tt.input, result, tt.expected)
+			}
+		})
+	}
 }
 
 func contains(s, substr string) bool {

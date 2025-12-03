@@ -95,13 +95,54 @@ func getDeployments(namespace string) ([]string, error) {
 }
 
 func getPods(namespace, deployment string) ([]string, error) {
-	out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", fmt.Sprintf("app=%s", deployment), "-o", "jsonpath={.items[*].metadata.name}")
+	// First get the deployment's selector
+	selectorOut, err := cmdFn("kubectl", "get", "deployment", deployment, "-n", namespace, "-o", "jsonpath={.spec.selector.matchLabels}")
+	if err != nil {
+		return nil, err
+	}
+
+	// If the selector is empty or we can't parse it, fallback to a simple label selector
+	if strings.TrimSpace(selectorOut) == "" {
+		// Try with common label patterns
+		out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", fmt.Sprintf("app=%s", deployment), "-o", "jsonpath={.items[*].metadata.name}")
+		if err != nil {
+			return nil, err
+		}
+		pods := strings.Fields(strings.TrimSpace(out))
+		return pods, nil
+	}
+
+	// Get pods using the deployment's label selector
+	// The selector output is in format: map[key1:value1 key2:value2]
+	// We need to convert it to kubectl label selector format: key1=value1,key2=value2
+	selector := parseSelector(selectorOut)
+
+	out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", selector, "-o", "jsonpath={.items[*].metadata.name}")
 	if err != nil {
 		return nil, err
 	}
 
 	pods := strings.Fields(strings.TrimSpace(out))
 	return pods, nil
+}
+
+func parseSelector(selectorJSON string) string {
+	// Simple parsing of kubectl jsonpath output for matchLabels
+	// Input format: map[app:myapp version:v1]
+	// Output format: app=myapp,version=v1
+
+	// Remove "map[" prefix and "]" suffix
+	selectorJSON = strings.TrimSpace(selectorJSON)
+	selectorJSON = strings.TrimPrefix(selectorJSON, "map[")
+	selectorJSON = strings.TrimSuffix(selectorJSON, "]")
+
+	// Split by space and convert key:value to key=value
+	pairs := strings.Fields(selectorJSON)
+	for i, pair := range pairs {
+		pairs[i] = strings.Replace(pair, ":", "=", 1)
+	}
+
+	return strings.Join(pairs, ",")
 }
 
 func getContainers(namespace, pod string) ([]string, error) {
