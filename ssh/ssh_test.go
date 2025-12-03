@@ -295,6 +295,21 @@ func TestParseSelector(t *testing.T) {
 			input:    `map["reverb.com/deployment":"graphql-gateway" version:v1]`,
 			expected: "reverb.com/deployment=graphql-gateway,version=v1",
 		},
+		{
+			name:     "JSON format single label",
+			input:    `{"reverb.com/deployment":"graphql-gateway"}`,
+			expected: "reverb.com/deployment=graphql-gateway",
+		},
+		{
+			name:     "JSON format multiple labels",
+			input:    `{"reverb.com/deployment":"graphql-gateway","app":"web"}`,
+			expected: "reverb.com/deployment=graphql-gateway,app=web",
+		},
+		{
+			name:     "JSON format empty",
+			input:    `{}`,
+			expected: "",
+		},
 	}
 
 	for _, tt := range tests {

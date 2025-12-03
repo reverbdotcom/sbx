@@ -136,10 +136,40 @@ func parseSelector(selectorJSON string) string {
 	// Input format can be:
 	//   map[app:myapp version:v1]
 	//   map["reverb.com/deployment":"graphql-gateway"]
+	//   {"reverb.com/deployment":"graphql-gateway"}  (JSON format)
 	// Output format: app=myapp,version=v1 or reverb.com/deployment=graphql-gateway
 
-	// Remove "map[" prefix and "]" suffix
 	selectorJSON = strings.TrimSpace(selectorJSON)
+
+	// Handle JSON format (starts with {)
+	if strings.HasPrefix(selectorJSON, "{") {
+		// Remove { and }
+		selectorJSON = strings.TrimPrefix(selectorJSON, "{")
+		selectorJSON = strings.TrimSuffix(selectorJSON, "}")
+		selectorJSON = strings.TrimSpace(selectorJSON)
+
+		// Handle empty JSON object
+		if selectorJSON == "" {
+			return ""
+		}
+
+		// Parse JSON-style key:value pairs
+		// Split by comma first (for multiple labels in JSON)
+		parts := strings.Split(selectorJSON, ",")
+		result := []string{}
+		for _, part := range parts {
+			part = strings.TrimSpace(part)
+			// Remove quotes and convert : to =
+			part = strings.ReplaceAll(part, "\"", "")
+			part = strings.Replace(part, ":", "=", 1)
+			if part != "" {
+				result = append(result, part)
+			}
+		}
+		return strings.Join(result, ",")
+	}
+
+	// Remove "map[" prefix and "]" suffix for Go map format
 	selectorJSON = strings.TrimPrefix(selectorJSON, "map[")
 	selectorJSON = strings.TrimSuffix(selectorJSON, "]")
 
