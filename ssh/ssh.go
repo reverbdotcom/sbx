@@ -262,42 +262,33 @@ func checkClusterAccess() error {
 		if strings.Contains(out, "Error loading SSO Token") ||
 			strings.Contains(out, "Unable to connect to the server") ||
 			strings.Contains(out, "getting credentials") {
-			fmt.Println("kubectl cannot connect to preprod cluster. Running 'sbx k8s login'...")
-
-			// Attempt to login
-			_, loginErr := loginFn()
-			if loginErr != nil {
-				return fmt.Errorf("failed to authenticate: %w", loginErr)
-			}
-
-			// Verify connection after login
-			out, err = cmdFn("kubectl", "version")
-			if err != nil || !strings.Contains(out, "Server Version") {
-				return fmt.Errorf("kubectl still cannot connect to preprod cluster after login")
-			}
-
-			return nil
+			return attemptAutoLogin()
 		}
 		return fmt.Errorf("kubectl version check failed: %s: %w", out, err)
 	}
 
 	// Verify that Server Version is present in the output
 	if !strings.Contains(out, "Server Version") {
-		fmt.Println("kubectl cannot connect to preprod cluster. Running 'sbx k8s login'...")
+		return attemptAutoLogin()
+	}
 
-		// Attempt to login
-		_, loginErr := loginFn()
-		if loginErr != nil {
-			return fmt.Errorf("failed to authenticate: %w", loginErr)
-		}
+	return nil
+}
 
-		// Verify connection after login
-		out, err = cmdFn("kubectl", "version")
-		if err != nil || !strings.Contains(out, "Server Version") {
-			return fmt.Errorf("kubectl still cannot connect to preprod cluster after login")
-		}
+// attemptAutoLogin attempts to authenticate and verify connection
+func attemptAutoLogin() error {
+	fmt.Println("kubectl cannot connect to preprod cluster. Running 'sbx k8s login'...")
 
-		return nil
+	// Attempt to login
+	_, loginErr := loginFn()
+	if loginErr != nil {
+		return fmt.Errorf("failed to authenticate: %w", loginErr)
+	}
+
+	// Verify connection after login
+	out, err := cmdFn("kubectl", "version")
+	if err != nil || !strings.Contains(out, "Server Version") {
+		return fmt.Errorf("kubectl still cannot connect to preprod cluster after login")
 	}
 
 	return nil
