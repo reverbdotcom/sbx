@@ -6,6 +6,7 @@ import (
 	"github.com/reverbdotcom/sbx/down"
 	"github.com/reverbdotcom/sbx/env"
 	"github.com/reverbdotcom/sbx/graphiql"
+	"github.com/reverbdotcom/sbx/k8s"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/pods"
@@ -36,6 +37,7 @@ COMMANDS
       env
       beta
       pods
+      k8s
 
 DESCRIPTION
 
@@ -55,6 +57,7 @@ DESCRIPTION
   env         e             shows the configured environment variables for sbx.
   beta                      spins up an orchestra sandbox with an isolated data layer
   pods                      opens the kubernetes pod view in a browser.
+  k8s                       opens the kubernetes cluster view in a browser.
 
 USAGE:
   sbx <command> [flags]
@@ -91,5 +94,6 @@ func Commands() map[string]RunFn {
 		"e":        env.Run,
 		"beta":     beta.Run,
 		"pods":     pods.Run,
+		"k8s":      k8s.Run,
 	}
 }
