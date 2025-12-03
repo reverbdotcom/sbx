@@ -2,6 +2,7 @@ package commands
 
 import (
 	"github.com/reverbdotcom/sbx/beta"
+	"github.com/reverbdotcom/sbx/containers"
 	"github.com/reverbdotcom/sbx/crons"
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/deployments"
@@ -12,6 +13,7 @@ import (
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/pods"
+	"github.com/reverbdotcom/sbx/processes"
 	"github.com/reverbdotcom/sbx/summary"
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
@@ -42,6 +44,8 @@ COMMANDS
       deployments
       jobs
       crons
+      processes
+      containers
 
 DESCRIPTION
 
@@ -64,6 +68,8 @@ DESCRIPTION
   deployments               opens the kubernetes deployment view in a browser.
   jobs                      opens the kubernetes job view in a browser.
   crons                     opens the kubernetes cron job view in a browser.
+  processes                 opens the datadog process view in a browser.
+  containers                opens the datadog containers view in a browser.
 
 USAGE:
   sbx <command> [flags]
@@ -103,5 +109,7 @@ func Commands() map[string]RunFn {
 		"deployments": deployments.Run,
 		"jobs":        jobs.Run,
 		"crons":       crons.Run,
+		"processes":   processes.Run,
+		"containers":  containers.Run,
 	}
 }
