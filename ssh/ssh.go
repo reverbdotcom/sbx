@@ -224,6 +224,11 @@ func selectItem(label string, items []string) (string, error) {
 }
 
 func buildShellCommand(shell string) string {
+	// Validate shell is one of the expected values to prevent command injection
+	if shell != defaultShell && shell != fallbackShell {
+		// This should never happen since we only pass constants, but being defensive
+		shell = defaultShell
+	}
 	// Command to check if /etc/secrets/env exists and source it, then start an interactive shell
 	return "[ -f /etc/secrets/env ] && . /etc/secrets/env; exec " + shell
 }
