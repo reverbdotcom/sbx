@@ -1,0 +1,47 @@
+name: Copilot Setup Steps
+
+on:
+  pull_request:
+    paths:
+      - '.github/agents/coding/instructions.md'
+  workflow_dispatch:
+
+jobs:
+  validate-setup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify Copilot instructions exist
+        run: |
+          if [ ! -f .github/agents/coding/instructions.md ]; then
+            echo "❌ Error: .github/agents/coding/instructions.md not found"
+            echo "Please create the Copilot instructions file following:"
+            echo "https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment"
+            exit 1
+          fi
+          echo "✅ Copilot instructions file found"
+
+      - name: Validate instructions content
+        run: |
+          if [ ! -s .github/agents/coding/instructions.md ]; then
+            echo "❌ Error: instructions.md is empty"
+            exit 1
+          fi
+          echo "✅ Instructions file has content"
+          echo "File size: $(wc -c < .github/agents/coding/instructions.md) bytes"
+
+      - name: Display setup summary
+        run: |
+          echo "### GitHub Copilot Setup Status ✅"
+          echo ""
+          echo "The repository is configured for GitHub Copilot with custom instructions."
+          echo ""
+          echo "**Location:** \`.github/agents/coding/instructions.md\`"
+          echo ""
+          echo "**Documentation:** https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment"
+          echo ""
+          echo "Copilot will automatically use these instructions when providing code suggestions."
