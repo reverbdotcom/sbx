@@ -1,47 +1,31 @@
-name: Copilot Setup Steps
+name: "Copilot Setup Steps"
 
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
 on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
   pull_request:
     paths:
-      - '.github/agents/coding/instructions.md'
-  workflow_dispatch:
+      - .github/workflows/copilot-setup-steps.yml
 
 jobs:
-  validate-setup:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
     runs-on: ubuntu-latest
+
+    # Set the permissions to the lowest permissions possible needed for your steps.
+    # Copilot will be given its own token for its operations.
     permissions:
+      # If you want to clone the repository as part of your setup steps, for example to install dependencies, you'll need the `contents: read` permission. If you don't clone the repository in your setup steps, Copilot will do this for you automatically after the steps complete.
       contents: read
+
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Verify Copilot instructions exist
+      - uses: actions/checkout@v4
+      - name: Install
         run: |
-          if [ ! -f .github/agents/coding/instructions.md ]; then
-            echo "❌ Error: .github/agents/coding/instructions.md not found"
-            echo "Please create the Copilot instructions file following:"
-            echo "https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment"
-            exit 1
-          fi
-          echo "✅ Copilot instructions file found"
+          make build
 
-      - name: Validate instructions content
-        run: |
-          if [ ! -s .github/agents/coding/instructions.md ]; then
-            echo "❌ Error: instructions.md is empty"
-            exit 1
-          fi
-          echo "✅ Instructions file has content"
-          echo "File size: $(wc -c < .github/agents/coding/instructions.md) bytes"
-
-      - name: Display setup summary
-        run: |
-          echo "### GitHub Copilot Setup Status ✅"
-          echo ""
-          echo "The repository is configured for GitHub Copilot with custom instructions."
-          echo ""
-          echo "**Location:** \`.github/agents/coding/instructions.md\`"
-          echo ""
-          echo "**Documentation:** https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment"
-          echo ""
-          echo "Copilot will automatically use these instructions when providing code suggestions."
