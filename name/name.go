@@ -63,6 +63,9 @@ func _branch() (string, error) {
 	out, err := cli.Cmd("git", "branch", "--show-current")
 
 	if err != nil {
+		if strings.Contains(out, "not a git repository") {
+			return "", fmt.Errorf("not in a git repository - sbx k8s commands must be run from within an orchestra repository")
+		}
 		return out, err
 	}
 
