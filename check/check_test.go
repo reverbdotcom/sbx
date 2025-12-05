@@ -1,6 +1,7 @@
 package check
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -68,6 +69,21 @@ func TestOnOrchestra(t *testing.T) {
 
 		if err != nil {
 			t.Errorf("got %v, want nil", err)
+		}
+	})
+
+	t.Run("when run outside of a git repository", func(t *testing.T) {
+
+		gitDir = func() (string, error) {
+			return "exit status 128", errors.New("fatal: not a git repository (or any of the parent directories): .git")
+		}
+
+		err := EnsureOrchestra()
+
+		if err != nil {
+			if !strings.Contains(err.Error(), "This project is not on Orchestra") {
+				t.Errorf("got %v, want 'This project is not on Orchestra'", err)
+			}
 		}
 	})
 }

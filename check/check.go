@@ -2,6 +2,7 @@ package check
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 
@@ -22,8 +23,10 @@ func HasGithubToken() bool {
 
 func EnsureOrchestra() error {
 	has, err := OnOrchestra()
-
 	if err != nil {
+		if strings.Contains(err.Error(), "not a git repository") {
+			return fmt.Errorf("This project is not on Orchestra: %v", err)
+		}
 		return err
 	}
 
@@ -50,11 +53,13 @@ func OnOrchestra() (bool, error) {
 	return false, nil
 }
 
-func gitDir() (string, error) {
+var gitDir = _gitDir
+
+func _gitDir() (string, error) {
 	out, err := cli.Cmd("git", "rev-parse", "--show-toplevel")
 
 	if err != nil {
-		return out, err
+		return out, fmt.Errorf("%v: %v", out, err)
 	}
 
 	dir := strings.TrimSpace(out)
