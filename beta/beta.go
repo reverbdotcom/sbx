@@ -146,7 +146,7 @@ func checkoutBranch(branch string) (string, error) {
 	out, err := cmdFn("git", "checkout", branch)
 
 	if err != nil && strings.Contains(out, noBranch) {
-		out, err = cmdFn("git", "checkout", "-b", branch, "main-sandbox")
+		out, err = cmdFn("git", "checkout", "-b", branch, "origin/main-sandbox")
 		return out, err
 	}
 
