@@ -211,7 +211,7 @@ func TestRun(t *testing.T) {
 				Err:     errors.New("checkout error"),
 			},
 			{
-				Command: "git checkout -b feature-branch main-sandbox",
+				Command: "git checkout -b feature-branch origin/main-sandbox",
 				Out:     "Already on 'feature-branch'",
 				Err:     errors.New("create branch error"),
 			},
