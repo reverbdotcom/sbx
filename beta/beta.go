@@ -13,7 +13,19 @@ import (
 const noBranch = "did not match any file(s) known to git"
 
 const note = `»»»
-Note: Navigate to the %s directory to view deployment details
+Note: The above commands work for the current directory.
+Navigate to the %s directory to view deployment details for this deploy after this command completes.
+
+`
+
+const startNote = `Starting beta sandbox deploy...
+=================================
+This will kick off deployments for the following repos: 
+%s
+
+It will take several minutes to complete.
+Please do not interrupt this process.
+=================================
 
 `
 
@@ -41,6 +53,8 @@ func Run() (string, error) {
 	if !found {
 		repos = append(repos, home)
 	}
+
+	fmt.Printf(startNote, strings.Join(repos, ", "))
 
 	// get branch
 	branch, err := getBranch()
@@ -86,15 +100,16 @@ func Run() (string, error) {
 		}
 
 		// for the beta, core migrations are needed to run the new search indexer predeploy task
-		// five minutes give core time to build and run its predeploy migrations and seeding
+		// four minutes give core time to build and run its predeploy migrations and seeding
 		//
 		// was getting multiple errors from flux patch step, three trying at once, so
 		// added in a shorter sleep for the other repos to try to avoid this
-		fmt.Println("waiting before continuing...")
 		fmt.Println()
 		if repo == "reverb" {
+			fmt.Println("waiting 4 minutes for core to build and run its predeploy tasks before continuing...")
 			sleep(240)
 		} else {
+			fmt.Println("waiting 1 minute to space out deploys before continuing...")
 			sleep(60)
 		}
 	}
