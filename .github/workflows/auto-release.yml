@@ -1,0 +1,79 @@
+name: Auto Release Minor Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          # Get the latest tag
+          LATEST_TAG=$(git tag --sort=-v:refname | head -1)
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No existing tags found, starting with v1.0.0"
+            echo "new_version=v1.0.0" >> $GITHUB_OUTPUT
+          else
+            echo "Latest tag: $LATEST_TAG"
+            
+            # Extract version numbers (remove 'v' prefix)
+            VERSION=${LATEST_TAG#v}
+            
+            # Split version into parts
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+            
+            # Increment minor version and reset patch to 0
+            NEW_MINOR=$((MINOR + 1))
+            NEW_VERSION="v${MAJOR}.${NEW_MINOR}.0"
+            
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "New version will be: $NEW_VERSION"
+          fi
+
+      - name: Check if version already exists
+        id: check_tag
+        run: |
+          NEW_VERSION="${{ steps.get_latest_tag.outputs.new_version }}"
+          if git rev-parse "$NEW_VERSION" >/dev/null 2>&1; then
+            echo "Tag $NEW_VERSION already exists, skipping release"
+            echo "should_release=false" >> $GITHUB_OUTPUT
+          else
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/setup-go@v5
+        if: steps.check_tag.outputs.should_release == 'true'
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Run tests
+        if: steps.check_tag.outputs.should_release == 'true'
+        run: make test
+
+      - name: Create Release
+        if: steps.check_tag.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_latest_tag.outputs.new_version }}
+          name: Release ${{ steps.get_latest_tag.outputs.new_version }}
+          body: |
+            Auto-generated release ${{ steps.get_latest_tag.outputs.new_version }}
+            
+            This release was automatically created from the latest push to main.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
