@@ -3,7 +3,12 @@ name: Release
 on:
   release:
     types: [published]
-
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.16.0)'
+        required: true
+        type: string
 
 jobs:
   release:
@@ -12,12 +17,40 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.3.2
+      
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_call" ]; then
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create release if called from workflow
+        if: github.event_name == 'workflow_call'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Brew
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$VERSION" \
+            --title "Release $VERSION" \
+            --notes "Auto-generated release $VERSION" \
+            --target main
+      
+      - name: Get release info
+        id: get_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          RELEASE_INFO=$(gh release view "$VERSION" --json uploadUrl,tagName)
+          UPLOAD_URL=$(echo "$RELEASE_INFO" | jq -r '.uploadUrl')
+          TAG_NAME=$(echo "$RELEASE_INFO" | jq -r '.tagName')
+          echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+      
+      - name: Update version file
         env:
           ACTOR: "${{ github.actor }}"
           EMAIL: "${{ github.actor }}@users.noreply.github.com"
@@ -34,14 +67,17 @@ jobs:
           git fetch origin main
           git merge FETCH_HEAD --no-edit
           git push origin main
+      
       - uses: actions/setup-go@v5
+      
       - name: Build binaries
         run: |
           mkdir -p dist
           GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
-          GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
+          GOOS=darwin GOARCH=arm64 go build -o dist/sbx-arm64 .
           tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx
-          tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx
+          tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx-arm64
+      
       - name: Upload macOS amd64 binary
         uses: actions/upload-release-asset@v1
         with:
