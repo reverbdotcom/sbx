@@ -10,6 +10,8 @@ on:
         required: true
         type: string
 
+run-name: "Release ${{ inputs.version || github.event.release.tag_name }}"
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -97,3 +99,16 @@ jobs:
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Release summary
+        if: success()
+        run: |
+          VERSION="${{ steps.get_release.outputs.tag_name }}"
+          echo "## 🚀 Release Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Release URL:** https://github.com/${{ github.repository }}/releases/tag/$VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ sbx-darwin-amd64.tar.gz" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ sbx-darwin-arm64.tar.gz" >> $GITHUB_STEP_SUMMARY

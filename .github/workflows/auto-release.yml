@@ -5,6 +5,8 @@ on:
     branches:
       - main
 
+run-name: Auto Release ${{ github.run_number }}
+
 jobs:
   calculate-version:
     runs-on: ubuntu-latest
@@ -53,6 +55,23 @@ jobs:
           else
             echo "should_release=true" >> $GITHUB_OUTPUT
           fi
+      
+      - name: Generate summary
+        run: |
+          NEW_VERSION="${{ steps.get_latest_tag.outputs.new_version }}"
+          SHOULD_RELEASE="${{ steps.check_tag.outputs.should_release }}"
+          
+          echo "## Auto Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Latest Tag:** ${{ steps.get_latest_tag.outputs.latest_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "**New Version:** \`$NEW_VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$SHOULD_RELEASE" = "true" ]; then
+            echo "✅ **Status:** Proceeding with release" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⏭️ **Status:** Skipping release (version already exists)" >> $GITHUB_STEP_SUMMARY
+          fi
 
   test:
     needs: calculate-version
@@ -67,6 +86,13 @@ jobs:
 
       - name: Run tests
         run: make test
+      
+      - name: Test summary
+        if: success()
+        run: |
+          echo "## ✅ Tests Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All tests passed for version **${{ needs.calculate-version.outputs.new_version }}**" >> $GITHUB_STEP_SUMMARY
 
   release:
     needs: [calculate-version, test]
@@ -76,3 +102,4 @@ jobs:
       contents: write
     with:
       version: ${{ needs.calculate-version.outputs.new_version }}
+    secrets: inherit
