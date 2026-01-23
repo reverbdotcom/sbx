@@ -40,16 +40,18 @@ jobs:
             --notes "Auto-generated release $VERSION" \
             --target main
       
+      - name: Wait for release to be ready
+        if: github.event_name == 'workflow_call'
+        run: sleep 2
+      
       - name: Get release info
         id: get_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          RELEASE_INFO=$(gh release view "$VERSION" --json uploadUrl,tagName)
-          UPLOAD_URL=$(echo "$RELEASE_INFO" | jq -r '.uploadUrl')
+          RELEASE_INFO=$(gh release view "$VERSION" --json id,tagName)
           TAG_NAME=$(echo "$RELEASE_INFO" | jq -r '.tagName')
-          echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
       
       - name: Update version file
@@ -75,30 +77,20 @@ jobs:
       - name: Build binaries
         run: |
           mkdir -p dist
-          GOOS=darwin GOARCH=amd64 go build -o dist/sbx .
+          GOOS=darwin GOARCH=amd64 go build -o dist/sbx-amd64 .
           GOOS=darwin GOARCH=arm64 go build -o dist/sbx-arm64 .
-          tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx
+          tar -czvf dist/sbx-darwin-amd64.tar.gz -C dist sbx-amd64
           tar -czvf dist/sbx-darwin-arm64.tar.gz -C dist sbx-arm64
       
-      - name: Upload macOS amd64 binary
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: dist/sbx-darwin-amd64.tar.gz
-          asset_name: sbx-darwin-amd64.tar.gz
-          asset_content_type: application/octet-stream
+      - name: Upload release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload macOS arm64 binary
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: dist/sbx-darwin-arm64.tar.gz
-          asset_name: sbx-darwin-arm64.tar.gz
-          asset_content_type: application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
+        run: |
+          gh release upload "$VERSION" \
+            dist/sbx-darwin-amd64.tar.gz \
+            dist/sbx-darwin-arm64.tar.gz \
+            --clobber
       
       - name: Release summary
         if: success()
