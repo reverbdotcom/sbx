@@ -23,6 +23,11 @@ func TestRun(t *testing.T) {
 			return "sandbox-test-namespace", nil
 		}
 
+		// Mock VPN check to pass
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
+
 		// Mock the select function to avoid interactive prompt
 		selectItemFn = func(label string, items []string) (string, error) {
 			if len(items) > 0 {
@@ -54,12 +59,29 @@ func TestRun(t *testing.T) {
 		}
 	})
 
+	t.Run("it errors when VPN is not connected", func(t *testing.T) {
+		checkVPNConnectionFn = func() error {
+			return errors.New("VPN connection check failed")
+		}
+
+		_, err := Run()
+		if err == nil {
+			t.Error("expected error, got nil")
+		}
+		if !contains(err.Error(), "VPN connection check failed") {
+			t.Errorf("expected error to contain 'VPN connection check failed', got %v", err.Error())
+		}
+	})
+
 	t.Run("it errors when namespace cannot be determined", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
 		nameFn = func() (string, error) {
 			return "", errors.New("namespace error")
 		}
@@ -80,6 +102,9 @@ func TestRun(t *testing.T) {
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
 		}
@@ -100,6 +125,9 @@ func TestRun(t *testing.T) {
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
 		}
@@ -334,6 +362,38 @@ func contains(s, substr string) bool {
 	return strings.Contains(s, substr)
 }
 
+func TestCheckVPNConnection(t *testing.T) {
+	t.Run("it succeeds when VPN check URL is reachable", func(t *testing.T) {
+		// Since we're testing the actual function, we need to mock it
+		// The function variable is already set up for mocking in the package
+		originalCheck := checkVPNConnectionFn
+		defer func() { checkVPNConnectionFn = originalCheck }()
+
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
+
+		err := checkVPNConnectionFn()
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+	})
+
+	t.Run("it fails when VPN check URL is not reachable", func(t *testing.T) {
+		originalCheck := checkVPNConnectionFn
+		defer func() { checkVPNConnectionFn = originalCheck }()
+
+		checkVPNConnectionFn = func() error {
+			return errors.New("VPN connection check failed")
+		}
+
+		err := checkVPNConnectionFn()
+		if err == nil {
+			t.Error("expected error, got nil")
+		}
+	})
+}
+
 func TestCheckClusterAccess(t *testing.T) {
 	t.Run("it succeeds when kubectl version returns Server Version", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
@@ -486,6 +546,9 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
 		}
@@ -521,6 +584,9 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
 		}
@@ -560,6 +626,9 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
+		checkVPNConnectionFn = func() error {
+			return nil
+		}
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
 		}

@@ -2,9 +2,11 @@ package ssh
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/reverbdotcom/sbx/cli"
@@ -17,14 +19,21 @@ var nameFn = name.Name
 var execIntoContainer = _execIntoContainer
 var selectItemFn = selectItem
 var checkClusterAccessFn = checkClusterAccess
+var checkVPNConnectionFn = checkVPNConnection
 var loginFn = login.Run
 
 const (
 	defaultShell  = "/bin/sh"
 	fallbackShell = "/bin/bash"
+	vpnCheckURL   = "https://nsqadmin.reverb.tools/"
 )
 
 func Run() (string, error) {
+	// Check VPN connection
+	if err := checkVPNConnectionFn(); err != nil {
+		return "", err
+	}
+
 	// Check if kubectl can connect to the cluster
 	if err := checkClusterAccessFn(); err != nil {
 		return "", err
@@ -302,6 +311,25 @@ func attemptAutoLogin() error {
 	out, err := cmdFn("kubectl", "version")
 	if err != nil || !strings.Contains(out, "Server Version") {
 		return fmt.Errorf("kubectl still cannot connect to preprod cluster after login")
+	}
+
+	return nil
+}
+
+// checkVPNConnection verifies that the VPN is connected by making a request to nsqadmin
+func checkVPNConnection() error {
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	resp, err := client.Get(vpnCheckURL)
+	if err != nil {
+		return fmt.Errorf("VPN connection check failed. Please ensure you are connected to the VPN.\nError: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		return fmt.Errorf("VPN connection check failed with status %d. Please ensure you are connected to the VPN", resp.StatusCode)
 	}
 
 	return nil

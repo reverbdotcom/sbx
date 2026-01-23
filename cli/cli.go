@@ -10,7 +10,9 @@ import (
 
 type CmdFn func(name string, args ...string) (string, error)
 
-func Cmd(name string, arg ...string) (string, error) {
+var Cmd CmdFn = _cmd
+
+func _cmd(name string, arg ...string) (string, error) {
 	cmd := exec.Command(name, arg...)
 
 	buffer := bytes.Buffer{}
