@@ -3,7 +3,7 @@ name: Release
 on:
   release:
     types: [published]
-  workflow_call:
+  workflow_dispatch:
     inputs:
       tag:
         description: 'Release tag'
@@ -32,8 +32,8 @@ jobs:
               // Get from release event
               tagName = context.payload.release.tag_name;
               uploadUrl = context.payload.release.upload_url;
-            } else if (context.eventName === 'workflow_call') {
-              // Get from workflow_call input
+            } else if (context.eventName === 'workflow_dispatch') {
+              // Get from workflow_dispatch input
               tagName = '${{ inputs.tag }}';
               const release = await github.rest.repos.getReleaseByTag({
                 owner: context.repo.owner,
