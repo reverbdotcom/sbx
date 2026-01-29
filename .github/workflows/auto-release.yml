@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      new_version: ${{ steps.bump_version.outputs.new_version }}
+      should_release: ${{ steps.check_tag.outputs.tag_exists == 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,3 +78,10 @@ jobs:
               draft: false,
               prerelease: false
             });
+  
+  call-release:
+    needs: auto-release
+    if: needs.auto-release.outputs.should_release == 'true'
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.auto-release.outputs.new_version }}
