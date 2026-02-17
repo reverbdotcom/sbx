@@ -2,6 +2,7 @@ package summary
 
 import (
 	"fmt"
+
 	"github.com/reverbdotcom/sbx/commit"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
@@ -16,6 +17,7 @@ Host:           %s
 »»»
 Site:           sbx w | sbx web
 Graphiql:       sbx g | sbx graphiql
+Redis:				  | sbx redis
 
 Dash:           sbx d | sbx dash
 Logs:           sbx l | sbx logs

@@ -9,6 +9,7 @@ import (
 	"github.com/reverbdotcom/sbx/k8s"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
+	"github.com/reverbdotcom/sbx/redis"
 	"github.com/reverbdotcom/sbx/summary"
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
@@ -29,6 +30,7 @@ COMMANDS
       dash
       logs
       web
+      redis
       graphiql
       version
       info
@@ -47,6 +49,7 @@ DESCRIPTION
   name        n             shows the sandbox name.
   dash        d             opens the dashboard in a browser.
   logs        l             opens the logs in a browser.
+  redis                     opens the redis UI in a browser.
   web         w             opens the site in a browser.
   graphiql    g             opens graphql user interface in a browser.
   version     v             shows the version of the sbx cli.
@@ -71,6 +74,7 @@ func Commands() map[string]RunFn {
 		"u":        up.Run,
 		"help":     help,
 		"name":     name.Run,
+		"redis":    redis.Open,
 		"n":        name.Run,
 		"web":      web.Open,
 		"progress": web.OpenProgress,
