@@ -49,7 +49,7 @@ DESCRIPTION
   name        n             shows the sandbox name.
   dash        d             opens the dashboard in a browser.
   logs        l             opens the logs in a browser.
-  redis                    opens the redis UI in a browser.
+  redis                     opens the redis UI in a browser.
   web         w             opens the site in a browser.
   graphiql    g             opens graphql user interface in a browser.
   version     v             shows the version of the sbx cli.
