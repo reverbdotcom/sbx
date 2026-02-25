@@ -2,6 +2,7 @@ package commands
 
 import (
 	"github.com/reverbdotcom/sbx/beta"
+	"github.com/reverbdotcom/sbx/console"
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/db"
 	"github.com/reverbdotcom/sbx/down"
@@ -21,47 +22,41 @@ type RunFn func() (string, error)
 const Help = `NAME
   sbx - orchestra cli
 
-COMMANDS
-
-  sbx help
-      up
-      down
-      name
-      dash
-      logs
-      web
-      db
-      graphiql
-      version
-      info
-      progress
-      env
-      beta
-      k8s
-
-DESCRIPTION
-
-  command     shorthand     description
-
-  help                      shows the help message.
-  up          u             spins up an orchestra sandbox.
-  down                      tears down an orchestra sandbox.
-  name        n             shows the sandbox name.
-  dash        d             opens the dashboard in a browser.
-  logs        l             opens the logs in a browser.
-  web         w             opens the site in a browser.
-  graphiql    g             opens graphql user interface in a browser.
-  version     v             shows the version of the sbx cli.
-  info        i             shows the summary of the sandbox.
-  progress    p             opens deployment progress in a browser.
-  env         e             shows the configured environment variables for sbx.
-  beta                      spins up an orchestra sandbox with an isolated data layer
-  db                        database console explorer. Use 'sbx db help' for subcommands.
-  k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands.
-
-USAGE:
+USAGE
   sbx <command> [flags]
+
+SANDBOX MANAGEMENT
+  command     shorthand     description
+  up          u             spins up an orchestra sandbox
+  down                      tears down an orchestra sandbox
+  name        n             shows the sandbox name
+  info        i             shows the summary of the sandbox
+  beta                      spins up an orchestra sandbox with an isolated data layer
+
+BROWSER TOOLS
+  command     shorthand     description
+	progress    p             opens deployment progress in a browser
+  dash        d             opens the datadog dashboard in a browser
+  logs        l             opens the datadog logs in a browser
+  web         w             opens the site in a browser
+  graphiql    g             opens graphql user interface in a browser
+	db                        database console explorer. Use 'sbx db help' for subcommands.
+
+CLI TOOLS
+  command     shorthand     description
+  k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands
+  console     c             opens a core rails console
+
+CONFIGURATION & INFO
+  command     shorthand     description
+  env         e             shows the configured environment variables the sbx cli
+  version     v             shows the version of the sbx cli
+  help        h             shows this help message
+
+EXAMPLES
   sbx up
+  sbx dash
+  sbx k8s help
 `
 
 func help() (string, error) {
@@ -95,5 +90,7 @@ func Commands() map[string]RunFn {
 		"e":        env.Run,
 		"beta":     beta.Run,
 		"k8s":      k8s.Run,
+		"console":  console.Run,
+		"c":        console.Run,
 	}
 }

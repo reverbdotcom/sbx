@@ -2,18 +2,25 @@ package login
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/reverbdotcom/sbx/cli"
 )
 
-const profile = "preprod"
+const (
+	profile     = "preprod"
+	vpnCheckURL = "https://nsqadmin.reverb.tools/"
+)
 
 var cmdFn = cli.Cmd
 var checkCommandFn = checkCommand
 var awsSSOLoginFn = awsSSOLogin
+var loginFn = Run
+var checkVPNConnectionFn = CheckVPNConnection
 
 // Run executes the k8s login workflow:
 // 1. Check if aws and kubectx are available
@@ -82,4 +89,64 @@ func awsSSOLogin(profile string) error {
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
+}
+
+// checkClusterAccess checks if kubectl can connect to the preprod cluster
+// If not authenticated, it automatically runs sbx k8s login
+func CheckClusterAccess() error {
+	out, err := cmdFn("kubectl", "version")
+	if err != nil {
+		// Check if the error is due to SSO token or connection issues
+		if strings.Contains(out, "Error loading SSO Token") ||
+			strings.Contains(out, "Unable to connect to the server") ||
+			strings.Contains(out, "getting credentials") {
+			return attemptAutoLogin()
+		}
+		return fmt.Errorf("kubectl version check failed: %s: %w", out, err)
+	}
+
+	// Verify that Server Version is present in the output
+	if !strings.Contains(out, "Server Version") {
+		return attemptAutoLogin()
+	}
+
+	return nil
+}
+
+// attemptAutoLogin attempts to authenticate and verify connection
+func attemptAutoLogin() error {
+	fmt.Println("kubectl cannot connect to preprod cluster. Running 'sbx k8s login'...")
+
+	// Attempt to login
+	_, loginErr := loginFn()
+	if loginErr != nil {
+		return fmt.Errorf("failed to authenticate: %w", loginErr)
+	}
+
+	// Verify connection after login
+	out, err := cmdFn("kubectl", "version")
+	if err != nil || !strings.Contains(out, "Server Version") {
+		return fmt.Errorf("kubectl still cannot connect to preprod cluster after login")
+	}
+
+	return nil
+}
+
+// CheckVPNConnection verifies that the VPN is connected by making a request to nsqadmin
+func CheckVPNConnection() error {
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	resp, err := client.Get(vpnCheckURL)
+	if err != nil {
+		return fmt.Errorf("VPN connection check failed. Please ensure you are connected to the VPN.\nError: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		return fmt.Errorf("VPN connection check failed with status %d. Please ensure you are connected to the VPN", resp.StatusCode)
+	}
+
+	return nil
 }
