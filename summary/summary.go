@@ -17,7 +17,9 @@ Host:           %s
 »»»
 Site:           sbx w | sbx web
 Graphiql:       sbx g | sbx graphiql
-Redis:				  | sbx redis
+Redis:          sbx db r | sbx db redis
+Postgres:       sbx db p | sbx db postgres
+Elasticsearch:  sbx db e | sbx db elasticsearch
 
 Dash:           sbx d | sbx dash
 Logs:           sbx l | sbx logs

@@ -19,7 +19,7 @@ COMMANDS
       dash
       logs
       web
-      redis
+      db
       graphiql
       version
       info
@@ -37,11 +37,12 @@ DESCRIPTION
   dash        d             opens the dashboard in a browser.
   logs        l             opens the logs in a browser.
   web         w             opens the site in a browser.
-  redis                     opens the redis UI in a browser.
   graphiql    g             opens graphql user interface in a browser.
   version     v             shows the version of the sbx cli.
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
+  
+  db                        database console explorer. Use 'sbx db help' for subcommands.
   k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands.
 
 USAGE:
