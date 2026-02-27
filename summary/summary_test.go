@@ -25,6 +25,7 @@ Host:           https://sandbox-lorraine-francisco-jonathan.int.orchestra.rvb.ai
 
 »»»
 Site:           sbx w | sbx web
+Console:        sbx c | sbx console
 Graphiql:       sbx g | sbx graphiql
 Redis:          sbx db r | sbx db redis
 Postgres:       sbx db p | sbx db postgres
