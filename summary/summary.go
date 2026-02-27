@@ -14,8 +14,8 @@ SHA:            %s
 Host:           %s
 
 »»»
-Site:           sbx w | sbx web
-Graphiql:       sbx g | sbx graphiql
+Site:           sbx w    | sbx web
+Graphiql:       sbx g    | sbx graphiql
 Redis:          sbx db r | sbx db redis
 Postgres:       sbx db p | sbx db postgres
 Elasticsearch:  sbx db e | sbx db elasticsearch
