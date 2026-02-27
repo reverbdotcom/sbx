@@ -9,7 +9,6 @@ import (
 	"github.com/reverbdotcom/sbx/k8s"
 	"github.com/reverbdotcom/sbx/logs"
 	"github.com/reverbdotcom/sbx/name"
-	"github.com/reverbdotcom/sbx/redis"
 	"github.com/reverbdotcom/sbx/summary"
 	"github.com/reverbdotcom/sbx/up"
 	"github.com/reverbdotcom/sbx/version"
@@ -74,8 +73,6 @@ func Commands() map[string]RunFn {
 		"help":     help,
 		"name":     name.Run,
 		"n":        name.Run,
-		"redis":    redis.Open,
-		"r":        redis.Open,
 		"web":      web.Open,
 		"w":        web.Open,
 		"progress": web.OpenProgress,
