@@ -2,13 +2,14 @@ package up
 
 import (
 	"errors"
+	"io"
 	"testing"
 
 	"github.com/reverbdotcom/sbx/cli"
 )
 
 func TestRun(t *testing.T) {
-	summaryFn = func(_ string) error { return nil }
+	summaryFn = func(_ io.Writer, _ string) error { return nil }
 	htmlUrlFn = func() (string, error) {
 		return "some.url", nil
 	}

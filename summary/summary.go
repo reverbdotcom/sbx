@@ -2,6 +2,7 @@ package summary
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/reverbdotcom/sbx/commit"
 	"github.com/reverbdotcom/sbx/name"
@@ -38,14 +39,14 @@ func Run() (string, error) {
 	return printSummary(name)
 }
 
-func Print(name string) error {
+func Print(w io.Writer, name string) error {
 	summary, err := printSummary(name)
 
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(summary)
+	fmt.Fprintln(w, summary)
 
 	return nil
 }

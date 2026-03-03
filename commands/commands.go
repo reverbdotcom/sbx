@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"io"
+
 	"github.com/reverbdotcom/sbx/beta"
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/db"
@@ -17,6 +19,11 @@ import (
 )
 
 type RunFn func() (string, error)
+
+// StreamFn is a command that sends incremental progress to w while running.
+// Commands that produce streamed output (deploy progress, build logs, etc.)
+// should implement this signature so the TUI can render updates live.
+type StreamFn func(w io.Writer) (string, error)
 
 const Help = `NAME
   sbx - orchestra cli
@@ -95,5 +102,15 @@ func Commands() map[string]RunFn {
 		"e":        env.Run,
 		"beta":     beta.Run,
 		"k8s":      k8s.Run,
+	}
+}
+
+// StreamCommands returns commands that support streaming progress to an
+// io.Writer. The TUI uses these to render live output. Commands not in
+// this map fall back to the standard RunFn execution.
+func StreamCommands() map[string]StreamFn {
+	return map[string]StreamFn{
+		"up": up.RunStream,
+		"u":  up.RunStream,
 	}
 }

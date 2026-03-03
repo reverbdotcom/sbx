@@ -3,6 +3,8 @@ package up
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
@@ -30,9 +32,18 @@ var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
 
+// Run is the legacy entry point for the up command. It writes progress
+// directly to stdout. Use RunStream for TUI-integrated execution.
 func Run() (string, error) {
-	fmt.Println("deploying...")
-	fmt.Println()
+	return RunStream(os.Stdout)
+}
+
+// RunStream deploys a sandbox, writing incremental progress to w.
+// This allows the TUI to capture and render updates live instead of
+// having them leak to stdout.
+func RunStream(w io.Writer) (string, error) {
+	fmt.Fprintln(w, "deploying...")
+	fmt.Fprintln(w)
 
 	yes, err := isMain()
 
@@ -60,12 +71,7 @@ func Run() (string, error) {
 		return out, err
 	}
 
-	err = summaryFn(name)
-
-	if err != nil {
-		return "", err
-	}
-
+	fmt.Fprintln(w, "✅ Deployment successful!")
 	return out, nil
 }
 
