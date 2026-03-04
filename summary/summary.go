@@ -5,7 +5,6 @@ import (
 
 	"github.com/reverbdotcom/sbx/commit"
 	"github.com/reverbdotcom/sbx/name"
-	"github.com/reverbdotcom/sbx/run"
 )
 
 const template = "https://%s.int.orchestra.rvb.ai/"
@@ -15,8 +14,8 @@ SHA:            %s
 Host:           %s
 
 »»»
-Site:           sbx w | sbx web
-Graphiql:       sbx g | sbx graphiql
+Site:           sbx w    | sbx web
+Graphiql:       sbx g    | sbx graphiql
 Redis:          sbx db r | sbx db redis
 Postgres:       sbx db p | sbx db postgres
 Elasticsearch:  sbx db e | sbx db elasticsearch
@@ -50,7 +49,6 @@ func Print(name string) error {
 	return nil
 }
 
-var htmlUrl = run.HtmlUrl
 var headSHA = commit.HeadSHA
 
 func printSummary(name string) (string, error) {

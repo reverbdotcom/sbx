@@ -11,18 +11,6 @@ import (
 	"github.com/reverbdotcom/sbx/summary"
 )
 
-const info = `»»»
-Name:       %s
-SHA:        %s
-
-Deploy:     %s
-Dash:       %s
-Logs:       %s
-
-Host:       %s
-Graphiql:   %s
-`
-
 const noChanges = "up-to-date"
 
 var cmdFn = cli.Cmd
