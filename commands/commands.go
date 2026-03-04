@@ -33,12 +33,12 @@ SANDBOX MANAGEMENT
 
 BROWSER TOOLS
   command     shorthand     description
-	progress    p             opens deployment progress in a browser
+  progress    p             opens deployment progress in a browser
   dash        d             opens the datadog dashboard in a browser
   logs        l             opens the datadog logs in a browser
   web         w             opens the site in a browser
   graphiql    g             opens graphql user interface in a browser
-	db                        database console explorer. Use 'sbx db help' for subcommands.
+  db                        database console explorer. Use 'sbx db help' for subcommands.
 
 CLI TOOLS
   command     shorthand     description
