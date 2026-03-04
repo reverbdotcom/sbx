@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	profile     = "preprod"
-	vpnCheckURL = "https://nsqadmin.reverb.tools/"
+	profile = "preprod"
 )
 
+var vpnCheckURL = "https://nsqadmin.reverb.tools/"
 var cmdFn = cli.Cmd
 var checkCommandFn = checkCommand
 var awsSSOLoginFn = awsSSOLogin

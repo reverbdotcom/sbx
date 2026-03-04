@@ -38,7 +38,7 @@ func Run() (string, error) {
 		return "", fmt.Errorf("failed to get namespace: %w", err)
 	}
 
-	// Get pods with label app=web-puma
+	// Get pods for the deployment
 	pods, err := getPodsFn(namespace, deployment)
 	if err != nil {
 		return "", fmt.Errorf("failed to get pods: %w", err)
@@ -57,7 +57,7 @@ func Run() (string, error) {
 }
 
 func _execConsole(namespace, pod, container string) (string, error) {
-	// Using /bin/sh to run the conditional sourcing, then exec into rails console
+	// Using /bin/sh to change to the app directory, then exec into the Rails console
 	railsCmd := "cd /app && exec bin/rails c"
 	cmd := exec.Command("kubectl", "exec", "-it", "-n", namespace, pod, "-c", container, "--", "/bin/sh", "-c", railsCmd)
 	cmd.Stdin = os.Stdin

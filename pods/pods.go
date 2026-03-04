@@ -55,6 +55,14 @@ func GetPods(namespace, deployment string) ([]string, error) {
 	// We need to convert it to kubectl label selector format: key1=value1,key2=value2
 	selector := parseSelector(selectorOut)
 
+	if selector == "" {
+		out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", fmt.Sprintf("app=%s", deployment), "-o", "jsonpath={.items[*].metadata.name}")
+		if err != nil {
+			return nil, fmt.Errorf("kubectl error: %s: %w", out, err)
+		}
+		return strings.Fields(strings.TrimSpace(out)), nil
+	}
+
 	out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", selector, "-o", "jsonpath={.items[*].metadata.name}")
 	if err != nil {
 		return nil, fmt.Errorf("kubectl error: %s: %w", out, err)

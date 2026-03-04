@@ -103,6 +103,27 @@ func TestGetPods(t *testing.T) {
 		}
 	})
 
+	t.Run("it falls back to app label when selector is empty map", func(t *testing.T) {
+		mockCalls := []cli.MockCall{
+			{Command: "kubectl get deployment app-1 -n test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "map[]", Err: nil},
+			{Command: "kubectl get pods -n test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1", Err: nil},
+		}
+
+		cmdFn = cli.MockCmd(t, mockCalls)
+
+		pods, err := GetPods("test-namespace", "app-1")
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		if len(pods) != 1 {
+			t.Errorf("expected 1 pod, got %d", len(pods))
+		}
+
+		if pods[0] != "pod-1" {
+			t.Errorf("unexpected pod name: %v", pods)
+		}
+	})
 	t.Run("it returns error on kubectl failure", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl get deployment app-1 -n test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "", Err: errors.New("kubectl error")},

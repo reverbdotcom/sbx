@@ -47,7 +47,7 @@ CLI TOOLS
 
 CONFIGURATION & INFO
   command     shorthand     description
-  env         e             shows the configured environment variables the sbx cli
+  env         e             shows the configured environment variables for the sbx cli
   version     v             shows the version of the sbx cli
   help        h             shows this help message
 
@@ -66,6 +66,7 @@ func Commands() map[string]RunFn {
 		"up":       up.Run,
 		"u":        up.Run,
 		"help":     help,
+		"h":        help,
 		"name":     name.Run,
 		"n":        name.Run,
 		"web":      web.Open,
@@ -88,5 +89,6 @@ func Commands() map[string]RunFn {
 		"e":        env.Run,
 		"k8s":      k8s.Run,
 		"console":  console.Run,
-		"c":        console.Run}
+		"c":        console.Run,
+	}
 }
