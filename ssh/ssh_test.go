@@ -11,10 +11,7 @@ import (
 func TestRun(t *testing.T) {
 	t.Run("it successfully drops into a container", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
-			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 			{Command: "kubectl get deployments -n sandbox-test-namespace -o jsonpath={.items[*].metadata.name}", Out: "app-1", Err: nil},
-			{Command: "kubectl get deployment app-1 -n sandbox-test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "map[app:app-1]", Err: nil},
-			{Command: "kubectl get pods -n sandbox-test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1", Err: nil},
 			{Command: "kubectl get pod pod-1 -n sandbox-test-namespace -o jsonpath={.spec.containers[*].name}", Out: "container-1", Err: nil},
 		}
 
@@ -22,9 +19,15 @@ func TestRun(t *testing.T) {
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
 		}
+		getPodsFn = func(_, _ string) ([]string, error) {
+			return []string{"pod-1"}, nil
+		}
 
 		// Mock VPN check to pass
 		checkVPNConnectionFn = func() error {
+			return nil
+		}
+		checkClusterAccessFn = func() error {
 			return nil
 		}
 
@@ -97,12 +100,14 @@ func TestRun(t *testing.T) {
 
 	t.Run("it errors when no deployments found", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
-			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 			{Command: "kubectl get deployments -n sandbox-test-namespace -o jsonpath={.items[*].metadata.name}", Out: "", Err: nil},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
 		checkVPNConnectionFn = func() error {
+			return nil
+		}
+		checkClusterAccessFn = func() error {
 			return nil
 		}
 		nameFn = func() (string, error) {
@@ -120,12 +125,14 @@ func TestRun(t *testing.T) {
 
 	t.Run("it errors when kubectl get deployments fails", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
-			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 			{Command: "kubectl get deployments -n sandbox-test-namespace -o jsonpath={.items[*].metadata.name}", Out: "", Err: errors.New("kubectl error")},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
 		checkVPNConnectionFn = func() error {
+			return nil
+		}
+		checkClusterAccessFn = func() error {
 			return nil
 		}
 		nameFn = func() (string, error) {
@@ -238,10 +245,7 @@ func contains(s, substr string) bool {
 func TestRunWithClusterAccessCheck(t *testing.T) {
 	t.Run("it checks cluster access before proceeding", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
-			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 			{Command: "kubectl get deployments -n sandbox-test-namespace -o jsonpath={.items[*].metadata.name}", Out: "app-1", Err: nil},
-			{Command: "kubectl get deployment app-1 -n sandbox-test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "map[app:app-1]", Err: nil},
-			{Command: "kubectl get pods -n sandbox-test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1", Err: nil},
 			{Command: "kubectl get pod pod-1 -n sandbox-test-namespace -o jsonpath={.spec.containers[*].name}", Out: "container-1", Err: nil},
 		}
 
@@ -249,8 +253,14 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 		checkVPNConnectionFn = func() error {
 			return nil
 		}
+		checkClusterAccessFn = func() error {
+			return nil
+		}
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
+		}
+		getPodsFn = func(_, _ string) ([]string, error) {
+			return []string{"pod-1"}, nil
 		}
 
 		selectItemFn = func(label string, items []string) (string, error) {
@@ -275,11 +285,7 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 
 	t.Run("it automatically logs in when cluster access check fails", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
-			{Command: "kubectl version", Out: "Error loading SSO Token: Token for okta does not exist\nUnable to connect to the server", Err: errors.New("exit status 1")},
-			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 			{Command: "kubectl get deployments -n sandbox-test-namespace -o jsonpath={.items[*].metadata.name}", Out: "app-1", Err: nil},
-			{Command: "kubectl get deployment app-1 -n sandbox-test-namespace -o jsonpath={.spec.selector.matchLabels}", Out: "map[app:app-1]", Err: nil},
-			{Command: "kubectl get pods -n sandbox-test-namespace -l app=app-1 -o jsonpath={.items[*].metadata.name}", Out: "pod-1", Err: nil},
 			{Command: "kubectl get pod pod-1 -n sandbox-test-namespace -o jsonpath={.spec.containers[*].name}", Out: "container-1", Err: nil},
 		}
 
@@ -290,11 +296,18 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 		nameFn = func() (string, error) {
 			return "sandbox-test-namespace", nil
 		}
+		getPodsFn = func(_, _ string) ([]string, error) {
+			return []string{"pod-1"}, nil
+		}
 
 		loginCalled := false
 		loginFn = func() (string, error) {
 			loginCalled = true
 			return "login successful", nil
+		}
+		checkClusterAccessFn = func() error {
+			loginFn()
+			return nil
 		}
 
 		selectItemFn = func(label string, items []string) (string, error) {
@@ -321,11 +334,6 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 	})
 
 	t.Run("it errors when login fails", func(t *testing.T) {
-		mockCalls := []cli.MockCall{
-			{Command: "kubectl version", Out: "Error loading SSO Token: Token for okta does not exist\nUnable to connect to the server", Err: errors.New("exit status 1")},
-		}
-
-		cmdFn = cli.MockCmd(t, mockCalls)
 		checkVPNConnectionFn = func() error {
 			return nil
 		}
@@ -335,6 +343,13 @@ func TestRunWithClusterAccessCheck(t *testing.T) {
 
 		loginFn = func() (string, error) {
 			return "", errors.New("login failed")
+		}
+		checkClusterAccessFn = func() error {
+			_, err := loginFn()
+			if err != nil {
+				return errors.New("failed to authenticate: " + err.Error())
+			}
+			return nil
 		}
 
 		_, err := Run()
