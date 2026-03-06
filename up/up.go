@@ -150,7 +150,7 @@ func upgrade() {
 		return
 	}
 
-	out, err = cmdFn("brew", "upgrade", "sbx")
+	out, err = cmdFn("arch", "-arm64", "brew", "upgrade", "sbx")
 
 	if err != nil {
 		errr.Warning(fmt.Sprintf("sbx upgrade: %s %s", out, err))
