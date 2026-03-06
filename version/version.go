@@ -9,6 +9,10 @@ import (
 //go:embed SBX_VERSION
 var version string
 
+func Get() string {
+	return strings.TrimSpace(version)
+}
+
 func Run() (string, error) {
-	return fmt.Sprintf("Version: %s\n", strings.TrimSpace(version)), nil
+	return fmt.Sprintf("Version: %s\n", Get()), nil
 }
