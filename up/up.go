@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/v67/github"
 	"github.com/reverbdotcom/sbx/cli"
@@ -154,7 +155,10 @@ func latestRelease() (*github.RepositoryRelease, error) {
 		return nil, err
 	}
 
-	release, _, err := client.Repositories.GetLatestRelease(context.Background(), "reverbdotcom", "sbx")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	release, _, err := client.Repositories.GetLatestRelease(ctx, "reverbdotcom", "sbx")
 
 	return release, err
 }
