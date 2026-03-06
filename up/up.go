@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
+	"github.com/reverbdotcom/sbx/errr"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 	"github.com/reverbdotcom/sbx/summary"
@@ -19,6 +20,8 @@ var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
 
 func Run() (string, error) {
+	upgrade()
+
 	fmt.Println("deploying...")
 	fmt.Println()
 
@@ -137,4 +140,12 @@ func onSandbox(name string) (bool, error) {
 	yes := strings.TrimSpace(out) == name
 
 	return yes, nil
+}
+
+func upgrade() {
+	out, err := cmdFn("brew", "upgrade", "sbx")
+
+	if err != nil {
+		errr.Warning(fmt.Sprintf("sbx upgrade: %s %s", out, err))
+	}
 }

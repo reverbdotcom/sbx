@@ -55,35 +55,17 @@ USAGE:
 
 Requires `GITHUB_TOKEN` to be set in the environment.
 
-#### brew
-
 ```bash
 brew tap reverbdotcom/sbx git@github.com:reverbdotcom/sbx.git
 brew update
 brew install sbx
 ```
 
-#### golang
+`sbx` self-updates on `sbx up` via `brew upgrade`.
 
-```bash
-export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@main
-```
-
-#### bash
-
-```bash
-VERSION=<grab the latest tag> \
-    curl \
-        -s\
-        -L \
-        -o "/tmp/sbx-darwin-arm64.tar.gz" \
-        "https://github.com/reverbdotcom/sbx/releases/download/${VERSION}/sbx-darwin-arm64.tar.gz" \
-    && tar -xzf /tmp/sbx-darwin-arm64.tar.gz -C /tmp \
-    && sudo mv /tmp/sbx /usr/local/bin/sbx
-```
 ## Release
 
-Release is done for `bash` and `brew` installations. We support only darwin-arm64 ( macos m1 ) for now.
+We support only darwin-arm64 ( macos m1 ) for now.
 To cut a new release, [publish a new tag](https://github.com/reverbdotcom/sbx/releases) following semver.
 
 ## Development
