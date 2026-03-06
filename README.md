@@ -41,7 +41,7 @@ DESCRIPTION
   version     v             shows the version of the sbx cli.
   info        i             shows the summary of the sandbox.
   progress    p             opens deployment progress in a browser.
-  
+
   db                        database console explorer. Use 'sbx db help' for subcommands.
   k8s                       kubernetes resources explorer. Use 'sbx k8s help' for subcommands.
 
@@ -55,24 +55,10 @@ USAGE:
 
 Requires `GITHUB_TOKEN` to be set in the environment.
 
-#### brew
-
-```bash
-brew tap reverbdotcom/sbx git@github.com:reverbdotcom/sbx.git
-brew update
-brew install sbx
-```
-
-#### golang
-
-```bash
-export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/sbx@main
-```
-
 #### bash
 
 ```bash
-VERSION=<grab the latest tag> \
+VERSION=v1.22.0 \
     curl \
         -s\
         -L \
