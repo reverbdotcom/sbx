@@ -6,6 +6,7 @@ import (
 
 	gh "github.com/google/go-github/v67/github"
 	"github.com/reverbdotcom/sbx/cli"
+	"github.com/reverbdotcom/sbx/version"
 )
 
 var brewUpdate = cli.MockCall{
@@ -399,7 +400,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it skips brew when version is current", func(t *testing.T) {
-		tag := "v1.29.0"
+		tag := version.Get()
 		latestReleaseFn = func() (*gh.RepositoryRelease, error) {
 			return &gh.RepositoryRelease{TagName: &tag}, nil
 		}
