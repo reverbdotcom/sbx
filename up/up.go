@@ -143,7 +143,14 @@ func onSandbox(name string) (bool, error) {
 }
 
 func upgrade() {
-	out, err := cmdFn("brew", "upgrade", "sbx")
+	out, err := cmdFn("brew", "update")
+
+	if err != nil {
+		errr.Warning(fmt.Sprintf("sbx update: %s %s", out, err))
+		return
+	}
+
+	out, err = cmdFn("brew", "upgrade", "sbx")
 
 	if err != nil {
 		errr.Warning(fmt.Sprintf("sbx upgrade: %s %s", out, err))
