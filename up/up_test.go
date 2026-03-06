@@ -14,7 +14,7 @@ var brewUpdate = cli.MockCall{
 }
 
 var brewUpgrade = cli.MockCall{
-	Command: "brew upgrade sbx",
+	Command: "arch -arm64 brew upgrade sbx",
 	Out:     "",
 	Err:     nil,
 }
@@ -341,7 +341,7 @@ func TestRun(t *testing.T) {
 		wants := []cli.MockCall{
 			brewUpdate,
 			{
-				Command: "brew upgrade sbx",
+				Command: "arch -arm64 brew upgrade sbx",
 				Out:     "Error: sbx not installed",
 				Err:     errors.New("brew error"),
 			},
