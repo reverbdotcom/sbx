@@ -6,11 +6,9 @@ import (
 	"strings"
 
 	"github.com/reverbdotcom/sbx/cli"
-	"github.com/reverbdotcom/sbx/errr"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 	"github.com/reverbdotcom/sbx/summary"
-	"github.com/reverbdotcom/sbx/update"
 )
 
 const noChanges = "up-to-date"
@@ -19,16 +17,8 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
-var updateFn = update.Run
 
 func Run() (string, error) {
-	out, err := updateFn()
-	if err != nil {
-		errr.Warning(err.Error())
-	} else if out != "" {
-		fmt.Print(out)
-	}
-
 	fmt.Println("deploying...")
 	fmt.Println()
 
@@ -48,7 +38,7 @@ func Run() (string, error) {
 		return "", err
 	}
 
-	out, err = deploy(name, false)
+	out, err := deploy(name, false)
 
 	if err != nil && strings.Contains(err.Error(), noChanges) {
 		out, err = deploy(name, true)
