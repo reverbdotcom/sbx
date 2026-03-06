@@ -7,6 +7,12 @@ import (
 	"github.com/reverbdotcom/sbx/cli"
 )
 
+var brewUpgrade = cli.MockCall{
+	Command: "brew upgrade sbx",
+	Out:     "",
+	Err:     nil,
+}
+
 func TestRun(t *testing.T) {
 	summaryFn = func(_ string) error { return nil }
 	htmlUrlFn = func() (string, error) {
@@ -15,6 +21,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("it errs on main", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "main",
@@ -32,6 +39,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("it errs on nameFn", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "sandbox-blake-julian-kevin",
@@ -57,6 +65,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("it push a new remote", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "nn-my-branch",
@@ -90,6 +99,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("it errs on make local", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "nn-my-branch",
@@ -111,13 +121,14 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-		if err.Error() != wants[2].Err.Error() {
-			t.Errorf("got %v, want %v", err, wants[2].Err)
+		if err.Error() != wants[3].Err.Error() {
+			t.Errorf("got %v, want %v", err, wants[3].Err)
 		}
 	})
 
 	t.Run("it errs on push remote", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "nn-my-branch",
@@ -144,13 +155,14 @@ func TestRun(t *testing.T) {
 
 		_, err := Run()
 
-		if err != wants[3].Err {
-			t.Errorf("got %v, want %v", err, wants[3].Err)
+		if err != wants[4].Err {
+			t.Errorf("got %v, want %v", err, wants[4].Err)
 		}
 	})
 
 	t.Run("it creates a noop commit on push remote when remote is up to date", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "nn-my-branch",
@@ -204,6 +216,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("it pushes to remote with new changes", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "nn-my-branch",
@@ -237,6 +250,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("does not create a local branch is already on the sandbox branch", func(t *testing.T) {
 		wants := []cli.MockCall{
+			brewUpgrade,
 			{
 				Command: "git branch --show-current",
 				Out:     "sandbox-blake-julian-kevin",
@@ -245,6 +259,48 @@ func TestRun(t *testing.T) {
 			{
 				Command: "git branch --show-current",
 				Out:     "sandbox-blake-julian-kevin",
+				Err:     nil,
+			},
+			{
+				Command: "git push -f origin sandbox-blake-julian-kevin",
+				Out:     "",
+				Err:     nil,
+			},
+		}
+
+		nameFn = func() (string, error) {
+			return "sandbox-blake-julian-kevin", nil
+		}
+
+		cmdFn = cli.MockCmd(t, wants)
+
+		_, err := Run()
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+	})
+
+	t.Run("it continues deploy when brew upgrade fails", func(t *testing.T) {
+		wants := []cli.MockCall{
+			{
+				Command: "brew upgrade sbx",
+				Out:     "Error: sbx not installed",
+				Err:     errors.New("brew error"),
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Out:     "",
 				Err:     nil,
 			},
 			{
