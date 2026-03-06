@@ -26,18 +26,4 @@ func Open() (string, error) {
 
 var htmlUrlFn = run.HtmlUrl
 
-func OpenProgress() (string, error) {
-	htmlUrl, err := htmlUrlFn()
-
-	if err != nil {
-		return "", err
-	}
-
-	if err := openURL(htmlUrl); err != nil {
-		return "", err
-	}
-
-	return "", nil
-}
-
 var nameFn = name.Name
