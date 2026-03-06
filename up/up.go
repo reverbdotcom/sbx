@@ -177,6 +177,8 @@ func upgrade() {
 		return
 	}
 
+	fmt.Println("updating sbx...")
+
 	out, err := cmdFn("brew", "update")
 
 	if err != nil {
