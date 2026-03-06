@@ -163,36 +163,45 @@ func latestRelease() (*github.RepositoryRelease, error) {
 	return release, err
 }
 
-func newVersionAvailable() bool {
+func latestVersion() string {
 	release, err := latestReleaseFn()
 
 	if err != nil {
-		return false
+		return ""
 	}
 
 	latest := release.GetTagName()
 	current := version.Get()
 
-	return latest != current
+	if latest == current {
+		return ""
+	}
+
+	return latest
 }
 
 func upgrade() {
-	if !newVersionAvailable() {
+	latest := latestVersion()
+
+	if latest == "" {
 		return
 	}
 
-	fmt.Println("updating sbx...")
+	fmt.Printf("🎉 new version available: %s → %s\n", version.Get(), latest)
+	fmt.Println("🍺 upgrading sbx...")
 
 	out, err := cmdFn("brew", "update")
+	fmt.Print(out)
 
 	if err != nil {
-		errr.Warning(fmt.Sprintf("sbx update: %s %s", out, err))
+		errr.Warning(fmt.Sprintf("sbx update: %s", err))
 		return
 	}
 
 	out, err = cmdFn("arch", "-arm64", "brew", "upgrade", "sbx")
+	fmt.Print(out)
 
 	if err != nil {
-		errr.Warning(fmt.Sprintf("sbx upgrade: %s %s", out, err))
+		errr.Warning(fmt.Sprintf("sbx upgrade: %s", err))
 	}
 }
