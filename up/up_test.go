@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	gh "github.com/google/go-github/v67/github"
 	"github.com/reverbdotcom/sbx/cli"
 )
 
@@ -19,6 +20,13 @@ var brewUpgrade = cli.MockCall{
 	Err:     nil,
 }
 
+func mockNewVersion() {
+	tag := "v99.0.0"
+	latestReleaseFn = func() (*gh.RepositoryRelease, error) {
+		return &gh.RepositoryRelease{TagName: &tag}, nil
+	}
+}
+
 func TestRun(t *testing.T) {
 	summaryFn = func(_ string) error { return nil }
 	htmlUrlFn = func() (string, error) {
@@ -26,6 +34,7 @@ func TestRun(t *testing.T) {
 	}
 
 	t.Run("it errs on main", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -45,6 +54,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it errs on nameFn", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -72,6 +82,7 @@ func TestRun(t *testing.T) {
 	}
 
 	t.Run("it push a new remote", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -107,6 +118,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it errs on make local", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -137,6 +149,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it errs on push remote", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -172,6 +185,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it creates a noop commit on push remote when remote is up to date", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -227,6 +241,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it pushes to remote with new changes", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -262,6 +277,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("does not create a local branch is already on the sandbox branch", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			brewUpgrade,
@@ -296,6 +312,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it continues deploy when brew update fails", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			{
 				Command: "brew update",
@@ -338,6 +355,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("it continues deploy when brew upgrade fails", func(t *testing.T) {
+		mockNewVersion()
 		wants := []cli.MockCall{
 			brewUpdate,
 			{
@@ -345,6 +363,89 @@ func TestRun(t *testing.T) {
 				Out:     "Error: sbx not installed",
 				Err:     errors.New("brew error"),
 			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Out:     "",
+				Err:     nil,
+			},
+			{
+				Command: "git push -f origin sandbox-blake-julian-kevin",
+				Out:     "",
+				Err:     nil,
+			},
+		}
+
+		nameFn = func() (string, error) {
+			return "sandbox-blake-julian-kevin", nil
+		}
+
+		cmdFn = cli.MockCmd(t, wants)
+
+		_, err := Run()
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+	})
+
+	t.Run("it skips brew when version is current", func(t *testing.T) {
+		tag := "v1.29.0"
+		latestReleaseFn = func() (*gh.RepositoryRelease, error) {
+			return &gh.RepositoryRelease{TagName: &tag}, nil
+		}
+
+		wants := []cli.MockCall{
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch --show-current",
+				Out:     "nn-my-branch",
+				Err:     nil,
+			},
+			{
+				Command: "git branch -f sandbox-blake-julian-kevin HEAD",
+				Out:     "",
+				Err:     nil,
+			},
+			{
+				Command: "git push -f origin sandbox-blake-julian-kevin",
+				Out:     "",
+				Err:     nil,
+			},
+		}
+
+		nameFn = func() (string, error) {
+			return "sandbox-blake-julian-kevin", nil
+		}
+
+		cmdFn = cli.MockCmd(t, wants)
+
+		_, err := Run()
+
+		if err != nil {
+			t.Errorf("got %v, want nil", err)
+		}
+	})
+
+	t.Run("it skips brew when version check fails", func(t *testing.T) {
+		latestReleaseFn = func() (*gh.RepositoryRelease, error) {
+			return nil, errors.New("api error")
+		}
+
+		wants := []cli.MockCall{
 			{
 				Command: "git branch --show-current",
 				Out:     "nn-my-branch",

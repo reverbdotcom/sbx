@@ -1,15 +1,19 @@
 package up
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/google/go-github/v67/github"
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/errr"
+	gh "github.com/reverbdotcom/sbx/github"
 	"github.com/reverbdotcom/sbx/name"
 	"github.com/reverbdotcom/sbx/run"
 	"github.com/reverbdotcom/sbx/summary"
+	"github.com/reverbdotcom/sbx/version"
 )
 
 const noChanges = "up-to-date"
@@ -18,6 +22,7 @@ var cmdFn = cli.Cmd
 var nameFn = name.Name
 var htmlUrlFn = run.HtmlUrl
 var summaryFn = summary.Print
+var latestReleaseFn = latestRelease
 
 func Run() (string, error) {
 	upgrade()
@@ -142,7 +147,36 @@ func onSandbox(name string) (bool, error) {
 	return yes, nil
 }
 
+func latestRelease() (*github.RepositoryRelease, error) {
+	client, err := gh.Client()
+
+	if err != nil {
+		return nil, err
+	}
+
+	release, _, err := client.Repositories.GetLatestRelease(context.Background(), "reverbdotcom", "sbx")
+
+	return release, err
+}
+
+func newVersionAvailable() bool {
+	release, err := latestReleaseFn()
+
+	if err != nil {
+		return false
+	}
+
+	latest := release.GetTagName()
+	current := version.Get()
+
+	return latest != current
+}
+
 func upgrade() {
+	if !newVersionAvailable() {
+		return
+	}
+
 	out, err := cmdFn("brew", "update")
 
 	if err != nil {
