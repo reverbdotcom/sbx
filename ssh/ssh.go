@@ -2,30 +2,29 @@ package ssh
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"os/exec"
 	"strings"
-	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/reverbdotcom/sbx/cli"
 	"github.com/reverbdotcom/sbx/login"
 	"github.com/reverbdotcom/sbx/name"
+	"github.com/reverbdotcom/sbx/pods"
 )
 
 var cmdFn = cli.Cmd
 var nameFn = name.Name
 var execIntoContainer = _execIntoContainer
 var selectItemFn = selectItem
-var checkClusterAccessFn = checkClusterAccess
-var checkVPNConnectionFn = checkVPNConnection
+var checkClusterAccessFn = login.CheckClusterAccess
+var checkVPNConnectionFn = login.CheckVPNConnection
 var loginFn = login.Run
+var getPodsFn = pods.GetPods
 
 const (
 	defaultShell  = "/bin/sh"
 	fallbackShell = "/bin/bash"
-	vpnCheckURL   = "https://nsqadmin.reverb.tools/"
 )
 
 func Run() (string, error) {
@@ -61,7 +60,7 @@ func Run() (string, error) {
 	}
 
 	// Get pods for the selected deployment
-	pods, err := getPods(namespace, deployment)
+	pods, err := getPodsFn(namespace, deployment)
 	if err != nil {
 		return "", fmt.Errorf("failed to get pods: %w", err)
 	}
@@ -116,105 +115,6 @@ func getDeployments(namespace string) ([]string, error) {
 	return deployments, nil
 }
 
-func getPods(namespace, deployment string) ([]string, error) {
-	// First get the deployment's selector
-	selectorOut, err := cmdFn("kubectl", "get", "deployment", deployment, "-n", namespace, "-o", "jsonpath={.spec.selector.matchLabels}")
-	if err != nil {
-		return nil, fmt.Errorf("kubectl error: %s: %w", selectorOut, err)
-	}
-
-	// If the selector is empty or we can't parse it, fallback to a simple label selector
-	if strings.TrimSpace(selectorOut) == "" {
-		// Try with common label patterns
-		out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", fmt.Sprintf("app=%s", deployment), "-o", "jsonpath={.items[*].metadata.name}")
-		if err != nil {
-			return nil, fmt.Errorf("kubectl error: %s: %w", out, err)
-		}
-		pods := strings.Fields(strings.TrimSpace(out))
-		return pods, nil
-	}
-
-	// Get pods using the deployment's label selector
-	// The selector output is in format: map[key1:value1 key2:value2]
-	// We need to convert it to kubectl label selector format: key1=value1,key2=value2
-	selector := parseSelector(selectorOut)
-
-	out, err := cmdFn("kubectl", "get", "pods", "-n", namespace, "-l", selector, "-o", "jsonpath={.items[*].metadata.name}")
-	if err != nil {
-		return nil, fmt.Errorf("kubectl error: %s: %w", out, err)
-	}
-
-	pods := strings.Fields(strings.TrimSpace(out))
-	return pods, nil
-}
-
-func parseSelector(selectorJSON string) string {
-	// Simple parsing of kubectl jsonpath output for matchLabels
-	// Input format can be:
-	//   map[app:myapp version:v1]
-	//   map["reverb.com/deployment":"graphql-gateway"]
-	//   {"reverb.com/deployment":"graphql-gateway"}  (JSON format)
-	// Output format: app=myapp,version=v1 or reverb.com/deployment=graphql-gateway
-
-	selectorJSON = strings.TrimSpace(selectorJSON)
-
-	// Handle JSON format (starts with {)
-	if strings.HasPrefix(selectorJSON, "{") {
-		// Remove { and }
-		selectorJSON = strings.TrimPrefix(selectorJSON, "{")
-		selectorJSON = strings.TrimSuffix(selectorJSON, "}")
-		selectorJSON = strings.TrimSpace(selectorJSON)
-
-		// Handle empty JSON object
-		if selectorJSON == "" {
-			return ""
-		}
-
-		// Parse JSON-style key:value pairs
-		// Split by comma first (for multiple labels in JSON)
-		parts := strings.Split(selectorJSON, ",")
-		result := []string{}
-		for _, part := range parts {
-			part = strings.TrimSpace(part)
-			// Remove quotes and convert : to =
-			part = strings.ReplaceAll(part, "\"", "")
-			part = strings.Replace(part, ":", "=", 1)
-			if part != "" {
-				result = append(result, part)
-			}
-		}
-		return strings.Join(result, ",")
-	}
-
-	// Remove "map[" prefix and "]" suffix for Go map format
-	selectorJSON = strings.TrimPrefix(selectorJSON, "map[")
-	selectorJSON = strings.TrimSuffix(selectorJSON, "]")
-
-	// Handle labels with special characters (quoted format)
-	// Example: "reverb.com/deployment":"graphql-gateway" "app":"web"
-	if strings.Contains(selectorJSON, "\"") {
-		// Split by space to get individual key:value pairs
-		pairs := strings.Fields(selectorJSON)
-		result := []string{}
-		for _, pair := range pairs {
-			// Remove quotes and convert : to =
-			pair = strings.ReplaceAll(pair, "\"", "")
-			pair = strings.Replace(pair, ":", "=", 1)
-			result = append(result, pair)
-		}
-		return strings.Join(result, ",")
-	}
-
-	// Handle simple labels without special characters
-	// Example: app:myapp version:v1
-	pairs := strings.Fields(selectorJSON)
-	for i, pair := range pairs {
-		pairs[i] = strings.Replace(pair, ":", "=", 1)
-	}
-
-	return strings.Join(pairs, ",")
-}
-
 func getContainers(namespace, pod string) ([]string, error) {
 	out, err := cmdFn("kubectl", "get", "pod", pod, "-n", namespace, "-o", "jsonpath={.spec.containers[*].name}")
 	if err != nil {
@@ -246,8 +146,8 @@ func buildShellCommand(shell string) string {
 		// This should never happen since we only pass constants, but being defensive
 		shell = defaultShell
 	}
-	// Command to check if /etc/secrets/env exists and source it, then start an interactive shell
-	return "[ -f /etc/secrets/env ] && . /etc/secrets/env; exec " + shell
+	// Command to start an interactive shell
+	return "exec " + shell
 }
 
 func _execIntoContainer(namespace, pod, container string) (string, error) {
@@ -273,64 +173,4 @@ func _execIntoContainer(namespace, pod, container string) (string, error) {
 	}
 
 	return "", nil
-}
-
-// checkClusterAccess checks if kubectl can connect to the preprod cluster
-// If not authenticated, it automatically runs sbx k8s login
-func checkClusterAccess() error {
-	out, err := cmdFn("kubectl", "version")
-	if err != nil {
-		// Check if the error is due to SSO token or connection issues
-		if strings.Contains(out, "Error loading SSO Token") ||
-			strings.Contains(out, "Unable to connect to the server") ||
-			strings.Contains(out, "getting credentials") {
-			return attemptAutoLogin()
-		}
-		return fmt.Errorf("kubectl version check failed: %s: %w", out, err)
-	}
-
-	// Verify that Server Version is present in the output
-	if !strings.Contains(out, "Server Version") {
-		return attemptAutoLogin()
-	}
-
-	return nil
-}
-
-// attemptAutoLogin attempts to authenticate and verify connection
-func attemptAutoLogin() error {
-	fmt.Println("kubectl cannot connect to preprod cluster. Running 'sbx k8s login'...")
-
-	// Attempt to login
-	_, loginErr := loginFn()
-	if loginErr != nil {
-		return fmt.Errorf("failed to authenticate: %w", loginErr)
-	}
-
-	// Verify connection after login
-	out, err := cmdFn("kubectl", "version")
-	if err != nil || !strings.Contains(out, "Server Version") {
-		return fmt.Errorf("kubectl still cannot connect to preprod cluster after login")
-	}
-
-	return nil
-}
-
-// checkVPNConnection verifies that the VPN is connected by making a request to nsqadmin
-func checkVPNConnection() error {
-	client := &http.Client{
-		Timeout: 5 * time.Second,
-	}
-
-	resp, err := client.Get(vpnCheckURL)
-	if err != nil {
-		return fmt.Errorf("VPN connection check failed. Please ensure you are connected to the VPN.\nError: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= 400 {
-		return fmt.Errorf("VPN connection check failed with status %d. Please ensure you are connected to the VPN", resp.StatusCode)
-	}
-
-	return nil
 }
