@@ -7,6 +7,7 @@ import (
 	"github.com/reverbdotcom/sbx/elasticsearch"
 	"github.com/reverbdotcom/sbx/postgres"
 	"github.com/reverbdotcom/sbx/redis"
+	"github.com/reverbdotcom/sbx/sidekiq"
 )
 
 const subcommandHelp = `USAGE:
@@ -16,6 +17,7 @@ SUBCOMMANDS:
   redis / r             opens the redis UI in a browser
   postgres / p / psql   opens the postgres UI in a browser
   elasticsearch / e / cerebro   opens the elasticsearch UI (cerebro) in a browser
+  sidekiq / s           opens the sidekiq UI in a browser
 
 If no subcommand is provided, shows this help.
 `
@@ -31,6 +33,8 @@ var subcommands = map[string]SubcommandFn{
 	"elasticsearch": elasticsearch.Open,
 	"e":             elasticsearch.Open,
 	"cerebro":       elasticsearch.Open,
+	"sidekiq":       sidekiq.Open,
+	"s":             sidekiq.Open,
 }
 
 var getArgs = func() []string {
