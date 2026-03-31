@@ -92,3 +92,10 @@ export GOPRIVATE=github.com/reverbdotcom && go install github.com/reverbdotcom/s
 ```
 
 `sbx` now points to your branch version.
+
+Alternatively, you can build the project directly
+```bash
+go build -o /tmp/sbx .
+```
+
+and use `/tmp/sbx` in your orchestra-enabled repo.
