@@ -292,7 +292,7 @@ func TestCheckClusterAccess(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
 			{Command: "kubectl config current-context", Out: "some-other-context", Err: nil},
-			{Command: "kubectl config use-context preprod", Out: "", Err: errors.New("exit status 1")},
+			{Command: "kubectl config use-context preprod", Out: "error: no context exists with the name: preprod", Err: errors.New("exit status 1")},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
@@ -304,12 +304,15 @@ func TestCheckClusterAccess(t *testing.T) {
 		if !contains(err.Error(), "failed to switch to kubernetes context preprod") {
 			t.Errorf("expected error to contain 'failed to switch to kubernetes context preprod', got %v", err.Error())
 		}
+		if !contains(err.Error(), "error: no context exists with the name: preprod") {
+			t.Errorf("expected error to contain command output, got %v", err.Error())
+		}
 	})
 
 	t.Run("it errors when current-context check fails", func(t *testing.T) {
 		mockCalls := []cli.MockCall{
 			{Command: "kubectl version", Out: "Client Version: v1.30.3\nServer Version: v1.32.9-eks-3cfe0ce", Err: nil},
-			{Command: "kubectl config current-context", Out: "", Err: errors.New("exit status 1")},
+			{Command: "kubectl config current-context", Out: "error: current-context is not set", Err: errors.New("exit status 1")},
 		}
 
 		cmdFn = cli.MockCmd(t, mockCalls)
@@ -320,6 +323,9 @@ func TestCheckClusterAccess(t *testing.T) {
 		}
 		if !contains(err.Error(), "failed to get current kubectl context") {
 			t.Errorf("expected error to contain 'failed to get current kubectl context', got %v", err.Error())
+		}
+		if !contains(err.Error(), "error: current-context is not set") {
+			t.Errorf("expected error to contain command output, got %v", err.Error())
 		}
 	})
 
