@@ -111,11 +111,11 @@ func CheckClusterAccess() error {
 	}
 
 	// Connected — switch context if not already on preprod (login already handles this if triggered above)
-	ctx, err := cmdFn("kubectl", "config", "current-context")
+	out, err = cmdFn("kubectl", "config", "current-context")
 	if err != nil {
-		return fmt.Errorf("failed to get current kubectl context: %s: %w", ctx, err)
+		return fmt.Errorf("failed to get current kubectl context: %s: %w", out, err)
 	}
-	if strings.TrimSpace(ctx) != profile {
+	if strings.TrimSpace(out) != profile {
 		fmt.Printf("Switching kubernetes context to %s...\n", profile)
 		if out, err := cmdFn("kubectl", "config", "use-context", profile); err != nil {
 			return fmt.Errorf("failed to switch to kubernetes context %s: %s: %w", profile, out, err)
