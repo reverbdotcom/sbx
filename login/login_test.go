@@ -88,9 +88,12 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected error for empty account ID, got nil")
 		}
 
-		expectedErr := "no sso_account_id found in AWS profile preprod"
-		if err.Error() != expectedErr {
-			t.Errorf("got %v, want %v", err.Error(), expectedErr)
+		if !strings.Contains(err.Error(), "no sso_account_id found in AWS profile preprod") {
+			t.Errorf("expected error to mention missing sso_account_id, got %v", err.Error())
+		}
+
+		if !strings.Contains(err.Error(), "sbx k8s reset") {
+			t.Errorf("expected error to suggest 'sbx k8s reset', got %v", err.Error())
 		}
 	})
 
@@ -112,6 +115,10 @@ func TestRun(t *testing.T) {
 
 		if !strings.Contains(err.Error(), "failed to get AWS account ID") {
 			t.Errorf("expected error message to contain 'failed to get AWS account ID', got %v", err.Error())
+		}
+
+		if !strings.Contains(err.Error(), "sbx k8s reset") {
+			t.Errorf("expected error to suggest 'sbx k8s reset', got %v", err.Error())
 		}
 	})
 
@@ -135,6 +142,10 @@ func TestRun(t *testing.T) {
 
 		if !strings.Contains(err.Error(), "failed to switch to kubernetes context") {
 			t.Errorf("expected error message to contain 'failed to switch to kubernetes context', got %v", err.Error())
+		}
+
+		if !strings.Contains(err.Error(), "sbx k8s reset") {
+			t.Errorf("expected error to suggest 'sbx k8s reset', got %v", err.Error())
 		}
 	})
 

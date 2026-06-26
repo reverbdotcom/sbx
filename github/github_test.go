@@ -118,3 +118,70 @@ func TestFindSandboxRun(t *testing.T) {
 		}
 	})
 }
+
+func TestGetFileContents(t *testing.T) {
+	type args struct {
+		owner string
+		repo  string
+		path  string
+		opts  *gh.RepositoryContentGetOptions
+	}
+
+	t.Run("it fetches and decodes the file", func(t *testing.T) {
+		got := args{}
+		content := "[profile preprod]\nsso_account_id = 123\n"
+		getContents = func(ctx context.Context, owner, repo, path string, opts *gh.RepositoryContentGetOptions) (*gh.RepositoryContent, []*gh.RepositoryContent, *gh.Response, error) {
+			got = args{owner, repo, path, opts}
+			c := content
+			file := &gh.RepositoryContent{Content: &c}
+
+			return file, nil, nil, nil
+		}
+
+		want := args{
+			owner: "reverbdotcom",
+			repo:  "k8x",
+			path:  "setup/aws-dev.profile",
+			opts:  &gh.RepositoryContentGetOptions{Ref: "main"},
+		}
+
+		out, err := GetFileContents("k8x", "setup/aws-dev.profile")
+
+		if err != nil {
+			t.Errorf("got %v", err)
+		}
+
+		if out != content {
+			t.Errorf("got %v, want %v", out, content)
+		}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("it errs when the fetch fails", func(t *testing.T) {
+		getContents = func(_ context.Context, _, _, _ string, _ *gh.RepositoryContentGetOptions) (*gh.RepositoryContent, []*gh.RepositoryContent, *gh.Response, error) {
+			return nil, nil, nil, errors.New("404 Not Found")
+		}
+
+		want := errors.New("404 Not Found")
+		_, err := GetFileContents("k8x", "setup/aws-dev.profile")
+
+		if err == nil || err.Error() != want.Error() {
+			t.Errorf("got %v, want %v", err, want)
+		}
+	})
+
+	t.Run("it errs when the path is not a file", func(t *testing.T) {
+		getContents = func(_ context.Context, _, _, _ string, _ *gh.RepositoryContentGetOptions) (*gh.RepositoryContent, []*gh.RepositoryContent, *gh.Response, error) {
+			return nil, nil, nil, nil
+		}
+
+		_, err := GetFileContents("k8x", "setup")
+
+		if err == nil {
+			t.Errorf("expected error for non-file path, got nil")
+		}
+	})
+}

@@ -15,6 +15,10 @@ const (
 	profile = "preprod"
 )
 
+// resetHint points users at `sbx k8s reset` when a login failure is caused by a
+// missing or misconfigured AWS config or kubernetes context.
+const resetHint = "If your AWS config or kubernetes contexts are missing or misconfigured, run 'sbx k8s reset' to reconfigure them."
+
 var vpnCheckURL = "https://nsqadmin.reverb.tools/"
 var cmdFn = cli.Cmd
 var checkCommandFn = checkCommand
@@ -44,12 +48,12 @@ func Run() (string, error) {
 	// Get account ID from AWS profile
 	accountID, err := cmdFn("aws", "configure", "get", "sso_account_id", "--profile", profile)
 	if err != nil {
-		return "", fmt.Errorf("failed to get AWS account ID from profile %s: %w", profile, err)
+		return "", fmt.Errorf("failed to get AWS account ID from profile %s: %w\n\n%s", profile, err, resetHint)
 	}
 	accountID = strings.TrimSpace(accountID)
 
 	if accountID == "" {
-		return "", fmt.Errorf("no sso_account_id found in AWS profile %s", profile)
+		return "", fmt.Errorf("no sso_account_id found in AWS profile %s\n\n%s", profile, resetHint)
 	}
 
 	// Check if already authenticated by calling aws sts get-caller-identity
@@ -69,7 +73,7 @@ func Run() (string, error) {
 	fmt.Printf("Switching to kubernetes context: %s...\n", profile)
 	output, err := cmdFn("kubectx", profile)
 	if err != nil {
-		return "", fmt.Errorf("failed to switch to kubernetes context %s: %s: %w", profile, output, err)
+		return "", fmt.Errorf("failed to switch to kubernetes context %s: %s: %w\n\n%s", profile, output, err, resetHint)
 	}
 
 	return fmt.Sprintf("Successfully logged in and switched to kubernetes context: %s", profile), nil

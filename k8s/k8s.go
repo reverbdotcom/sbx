@@ -14,6 +14,7 @@ import (
 	"github.com/reverbdotcom/sbx/open"
 	"github.com/reverbdotcom/sbx/pods"
 	"github.com/reverbdotcom/sbx/processes"
+	"github.com/reverbdotcom/sbx/reset"
 	"github.com/reverbdotcom/sbx/services"
 	"github.com/reverbdotcom/sbx/ssh"
 )
@@ -27,6 +28,7 @@ const subcommandHelp = `USAGE:
 
 SUBCOMMANDS:
   login         authenticates with AWS and switches to preprod kubernetes context
+  reset         resets AWS and kubernetes config (run if login fails from bad config)
   ssh           drops into a kubernetes pod container shell
   pods          opens the kubernetes pod view
   deployments   opens the kubernetes deployment view
@@ -44,6 +46,7 @@ type SubcommandFn func() (string, error)
 
 var subcommands = map[string]SubcommandFn{
 	"login":       login.Run,
+	"reset":       reset.Run,
 	"ssh":         ssh.Run,
 	"pods":        pods.Run,
 	"deployments": deployments.Run,

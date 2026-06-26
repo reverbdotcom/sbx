@@ -47,6 +47,32 @@ EXAMPLES
 ```
 
 
+## Kubernetes (`sbx k8s`)
+
+`sbx k8s` explores preprod kubernetes resources. Run `sbx k8s help` for the full
+list of subcommands. The most common ones:
+
+```bash
+sbx k8s login    # authenticate with AWS SSO and switch to the preprod context
+sbx k8s reset    # reset AWS and kubernetes config (run this if login fails)
+sbx k8s ssh      # drop into a pod container shell
+```
+
+`sbx k8s login` expects a working `preprod` AWS SSO profile in `~/.aws/config`
+and a `preprod` kubernetes context. If login fails because that config is
+missing or misconfigured, run `sbx k8s reset`.
+
+`sbx k8s reset` fetches the AWS config template from the internal `reverbdotcom/k8x`
+repository (so it requires `GITHUB_TOKEN` and access to that repo), backs up your
+existing `~/.aws/config` and `~/.kube/config` to `*.backup`, writes the fresh AWS
+config, and rebuilds the preprod kubernetes context. It prompts for confirmation
+before overwriting anything.
+
+> [!CAUTION]
+> `sbx k8s reset` overwrites your `~/.aws/config` and `~/.kube/config`. Existing
+> files are moved to `~/.aws/config.backup` and `~/.kube/config.backup`.
+
+
 ## Install / Upgrade
 
 Requires `GITHUB_TOKEN` to be set in the environment.
