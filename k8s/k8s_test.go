@@ -124,4 +124,32 @@ func TestRun(t *testing.T) {
 			t.Errorf("expected 'login called', got %v", result)
 		}
 	})
+
+	t.Run("it calls reset subcommand", func(t *testing.T) {
+		getArgs = func() []string { return []string{"sbx", "k8s", "reset"} }
+
+		resetCalled := false
+		originalReset := subcommands["reset"]
+		subcommands["reset"] = func() (string, error) {
+			resetCalled = true
+			return "reset called", nil
+		}
+		defer func() {
+			subcommands["reset"] = originalReset
+		}()
+
+		result, err := Run()
+
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		if !resetCalled {
+			t.Errorf("expected reset subcommand to be called")
+		}
+
+		if result != "reset called" {
+			t.Errorf("expected 'reset called', got %v", result)
+		}
+	})
 }

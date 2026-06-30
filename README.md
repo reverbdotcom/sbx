@@ -46,7 +46,6 @@ EXAMPLES
   sbx k8s help
 ```
 
-
 ## Install / Upgrade
 
 Requires `GITHUB_TOKEN` to be set in the environment.

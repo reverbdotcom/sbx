@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/google/go-github/v67/github"
@@ -70,4 +71,33 @@ func TeardownSandbox(name string) error {
 	}
 
 	return err
+}
+
+var getContents = _getContents
+
+func _getContents(ctx context.Context, owner, repo, path string, opts *github.RepositoryContentGetOptions) (*github.RepositoryContent, []*github.RepositoryContent, *github.Response, error) {
+	client, err := Client()
+
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	return client.Repositories.GetContents(ctx, owner, repo, path, opts)
+}
+
+// GetFileContents fetches and decodes a single file from a reverbdotcom repo.
+func GetFileContents(repo, path string) (string, error) {
+	ctx := context.Background()
+	opts := &github.RepositoryContentGetOptions{Ref: "main"}
+
+	fileContent, _, _, err := getContents(ctx, owner, repo, path, opts)
+	if err != nil {
+		return "", err
+	}
+
+	if fileContent == nil {
+		return "", fmt.Errorf("%s/%s/%s is not a file", owner, repo, path)
+	}
+
+	return fileContent.GetContent()
 }
