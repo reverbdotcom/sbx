@@ -1,0 +1,18 @@
+name: Copilot CLI example
+on: [push]
+
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  copilot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+      - name: Run Copilot
+        run: copilot --yolo -p "Summarize the changes in this commit"
+        env:
+          GITHUB_TOKEN: $
