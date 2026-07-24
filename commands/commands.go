@@ -5,7 +5,6 @@ import (
 	"github.com/reverbdotcom/sbx/dash"
 	"github.com/reverbdotcom/sbx/db"
 	"github.com/reverbdotcom/sbx/down"
-	"github.com/reverbdotcom/sbx/env"
 	"github.com/reverbdotcom/sbx/graphiql"
 	"github.com/reverbdotcom/sbx/k8s"
 	"github.com/reverbdotcom/sbx/logs"
@@ -47,7 +46,6 @@ CLI TOOLS
 
 CONFIGURATION & INFO
   command     shorthand     description
-  env         e             shows the configured environment variables for the sbx cli
   version     v             shows the version of the sbx cli
   help        h             shows this help message
 
@@ -85,8 +83,6 @@ func Commands() map[string]RunFn {
 		"l":        logs.Run,
 		"info":     summary.Run,
 		"i":        summary.Run,
-		"env":      env.Run,
-		"e":        env.Run,
 		"k8s":      k8s.Run,
 		"console":  console.Run,
 		"c":        console.Run,

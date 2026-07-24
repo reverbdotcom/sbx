@@ -9,10 +9,6 @@ func TestRun(t *testing.T) {
 		return []string{"blake", "julian", "kevin"}, nil
 	}
 
-	getenv = func(key string) string {
-		return ""
-	}
-
 	Branch = func() (string, error) {
 		return "nn-sbx-1234", nil
 	}
@@ -29,32 +25,11 @@ func TestRun(t *testing.T) {
 			t.Errorf("got %v, want %v", got, want)
 		}
 	})
-
-	t.Run("it includes duration when set", func(t *testing.T) {
-		getenv = func(key string) string {
-			return "5h"
-		}
-
-		got, err := Run()
-		want := "sandbox-5h-blake-julian-kevin"
-
-		if err != nil {
-			t.Errorf("got %v, want nil", err)
-		}
-
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
-	})
 }
 
 func TestProperNames(t *testing.T) {
 	dictionary = func() ([]string, error) {
 		return []string{"blake", "julian", "kevin", "a", "super-long-name-that-does-not-fit"}, nil
-	}
-
-	getenv = func(key string) string {
-		return ""
 	}
 
 	t.Run("it should be longer than 2 and less than 13", func(t *testing.T) {
@@ -79,10 +54,6 @@ func TestProperNames(t *testing.T) {
 func TestName(t *testing.T) {
 	dictionary = func() ([]string, error) {
 		return []string{"blake", "julian", "kevin"}, nil
-	}
-
-	getenv = func(key string) string {
-		return ""
 	}
 
 	t.Run("it generates a sandbox name", func(t *testing.T) {

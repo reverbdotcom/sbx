@@ -36,7 +36,6 @@ CLI TOOLS
 
 CONFIGURATION & INFO
   command     shorthand     description
-  env         e             shows the configured environment variables for the sbx cli
   version     v             shows the version of the sbx cli
   help        h             shows this help message
 
